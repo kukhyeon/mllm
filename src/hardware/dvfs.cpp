@@ -147,7 +147,7 @@ std::vector<int> DVFS::get_cpu_freqs_conf(int prime_cpu_index){
     for (auto cluster_idx : this->cluster_indices){
         int max_idx = this->get_cpu_freq().at(cluster_idx).size()-1;
         int idx = static_cast<int>(
-            round(((double)prime_cpu_index/(double)max_prime_cluster_idx)*(double)max_idx)
+            std::round(((double)prime_cpu_index/(double)max_prime_cluster_idx)*(double)max_idx)
         );
 
         freq_conf.push_back(idx);

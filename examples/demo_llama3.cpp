@@ -41,18 +41,39 @@ int main(int argc, char **argv) {
         auto input_tensor = tokenizer.tokenize(in_str);
         std::cout << "[Q] " << in_strs[i] << std::endl;
         std::cout << "[A] " << std::flush;
-        for (int step = 0; step < 100; step++) {
-            auto result = model({input_tensor});
-            auto [out_string, out_token] = tokenizer.detokenize(result[0]);
+
+        size_t max_new_tokens = tokens_limit - input_tensor.sequence();
+        LlmTextGeneratorOpts opt{
+            .max_new_tokens = 100,
+            .do_sample = false,
+            .temperature = 0.0F
+        };
+        model.generate(input_tensor, opt, [&](unsigned int out_token) -> bool {
+            auto out_string = tokenizer.detokenize({out_token});
             auto [not_end, output_string] = tokenizer.postprocess(out_string);
-            if (!not_end) { break; }
+            if (!not_end) { return false; }
             std::cout << output_string << std::flush;
-            chatPostProcessing(out_token, input_tensor, {});
-        }
+            return true;
+        });
+
+
+        // ..ORIGINAL Version..
+        // for (int step = 0; step < 100; step++) {
+        //     auto result = model({input_tensor});
+        //     auto [out_string, out_token] = tokenizer.detokenize(result[0]);
+        //     auto [not_end, output_string] = tokenizer.postprocess(out_string);
+        //     if (!not_end) { break; }
+        //     std::cout << output_string << std::flush;
+        //     chatPostProcessing(out_token, input_tensor, {});
+        // }
+        
+        
         printf("\n");
         model.clear_kvcache();
         model.profiling();
     }
+
+    cout << "done\n";
 
     return 0;
 }
