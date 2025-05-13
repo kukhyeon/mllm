@@ -194,7 +194,7 @@ int main(int argc, char **argv) {
         // if (file_.is_open()) {
         //     file_ << uuid << ',' << prefill_token_size<< ',' << prefill_speed << ',' << problem << '\n';
         // }
-        cout << answer << endl;
+        //cout << answer << endl;
         ans.push_back(answer); // accummulate answers
         model.clear_kvcache();
         ++qa_now;
