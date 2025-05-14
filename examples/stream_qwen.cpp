@@ -153,12 +153,6 @@ int main(int argc, char **argv) {
         profile_res.insert(profile_res.begin(), (double)sys_time/(double)1000.0);
         write_file(profile_res, output_infer); // store in real time
 
-        
-        
-        /*
-        infer 측정 코드 있어야 함.
-        */
-        
         if (is_query_save){ ans.push_back(answer); } // accummulate answers
         model.clear_kvcache();
         qa_now++;
@@ -178,8 +172,8 @@ int main(int argc, char **argv) {
     // post-measurement-processing
     if (!is_query_save) {
         // not save the result
-        system("input touchscreen keyevent 26");
-        system("input touchscreen keyevent 82");
+        //system("input touchscreen keyevent 26");
+        //system("input touchscreen keyevent 82");
         return 0;
     }
 
@@ -204,8 +198,8 @@ int main(int argc, char **argv) {
     std::cout << "Saved " << ans.size() << " QA pairs to " << output_qa << std::endl;
 
     // termination notification
-    system("input touchscreen keyevent 26");
-    system("input touchscreen keyevent 82");
+    //system("input touchscreen keyevent 26");
+    //system("input touchscreen keyevent 82");
 
     return 0;
 }
