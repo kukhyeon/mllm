@@ -62,6 +62,7 @@ else ()
     option(TEST "test mode" ON)
 endif ()
 option(QUANT "quantize tools" ON)
+option(ANALYZE "analyzer tools" ON)
 option(APK "Build for Android APK Lib." OFF)
 option(FROM_GGUF "convert from gguf" OFF)
 
@@ -220,6 +221,32 @@ if(QUANT)
         )
         target_link_libraries(from_gguf fmt::fmt-header-only)
     endif()
+endif()
+
+if(ANALYZE)
+    include_directories(${PROJECT_SOURCE_DIR}/src/analyzer)
+    # file(GLOB_RECURSE MLLM_ANALYZE
+    #     ${PROJECT_SOURCE_DIR}/src/backends/cpu/compute/GEMM_AArch64.hpp
+    #     ${PROJECT_SOURCE_DIR}/src/backends/cpu/compute/GEMM_AArch64.cpp
+    #     ${PROJECT_SOURCE_DIR}/src/backends/cpu/quantize/*.hpp
+    #     ${PROJECT_SOURCE_DIR}/src/backends/cpu/quantize/*.cpp
+    # )
+
+    file(GLOB_RECURSE MLLM_ANALYZER
+        ${CMAKE_CURRENT_LIST_DIR}/src/analyzer/*.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/analyzer/*.hpp)
+    list(REMOVE_ITEM MLLM_ANALYZER ${CMAKE_CURRENT_LIST_DIR}/src/analyzer/main.cpp)
+
+    add_executable(
+        analyzer
+        ${PROJECT_SOURCE_DIR}/src/analyzer/main.cpp
+        # ${MLLM_QUANT}
+        ${MLLM_ANALYZER}
+
+        # ${DIR_SRC}
+        ${PROJECT_SOURCE_DIR}/src/ParamLoader.cpp
+    )
+    target_link_libraries(analyzer fmt::fmt-header-only)
 endif()
 
 if(TEST)
