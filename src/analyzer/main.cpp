@@ -44,6 +44,7 @@ int main(){
     int layer_index_tmp = -99;
     // #define TEST
 
+    size_t blk_num = 0;
     for (auto l : layerInfos){
 #ifdef TEST
         std::cout << l.getOriginalName() << " | " << l.getMajorGroupOrder() << " | " << l.getLayerIndex() << std::endl;
@@ -85,19 +86,22 @@ int main(){
         
         // Print Operator and Layer Information
         // Specifying operator
-        std::string str = " -- ";
+	std::string str = " -- ";
         for (std::size_t i=mid_frag_idx; i<fragment.size(); ++i){
             str += fragment[i]; // ex) 
             if (i == fragment.size()-1) break;
             str += '.';
         }
 
-        std::cout << std::endl << std::left << std::setw(36) << str;
+	std::cout << std::endl << std::right << std::setw(4) << blk_num;
+        std::cout << std::left << std::setw(36) << str;
 
         // Print Lyaer Information: dType | Size
         std::cout << " \t\t" <<
             DataTypeName(paramLoader.getDataType(l.getOriginalName())) << "\t" << 
-            std::get<std::uint64_t>(param) / 1024 << " kB"; //" LENGTH";
+            (double) (std::get<std::uint64_t>(param)) / (double)(1024) << " kB"; //" LENGTH";
+	
+	++blk_num;
     }
     std::cout << std::endl;
 
