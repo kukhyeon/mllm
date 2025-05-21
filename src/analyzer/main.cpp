@@ -16,19 +16,21 @@
 #define MIN(a,b) (a<b ? a:b)
 
 
-int main(){
+int main(int argc, char** argv){
     // std::iostream::sync_with_stdio(false);
     cmdline::parser cmdParser;
 
     // arg parser
-    cmdParser.add<std::string>("file", 'f', "specify mllm model file", true, "models/qwen-1.5-0.5b-q4_k.mllm");
+    cmdParser.add<std::string>("file", 'f', "specify mllm model file", false, "models/qwen-1.5-0.5b-q4_k.mllm");
+    cmdParser.parse_check(argc, argv);
 
     // variable initialization
     std::string model_file = cmdParser.get<std::string>("file");
     
     // model load
     mllm::ParamLoader paramLoader(model_file, true);
-    std::cout << "Pass through " << paramLoader.getParamSize() << " Operaters\n";
+    std::cout << "Read File: " << model_file << std::endl
+              << "Pass through " << paramLoader.getParamSize() << " Operaters\n";
 
     // LayerInfo
     std::vector<LayerInfo> layerInfos;
