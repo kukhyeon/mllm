@@ -72,13 +72,13 @@ int main(int argc, char **argv) {
     const int qa_start = cmdParser.get<int>("start");
     const int qa_len = cmdParser.get<int>("length");
     const string input_path = cmdParser.get<string>("input");
-    const string output_dir = cmdParser.get<string>("output"); //"HotpotQA_mllm_result_Qwen"+model_billion+".json";
+    const string output_dir = cmdParser.get<string>("output"); //"HotpotQA_mllm_llama3"+model_billion+".json";
     const bool is_query_save = cmdParser.get<bool>("save");
     int qa_now = qa_start;
     int qa_limit = 0;
-    const string output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_cpu" + to_string(cpu_clk_idx) + "ram" + to_string(ram_clk_idx) + "_hard.txt");
-    const string output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_cpu" + to_string(cpu_clk_idx) + "ram" + to_string(ram_clk_idx) + "_infer.txt");
-    const string output_qa = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_result.json");
+    const string output_hard = joinPaths(output_dir, "HotpotQA_mllm_llama3_" + model_billion + "_cpu" + to_string(cpu_clk_idx) + "ram" + to_string(ram_clk_idx) + "_hard.txt");
+    const string output_infer = joinPaths(output_dir, "HotpotQA_mllm_llama3_" + model_billion + "_cpu" + to_string(cpu_clk_idx) + "ram" + to_string(ram_clk_idx) + "_infer.txt");
+    const string output_qa = joinPaths(output_dir, "HotpotQA_mllm_llama3_" + model_billion + "_result.json");
 
 
     // Model Configuration
@@ -102,7 +102,7 @@ int main(int argc, char **argv) {
     
     dvfs.set_cpu_freq(freq_config);
     dvfs.set_ram_freq(ram_clk_idx);
-    const vector<string> infer_record_names = {"sys_time", "prefill_speed", "decode_speed", "prefill_token", "decode_token", "ttft"};
+    const vector<string> infer_record_names = {"sys_time", "load_time", "prefill_speed", "decode_speed", "prefill_token", "decode_token", "ttft"};
     write_file(infer_record_names, output_infer);
 
     // limit=-1 -> infinite query stream

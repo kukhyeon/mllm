@@ -103,7 +103,7 @@ int main(int argc, char **argv) {
     
     dvfs.set_cpu_freq(freq_config);
     dvfs.set_ram_freq(ram_clk_idx);
-    const vector<string> infer_record_names = {"sys_time", "prefill_speed", "decode_speed", "prefill_token", "decode_token", "ttft"};
+    const vector<string> infer_record_names = {"sys_time", "load_time","prefill_speed", "decode_speed", "prefill_token", "decode_token", "ttft"};
     write_file(infer_record_names, output_infer);
 
     // limit=-1 -> infinite query stream
