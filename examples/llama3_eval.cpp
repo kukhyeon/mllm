@@ -123,7 +123,8 @@ int main(int argc, char **argv) {
     cmdParser.add<string>("vocab", 'v', "specify mllm tokenizer model path", false, "../vocab/llama3_tokenizer.model");
     cmdParser.add<string>("model", 'm', "specify mllm model path", false, "../models/llama-3.2-1b-instruct_q4_k.mllm");
     cmdParser.add<string>("billion", 'b', "[1B | 3B ]", false, "1B");
-    cmdParser.add<string>("query-path", 'q', "specify query path of csv", false, "../alpaca_eval.json");
+    cmdParser.add<string>("query-path", 'q', "specify query path of json", false, "../alpaca_eval.json");
+    cmdParser.add<string>("output-path", 'o', "specify output path of json", false, "Arc-Easy_mllm_Llama3.2_3B_q4k_result.json");
     cmdParser.add<int>("limits", 'l', "max KV cache size", false, 2048);
     cmdParser.add<int>("thread", 't', "num of threads", false, 16);
     cmdParser.add<int>("limit", 'L', "num of queries", false, -1);
@@ -133,14 +134,14 @@ int main(int argc, char **argv) {
     string vocab_path = cmdParser.get<string>("vocab");
     string model_path = cmdParser.get<string>("model");
     string model_billion = cmdParser.get<string>("billion");
-    const std::string query_path = cmdParser.get<string>("query-path");
-    cout << query_path << endl;
+    const string query_path = cmdParser.get<string>("query-path");
+    const string output_path = cmdParser.get<string>("output-path");
     int tokens_limit = cmdParser.get<int>("limits");
     CPUBackend::cpu_threads = cmdParser.get<int>("thread");
     const int qa_limit = cmdParser.get<int>("limit"); // length of limit
     const int qa_start = cmdParser.get<int>("start");
     int qa_now = 0; // qa_start
-    const string output_path = "AlpacaEval_mllm_LLaMA3.2_1B_result.json";
+    cout << query_path << endl;
 
     // Model Configuration
     Llama3Config config(tokens_limit, model_billion);

@@ -7,6 +7,9 @@
  * @copyright Copyright (c) 2025
  *
  */
+
+
+// ./bin/qwen_eval -m models/qwen-1.5-1.8b-chat-q4k.mllm -v vocab/qwen_vocab.mllm -e vocab/qwen_merges.txt -b 1.8B -r Qwen1.5 -l 512 -t 16 -q arc_challenge.json
 #include "cmdline.h"
 #include "models/qwen/configuration_qwen.hpp"
 #include "models/qwen/modeling_qwen.hpp"
@@ -123,7 +126,9 @@ int main(int argc, char **argv) {
     cmdParser.add<string>("merge", 'e', "specify mllm merge file path", false, "../vocab/qwen_merges.txt");
     cmdParser.add<string>("model", 'm', "specify mllm model path", false, "../models/qwen-1.5-0.5b-q4_k.mllm");
     cmdParser.add<string>("billion", 'b', "[0.5B | 1.8B | 1.5B |]", false, "0.5B");
+    cmdParser.add<string>("version", 'r', "[Qwen1.5 | Qwen2.5 |]", false, "Qwen1.5");
     cmdParser.add<string>("query-path", 'q', "specify query path of csv", false, "../alpaca_eval.json");
+    cmdParser.add<string>("output-path", 'o', "specify output path of json", false, "Arc-Challenge_mllm_Qwen1.5_1.8B_q4k_result.json");
     cmdParser.add<int>("limits", 'l', "max KV cache size", false, 2048);
     cmdParser.add<int>("thread", 't', "num of threads", false, 16);
     cmdParser.add<int>("limit", 'L', "num of queries", false, -1);
@@ -134,17 +139,18 @@ int main(int argc, char **argv) {
     string merge_path = cmdParser.get<string>("merge");
     string model_path = cmdParser.get<string>("model");
     string model_billion = cmdParser.get<string>("billion");
-    const std::string query_path = cmdParser.get<string>("query-path");
-    cout << query_path << endl;
+    string model_version = cmdParser.get<string>("version");
+    const string query_path = cmdParser.get<string>("query-path");
+    const string output_path = cmdParser.get<string>("output-path");
     int tokens_limit = cmdParser.get<int>("limits");
     CPUBackend::cpu_threads = cmdParser.get<int>("thread");
     const int qa_limit = cmdParser.get<int>("limit"); // length of limit
     const int qa_start = cmdParser.get<int>("start");
     int qa_now = 0; // qa_start
-    const string output_path = "AlpacaEval_mllm_Qwen1.5_1.8B_result.json";
+    cout << query_path << endl;
 
     auto tokenizer = QWenTokenizer(vocab_path, merge_path);
-    QWenConfig config(tokens_limit, model_billion, RoPEType::HFHUBROPE);
+    QWenConfig config(tokens_limit, model_billion, RoPEType::HFHUBROPE, model_version);
     //QWenConfig config(tokens_limit, model_billion, RoPEType::LLAMAROPE);
     auto model = QWenForCausalLM(config);
     model.load(model_path);

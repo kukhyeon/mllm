@@ -67,7 +67,7 @@ public:
             rank++;
         }
         BPETokenizer::setMergeRank(bpe_ranks_);
-        chat_template_pre = "<|im_start|>system\nYou are a helpful assistant.<|im_end|>\n<|im_start|>user\n";
+        chat_template_pre = "<|im_start|>system\nYou are a helpful assistant. Answer the question simply.<|im_end|>\n<|im_start|>user\n";
         chat_template_end = "<|im_end|>\n<|im_start|>assistant\n";
     }
 

@@ -189,12 +189,20 @@ public:
     }
 
     void clear_kvcache() override {
+        //std::cout << "Clear KV Cache 2\n";
         for (auto &block : blocks) {
             auto kvcache = block.get_attention().get_cache();
-            for (auto &cache : kvcache) { cache->clearCache(); }
+            for (auto &cache : kvcache) { // kvcache = {k_cache, v_cache}
+                //std::cout << cache->getCacheSeqLen() << std::endl;
+                cache->clearCache(); 
+            }
             auto ropes = block.get_attention().get_rope();
             for (auto &rope : ropes) { rope->clearCache(); }
         }
+    }
+    
+    std::vector<QWenDecoder> get_blocks() {
+        return blocks;
     }
 
 private:
@@ -216,6 +224,7 @@ public:
         if (tie_embedding_words) {
             lm_head = Parameter(1, config.vocab_size, 1, config.hidden_size,
                                 names.token_embd_name + ".weight");
+            //cout << names.token_embd_name + ".weight\n";
         } else {
             lm_head_layer =
                 Linear(config.hidden_size, config.vocab_size, false, names.lm_head_name);
@@ -229,13 +238,19 @@ public:
         auto outputs = model({x})[0];
         if (tie_embedding_words) {
             outputs = Tensor::mm(outputs, lm_head().transpose(Chl::SEQUENCE, Chl::DIMENSION));
+            //cout << "model.token_embd.weight\n";
         } else {
             outputs = lm_head_layer(outputs);
         }
         return {outputs};
     }
     void clear_kvcache() override {
+        //std::cout << "Clear KV Cache 1\n";
         model.clear_kvcache();
+    }
+    
+    std::vector<QWenDecoder> get_blocks() {
+        return model.get_blocks();
     }
 
 private:
