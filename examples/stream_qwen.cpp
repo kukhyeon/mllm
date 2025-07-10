@@ -49,8 +49,12 @@ int main(int argc, char **argv) {
     cmdParser.add<bool>("save", 'S', "save query-answer pairs with json", false, true);
     // arg parser: For DVFS
     cmdParser.add<string>("device", 'D', "specify your android phone [Pixel9 | S24]", true, "");
-    cmdParser.add<int>("cpu", 'C', "specify CPU clock index for CPU DVFS", true, 0);
-    cmdParser.add<int>("ram", 'R', "specify RAM clock index for RAM DVFS", true, 0);
+    cmdParser.add<int>("cpu-p", 'c', "specify CPU clock index for CPU DVFS", true, 0);
+    cmdParser.add<int>("ram-p", 'r', "specify RAM clock index for RAM DVFS", true, 0);
+    cmdParser.add<int>("cpu-d", 'C', "specify CPU clock index for CPU DVFS", true, 0);
+    cmdParser.add<int>("ram-d", 'R', "specify RAM clock index for RAM DVFS", true, 0);
+    cmdParser.add<int>("phase-pause", 'p', "specify a pause time between phases (ms)", true, 0);
+    cmdParser.add<int>("token-pause", 'P', "specify a pause time between generation tokens (ms)", true, 0);
     cmdParser.parse_check(argc, argv);
 
 
@@ -65,8 +69,13 @@ int main(int argc, char **argv) {
 
     // variable initialization: For DVFS
     const string device_name = cmdParser.get<string>("device");
-    const int cpu_clk_idx = cmdParser.get<int>("cpu");
-    const int ram_clk_idx = cmdParser.get<int>("ram");
+    const int cpu_clk_idx_p = cmdParser.get<int>("cpu-p");
+    const int ram_clk_idx_p = cmdParser.get<int>("ram-p");
+    const int cpu_clk_idx_d = cmdParser.get<int>("cpu-d");
+    const int ram_clk_idx_d = cmdParser.get<int>("ram-d");
+    const int phase_pause = cmdParser.get<int>("phase-pause");
+    const int token_pause = cmdParser.get<int>("token-pause");
+
 
 
     // variable initialization: For Stream
@@ -78,9 +87,37 @@ int main(int argc, char **argv) {
     const bool is_query_save = cmdParser.get<bool>("save");
     int qa_now = qa_start;
     int qa_limit = 0;
-    const string output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_cpu" + to_string(cpu_clk_idx) + "ram" + to_string(ram_clk_idx) + "_hard.txt");
-    const string output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_cpu" + to_string(cpu_clk_idx) + "ram" + to_string(ram_clk_idx) + "_infer.txt");
-    const string output_qa = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_result.json");
+    const bool fixed_config = (cpu_clk_idx_p == cpu_clk_idx_d) && (ram_clk_idx_p == ram_clk_idx_d);
+    string output_hard;
+    string output_infer;
+    string output_qa;
+
+    if (phase_pause <= 0 && token_pause <= 0 && !fixed_config){
+	// phase clock control
+        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_hard.txt");
+        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_infer.txt");
+
+    } else if (phase_pause <= 0 && token_pause <= 0 && fixed_config) {
+	// fixed configuration
+        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_hard.txt");
+        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_infer.txt");
+
+    } else if (phase_pause > 0 && token_pause <= 0 && fixed_config) {
+	// phase pause
+        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_pp_" + to_string(phase_pause) + "_hard.txt");
+        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_pp_" + to_string(phase_pause) + "_infer.txt");
+
+    } else if (phase_pause <= 0 && token_pause > 0 && fixed_config) {
+	// token pause
+	output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_tp_" + to_string(token_pause) + "_hard.txt");
+        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_tp_" + to_string(token_pause) + "_infer.txt");
+
+    } else {
+	// not controled config
+	cout << "ERROR: Not Controlled Configuration\n";
+	return 0;
+    }
+    output_qa = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_result.json");
 
 
     // Model Configuration
@@ -96,13 +133,11 @@ int main(int argc, char **argv) {
 
     // DVFS setting
     DVFS dvfs(device_name);
-    vector<int> freq_config = dvfs.get_cpu_freqs_conf(cpu_clk_idx);
     dvfs.output_filename = output_hard; // dvfs.output_filename requires hardware recording output path
     cout << pid << endl;
+    vector<int> freq_config = dvfs.get_cpu_freqs_conf(cpu_clk_idx_p);
     for (auto f :freq_config) { cout << f << " "; } cout << endl; // to validate (print freq-configuration)
     
-    dvfs.set_cpu_freq(freq_config);
-    dvfs.set_ram_freq(ram_clk_idx);
     const vector<string> infer_record_names = {"sys_time", "load_time","prefill_speed", "decode_speed", "prefill_token", "decode_token", "ttft"};
     write_file(infer_record_names, output_infer);
 
@@ -117,34 +152,69 @@ int main(int argc, char **argv) {
     while ( (qa_now - qa_start) < qa_limit ) {
         string question = qa_list[qa_now][1];
         string answer;
+	    int ft = 0; // first token
         auto now_sys_time = chrono::system_clock::now();
-        auto input_str = tokenizer.apply_chat_template(question);
+        
+	
+	    // Prefill
+    	freq_config = dvfs.get_cpu_freqs_conf(cpu_clk_idx_p);
+	    dvfs.set_cpu_freq(freq_config);
+	    dvfs.set_ram_freq(ram_clk_idx_p);
+	
+	    auto time1 = chrono::system_clock::now();
+	    auto input_str = tokenizer.apply_chat_template(question);
         auto input_tensor = tokenizer.tokenize(input_str);
+	    auto time2 = chrono::system_clock::now();
+	    //std::cout << chrono::duration_cast<chrono::microseconds>(time2 - time1).count() << " " << input_tensor.sequence() << std::endl; // test
         if (interface){
             std::cout << "[Q] " << question << std::endl;
             std::cout << "[A] " << std::flush;
         }
 
-        // inference
-        size_t max_new_tokens = tokens_limit - input_tensor.sequence();
-        LlmTextGeneratorOpts opt{
+        // Decode
+	    //size_t max_new_tokens = tokens_limit - input_tensor.sequence();
+	    size_t max_new_tokens = 256;
+    	LlmTextGeneratorOpts opt{
             .max_new_tokens = max_new_tokens,
             .do_sample = false,
             .temperature = 0.0F
         };
         model.generate(input_tensor, opt, [&](unsigned int out_token) -> bool {
-            auto out_string = tokenizer.detokenize({out_token});
-            auto [not_end, output_string] = tokenizer.postprocess(out_string);
+	    auto out_string = tokenizer.detokenize({out_token});
+	    // now prefill done (when ft==0)
+
+
+	    // phase clock control
+	    if (ft == 0 && !fixed_config) {
+	        freq_config = dvfs.get_cpu_freqs_conf(cpu_clk_idx_d);
+		    dvfs.set_cpu_freq(freq_config);
+		    dvfs.set_ram_freq(ram_clk_idx_d);
+	    } 
+	    // phase pause
+	    if (ft == 0 && phase_pause > 0) {
+	        //std::cout << std::flush << "sleep\n"; // test
+	        this_thread::sleep_for(chrono::milliseconds(phase_pause));
+	    }
+            
+	    // generation start
+	    auto [not_end, output_string] = tokenizer.postprocess(out_string);
             if (!not_end) { return false; }
-            // interface support
+	    else {
+		    //std::cout << std::flush << " tp "; // test
+		    this_thread::sleep_for(chrono::milliseconds(token_pause)); // token pause
+	    }
+            
+
+	    // interface support
             if (interface) {
                 std::cout << output_string << std::flush; 
                 output_string.erase(std::remove(output_string.begin(), output_string.end(), '\0'), output_string.end());
             }
             answer += output_string;
+	        ft++;
             return true;
         });
-        std::cout << "\n\n";
+        std::cout << "\n";
         
         // store data
         auto sys_time = chrono::duration_cast<chrono::milliseconds>(now_sys_time - start_sys_time).count();
@@ -156,6 +226,7 @@ int main(int argc, char **argv) {
         if (is_query_save){ ans.push_back(answer); } // accummulate answers
         model.clear_kvcache();
         qa_now++;
+	    ft = 0;
     }
 
 
@@ -167,7 +238,6 @@ int main(int argc, char **argv) {
 
     cout << "DONE\n";
     this_thread::sleep_for(chrono::milliseconds(1000));
-
 
     // post-measurement-processing
     if (!is_query_save) {
@@ -200,6 +270,5 @@ int main(int argc, char **argv) {
     // termination notification
     //system("input touchscreen keyevent 26");
     //system("input touchscreen keyevent 82");
-
     return 0;
 }
