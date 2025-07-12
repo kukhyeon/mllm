@@ -12,6 +12,9 @@
 #include "models/qwen/modeling_qwen.hpp"
 #include "models/qwen/tokenization_qwen.hpp"
 
+#include <thread>
+#include <chrono>
+
 using namespace mllm;
 
 int main(int argc, char **argv) {
@@ -38,16 +41,20 @@ int main(int argc, char **argv) {
     auto model = QWenForCausalLM(config);
     model.load(model_path);
 
+    std::cout << model.get_blocks().size() << std::endl;
+
     vector<string> in_strs = {
         "Hello, who are you?",
         "What can you do?",
-        "Please introduce Beijing University of Posts and Telecommunications.",
+        "Please introduce Daegu Gyeongbuk Institute of Science and Technology.",
     };
     for (int i = 0; i < in_strs.size(); ++i) {
         auto input_str = tokenizer.apply_chat_template(in_strs[i]);
         auto input_tensor = tokenizer.tokenize(input_str);
         std::cout << "[Q] " << in_strs[i] << std::endl;
         std::cout << "[A] " << std::flush;
+
+        int j = 0;
 
         LlmTextGeneratorOpts opt{
             .max_new_tokens = 100,
@@ -57,10 +64,12 @@ int main(int argc, char **argv) {
             .top_p = 0.F,
         };
         model.generate(input_tensor, opt, [&](unsigned int out_token) -> bool {
+            // prefill and decode phase is distinguished internally
             auto out_string = tokenizer.detokenize({out_token});
             auto [not_end, output_string] = tokenizer.postprocess(out_string);
             if (!not_end) { return false; }
             std::cout << output_string << std::flush;
+            ++j;
             return true;
         });
         std::cout << "\n";
