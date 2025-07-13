@@ -12,9 +12,6 @@
 #include "models/qwen/modeling_qwen.hpp"
 #include "models/qwen/tokenization_qwen.hpp"
 
-#include <thread>
-#include <chrono>
-
 using namespace mllm;
 
 int main(int argc, char **argv) {
@@ -41,6 +38,7 @@ int main(int argc, char **argv) {
     auto model = QWenForCausalLM(config);
     model.load(model_path);
 
+    // The number of layers
     std::cout << model.get_blocks().size() << std::endl;
 
     vector<string> in_strs = {
@@ -53,8 +51,6 @@ int main(int argc, char **argv) {
         auto input_tensor = tokenizer.tokenize(input_str);
         std::cout << "[Q] " << in_strs[i] << std::endl;
         std::cout << "[A] " << std::flush;
-
-        int j = 0;
 
         LlmTextGeneratorOpts opt{
             .max_new_tokens = 100,
@@ -69,7 +65,6 @@ int main(int argc, char **argv) {
             auto [not_end, output_string] = tokenizer.postprocess(out_string);
             if (!not_end) { return false; }
             std::cout << output_string << std::flush;
-            ++j;
             return true;
         });
         std::cout << "\n";
