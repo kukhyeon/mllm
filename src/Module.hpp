@@ -71,6 +71,9 @@ public:
 
     static std::unordered_map<string, shared_ptr<Op>> tensor_func_ops; // use for QNN
 
+    // For layer pause
+    int thread_sleep;
+
 private:
     template <typename... Args>
     vector<std::any> convertArgsToAnyVector(Args... args) {
@@ -224,7 +227,7 @@ public:
                 activation_tensors[input.name()]->setName(input.name());
                 activation_tensors[input.name()]->setModule(this);
             }
-            llm_model_ptr = this;
+            llm_model_ptr = this; // prefill & decode indicator
             Tensor::tensor_status = TENSOR_STATIC_INIT;
 
             uint64_t time_start = mllm_time_us();

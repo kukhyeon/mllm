@@ -4,8 +4,11 @@
  * @version 0.1
  * @date 2024-05-01
  *
- * @copyright Copyright (c) 2024
+ * @modified by Jinhwi Kim (kjh2159@dgist.ac.kr)
+ * @date 2025-07-26
  *
+ * @copyright Copyright (c) 2024
+ * 
  */
 #include "cmdline.h"
 #include "models/qwen/configuration_qwen.hpp"
@@ -41,7 +44,7 @@ int main(int argc, char **argv) {
     vector<string> in_strs = {
         "Hello, who are you?",
         "What can you do?",
-        "Please introduce Beijing University of Posts and Telecommunications.",
+        "Please introduce Daegu Gyeongbuk Institute of Science and Technology.",
     };
     for (int i = 0; i < in_strs.size(); ++i) {
         auto input_str = tokenizer.apply_chat_template(in_strs[i]);

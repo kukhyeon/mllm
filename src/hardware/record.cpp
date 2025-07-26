@@ -1,7 +1,7 @@
 #include "record.h"
 #include <algorithm>
 
-static std::vector<std::string> split_string(const std::string& str){
+std::vector<std::string> split_string(const std::string& str){
     // initialization
     std::vector<std::string> result;
     // conversion to stream string
@@ -16,7 +16,7 @@ static std::vector<std::string> split_string(const std::string& str){
 }
 
 
-static std::string execute_cmd(const char* cmd){
+std::string execute_cmd(const char* cmd){
     // command execution
     FILE* pipe = popen(cmd, "r");
     
