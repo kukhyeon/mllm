@@ -70,9 +70,6 @@ public:
     static BackendType tmp_device;
 
     static std::unordered_map<string, shared_ptr<Op>> tensor_func_ops; // use for QNN
-	
-    // For layer or phase pause
-    int thread_sleep = 0;
 
     // For layer pause
     int thread_sleep;
