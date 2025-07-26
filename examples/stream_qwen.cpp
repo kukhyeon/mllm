@@ -145,12 +145,8 @@ int main(int argc, char **argv) {
 	return 0;
     }
     output_qa = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_result.json");
-
-    // variable initialization: For Throttling Detection
-    std::string command = "su -c\""; //prefix
-    command += "awk '{print \\$1/1000}' /sys/devices/system/cpu/cpu7/cpufreq/scaling_cur_freq;"; //cmd
-    command += "\""; //postfix
-
+    
+    
     // Model Configuration
     auto tokenizer = QWenTokenizer(vocab_path, merge_path);
     QWenConfig config(tokens_limit, model_billion, RoPEType::HFHUBROPE);
