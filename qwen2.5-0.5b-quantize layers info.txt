@@ -1,0 +1,581 @@
+Quantize param model.embed_tokens.weight to F32	  size:544538624
+Quantize param model.layers.0.input_layernorm.weight to F32	  size:3584
+Quantize param model.layers.0.mlp.down_proj.weight to Q6_K	  size:3575040 type:Q6_K
+Quantize param model.layers.0.mlp.gate_proj.weight to F32	  size:17432576
+Quantize param model.layers.0.mlp.up_proj.weight to Q4_K	  size:2451456
+Quantize param model.layers.0.post_attention_layernorm.weight to F32	  size:3584
+Quantize param model.layers.0.self_attn.k_proj.bias to F32	  size:512
+Quantize param model.layers.0.self_attn.k_proj.weight to Q4_K	  size:64512
+Quantize param model.layers.0.self_attn.o_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.0.self_attn.q_proj.bias to F32	  size:3584
+Quantize param model.layers.0.self_attn.q_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.0.self_attn.v_proj.bias to F32	  size:512
+Quantize param model.layers.0.self_attn.v_proj.weight to Q4_0	  size:64512 type:Q4_0
+Quantize param model.layers.1.input_layernorm.weight to F32	  size:3584
+Quantize param model.layers.1.mlp.down_proj.weight to Q6_K	  size:3575040 type:Q6_K
+Quantize param model.layers.1.mlp.gate_proj.weight to F32	  size:17432576
+Quantize param model.layers.1.mlp.up_proj.weight to Q4_K	  size:2451456
+Quantize param model.layers.1.post_attention_layernorm.weight to F32	  size:3584
+Quantize param model.layers.1.self_attn.k_proj.bias to F32	  size:512
+Quantize param model.layers.1.self_attn.k_proj.weight to Q4_K	  size:64512
+Quantize param model.layers.1.self_attn.o_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.1.self_attn.q_proj.bias to F32	  size:3584
+Quantize param model.layers.1.self_attn.q_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.1.self_attn.v_proj.bias to F32	  size:512
+Quantize param model.layers.1.self_attn.v_proj.weight to Q4_0	  size:64512 type:Q4_0
+Quantize param model.layers.10.input_layernorm.weight to F32	  size:3584
+Quantize param model.layers.10.mlp.down_proj.weight to Q6_K	  size:3575040 type:Q6_K
+Quantize param model.layers.10.mlp.gate_proj.weight to F32	  size:17432576
+Quantize param model.layers.10.mlp.up_proj.weight to Q4_K	  size:2451456
+Quantize param model.layers.10.post_attention_layernorm.weight to F32	  size:3584
+Quantize param model.layers.10.self_attn.k_proj.bias to F32	  size:512
+Quantize param model.layers.10.self_attn.k_proj.weight to Q4_K	  size:64512
+Quantize param model.layers.10.self_attn.o_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.10.self_attn.q_proj.bias to F32	  size:3584
+Quantize param model.layers.10.self_attn.q_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.10.self_attn.v_proj.bias to F32	  size:512
+Quantize param model.layers.10.self_attn.v_proj.weight to Q4_0	  size:64512 type:Q4_0
+Quantize param model.layers.11.input_layernorm.weight to F32	  size:3584
+Quantize param model.layers.11.mlp.down_proj.weight to Q6_K	  size:3575040 type:Q6_K
+Quantize param model.layers.11.mlp.gate_proj.weight to F32	  size:17432576
+Quantize param model.layers.11.mlp.up_proj.weight to Q4_K	  size:2451456
+Quantize param model.layers.11.post_attention_layernorm.weight to F32	  size:3584
+Quantize param model.layers.11.self_attn.k_proj.bias to F32	  size:512
+Quantize param model.layers.11.self_attn.k_proj.weight to Q4_K	  size:64512
+Quantize param model.layers.11.self_attn.o_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.11.self_attn.q_proj.bias to F32	  size:3584
+Quantize param model.layers.11.self_attn.q_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.11.self_attn.v_proj.bias to F32	  size:512
+Quantize param model.layers.11.self_attn.v_proj.weight to Q4_0	  size:64512 type:Q4_0
+Quantize param model.layers.12.input_layernorm.weight to F32	  size:3584
+Quantize param model.layers.12.mlp.down_proj.weight to Q6_K	  size:3575040 type:Q6_K
+Quantize param model.layers.12.mlp.gate_proj.weight to F32	  size:17432576
+Quantize param model.layers.12.mlp.up_proj.weight to Q4_K	  size:2451456
+Quantize param model.layers.12.post_attention_layernorm.weight to F32	  size:3584
+Quantize param model.layers.12.self_attn.k_proj.bias to F32	  size:512
+Quantize param model.layers.12.self_attn.k_proj.weight to Q4_K	  size:64512
+Quantize param model.layers.12.self_attn.o_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.12.self_attn.q_proj.bias to F32	  size:3584
+Quantize param model.layers.12.self_attn.q_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.12.self_attn.v_proj.bias to F32	  size:512
+Quantize param model.layers.12.self_attn.v_proj.weight to Q4_0	  size:64512 type:Q4_0
+Quantize param model.layers.13.input_layernorm.weight to F32	  size:3584
+Quantize param model.layers.13.mlp.down_proj.weight to Q6_K	  size:3575040 type:Q6_K
+Quantize param model.layers.13.mlp.gate_proj.weight to F32	  size:17432576
+Quantize param model.layers.13.mlp.up_proj.weight to Q4_K	  size:2451456
+Quantize param model.layers.13.post_attention_layernorm.weight to F32	  size:3584
+Quantize param model.layers.13.self_attn.k_proj.bias to F32	  size:512
+Quantize param model.layers.13.self_attn.k_proj.weight to Q4_K	  size:64512
+Quantize param model.layers.13.self_attn.o_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.13.self_attn.q_proj.bias to F32	  size:3584
+Quantize param model.layers.13.self_attn.q_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.13.self_attn.v_proj.bias to F32	  size:512
+Quantize param model.layers.13.self_attn.v_proj.weight to Q4_0	  size:64512 type:Q4_0
+Quantize param model.layers.14.input_layernorm.weight to F32	  size:3584
+Quantize param model.layers.14.mlp.down_proj.weight to Q6_K	  size:3575040 type:Q6_K
+Quantize param model.layers.14.mlp.gate_proj.weight to F32	  size:17432576
+Quantize param model.layers.14.mlp.up_proj.weight to Q4_K	  size:2451456
+Quantize param model.layers.14.post_attention_layernorm.weight to F32	  size:3584
+Quantize param model.layers.14.self_attn.k_proj.bias to F32	  size:512
+Quantize param model.layers.14.self_attn.k_proj.weight to Q4_K	  size:64512
+Quantize param model.layers.14.self_attn.o_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.14.self_attn.q_proj.bias to F32	  size:3584
+Quantize param model.layers.14.self_attn.q_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.14.self_attn.v_proj.bias to F32	  size:512
+Quantize param model.layers.14.self_attn.v_proj.weight to Q4_0	  size:64512 type:Q4_0
+Quantize param model.layers.15.input_layernorm.weight to F32	  size:3584
+Quantize param model.layers.15.mlp.down_proj.weight to Q6_K	  size:3575040 type:Q6_K
+Quantize param model.layers.15.mlp.gate_proj.weight to F32	  size:17432576
+Quantize param model.layers.15.mlp.up_proj.weight to Q4_K	  size:2451456
+Quantize param model.layers.15.post_attention_layernorm.weight to F32	  size:3584
+Quantize param model.layers.15.self_attn.k_proj.bias to F32	  size:512
+Quantize param model.layers.15.self_attn.k_proj.weight to Q4_K	  size:64512
+Quantize param model.layers.15.self_attn.o_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.15.self_attn.q_proj.bias to F32	  size:3584
+Quantize param model.layers.15.self_attn.q_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.15.self_attn.v_proj.bias to F32	  size:512
+Quantize param model.layers.15.self_attn.v_proj.weight to Q4_0	  size:64512 type:Q4_0
+Quantize param model.layers.16.input_layernorm.weight to F32	  size:3584
+Quantize param model.layers.16.mlp.down_proj.weight to Q6_K	  size:3575040 type:Q6_K
+Quantize param model.layers.16.mlp.gate_proj.weight to F32	  size:17432576
+Quantize param model.layers.16.mlp.up_proj.weight to Q4_K	  size:2451456
+Quantize param model.layers.16.post_attention_layernorm.weight to F32	  size:3584
+Quantize param model.layers.16.self_attn.k_proj.bias to F32	  size:512
+Quantize param model.layers.16.self_attn.k_proj.weight to Q4_K	  size:64512
+Quantize param model.layers.16.self_attn.o_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.16.self_attn.q_proj.bias to F32	  size:3584
+Quantize param model.layers.16.self_attn.q_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.16.self_attn.v_proj.bias to F32	  size:512
+Quantize param model.layers.16.self_attn.v_proj.weight to Q4_0	  size:64512 type:Q4_0
+Quantize param model.layers.17.input_layernorm.weight to F32	  size:3584
+Quantize param model.layers.17.mlp.down_proj.weight to Q6_K	  size:3575040 type:Q6_K
+Quantize param model.layers.17.mlp.gate_proj.weight to F32	  size:17432576
+Quantize param model.layers.17.mlp.up_proj.weight to Q4_K	  size:2451456
+Quantize param model.layers.17.post_attention_layernorm.weight to F32	  size:3584
+Quantize param model.layers.17.self_attn.k_proj.bias to F32	  size:512
+Quantize param model.layers.17.self_attn.k_proj.weight to Q4_K	  size:64512
+Quantize param model.layers.17.self_attn.o_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.17.self_attn.q_proj.bias to F32	  size:3584
+Quantize param model.layers.17.self_attn.q_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.17.self_attn.v_proj.bias to F32	  size:512
+Quantize param model.layers.17.self_attn.v_proj.weight to Q4_0	  size:64512 type:Q4_0
+Quantize param model.layers.18.input_layernorm.weight to F32	  size:3584
+Quantize param model.layers.18.mlp.down_proj.weight to Q6_K	  size:3575040 type:Q6_K
+Quantize param model.layers.18.mlp.gate_proj.weight to F32	  size:17432576
+Quantize param model.layers.18.mlp.up_proj.weight to Q4_K	  size:2451456
+Quantize param model.layers.18.post_attention_layernorm.weight to F32	  size:3584
+Quantize param model.layers.18.self_attn.k_proj.bias to F32	  size:512
+Quantize param model.layers.18.self_attn.k_proj.weight to Q4_K	  size:64512
+Quantize param model.layers.18.self_attn.o_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.18.self_attn.q_proj.bias to F32	  size:3584
+Quantize param model.layers.18.self_attn.q_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.18.self_attn.v_proj.bias to F32	  size:512
+Quantize param model.layers.18.self_attn.v_proj.weight to Q4_0	  size:64512 type:Q4_0
+Quantize param model.layers.19.input_layernorm.weight to F32	  size:3584
+Quantize param model.layers.19.mlp.down_proj.weight to Q6_K	  size:3575040 type:Q6_K
+Quantize param model.layers.19.mlp.gate_proj.weight to F32	  size:17432576
+Quantize param model.layers.19.mlp.up_proj.weight to Q4_K	  size:2451456
+Quantize param model.layers.19.post_attention_layernorm.weight to F32	  size:3584
+Quantize param model.layers.19.self_attn.k_proj.bias to F32	  size:512
+Quantize param model.layers.19.self_attn.k_proj.weight to Q4_K	  size:64512
+Quantize param model.layers.19.self_attn.o_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.19.self_attn.q_proj.bias to F32	  size:3584
+Quantize param model.layers.19.self_attn.q_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.19.self_attn.v_proj.bias to F32	  size:512
+Quantize param model.layers.19.self_attn.v_proj.weight to Q4_0	  size:64512 type:Q4_0
+Quantize param model.layers.2.input_layernorm.weight to F32	  size:3584
+Quantize param model.layers.2.mlp.down_proj.weight to Q6_K	  size:3575040 type:Q6_K
+Quantize param model.layers.2.mlp.gate_proj.weight to F32	  size:17432576
+Quantize param model.layers.2.mlp.up_proj.weight to Q4_K	  size:2451456
+Quantize param model.layers.2.post_attention_layernorm.weight to F32	  size:3584
+Quantize param model.layers.2.self_attn.k_proj.bias to F32	  size:512
+Quantize param model.layers.2.self_attn.k_proj.weight to Q4_K	  size:64512
+Quantize param model.layers.2.self_attn.o_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.2.self_attn.q_proj.bias to F32	  size:3584
+Quantize param model.layers.2.self_attn.q_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.2.self_attn.v_proj.bias to F32	  size:512
+Quantize param model.layers.2.self_attn.v_proj.weight to Q4_0	  size:64512 type:Q4_0
+Quantize param model.layers.20.input_layernorm.weight to F32	  size:3584
+Quantize param model.layers.20.mlp.down_proj.weight to Q6_K	  size:3575040 type:Q6_K
+Quantize param model.layers.20.mlp.gate_proj.weight to F32	  size:17432576
+Quantize param model.layers.20.mlp.up_proj.weight to Q4_K	  size:2451456
+Quantize param model.layers.20.post_attention_layernorm.weight to F32	  size:3584
+Quantize param model.layers.20.self_attn.k_proj.bias to F32	  size:512
+Quantize param model.layers.20.self_attn.k_proj.weight to Q4_K	  size:64512
+Quantize param model.layers.20.self_attn.o_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.20.self_attn.q_proj.bias to F32	  size:3584
+Quantize param model.layers.20.self_attn.q_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.20.self_attn.v_proj.bias to F32	  size:512
+Quantize param model.layers.20.self_attn.v_proj.weight to Q4_0	  size:64512 type:Q4_0
+Quantize param model.layers.21.input_layernorm.weight to F32	  size:3584
+Quantize param model.layers.21.mlp.down_proj.weight to Q6_K	  size:3575040 type:Q6_K
+Quantize param model.layers.21.mlp.gate_proj.weight to F32	  size:17432576
+Quantize param model.layers.21.mlp.up_proj.weight to Q4_K	  size:2451456
+Quantize param model.layers.21.post_attention_layernorm.weight to F32	  size:3584
+Quantize param model.layers.21.self_attn.k_proj.bias to F32	  size:512
+Quantize param model.layers.21.self_attn.k_proj.weight to Q4_K	  size:64512
+Quantize param model.layers.21.self_attn.o_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.21.self_attn.q_proj.bias to F32	  size:3584
+Quantize param model.layers.21.self_attn.q_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.21.self_attn.v_proj.bias to F32	  size:512
+Quantize param model.layers.21.self_attn.v_proj.weight to Q4_0	  size:64512 type:Q4_0
+Quantize param model.layers.22.input_layernorm.weight to F32	  size:3584
+Quantize param model.layers.22.mlp.down_proj.weight to Q6_K	  size:3575040 type:Q6_K
+Quantize param model.layers.22.mlp.gate_proj.weight to F32	  size:17432576
+Quantize param model.layers.22.mlp.up_proj.weight to Q4_K	  size:2451456
+Quantize param model.layers.22.post_attention_layernorm.weight to F32	  size:3584
+Quantize param model.layers.22.self_attn.k_proj.bias to F32	  size:512
+Quantize param model.layers.22.self_attn.k_proj.weight to Q4_K	  size:64512
+Quantize param model.layers.22.self_attn.o_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.22.self_attn.q_proj.bias to F32	  size:3584
+Quantize param model.layers.22.self_attn.q_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.22.self_attn.v_proj.bias to F32	  size:512
+Quantize param model.layers.22.self_attn.v_proj.weight to Q4_0	  size:64512 type:Q4_0
+Quantize param model.layers.23.input_layernorm.weight to F32	  size:3584
+Quantize param model.layers.23.mlp.down_proj.weight to Q6_K	  size:3575040 type:Q6_K
+Quantize param model.layers.23.mlp.gate_proj.weight to F32	  size:17432576
+Quantize param model.layers.23.mlp.up_proj.weight to Q4_K	  size:2451456
+Quantize param model.layers.23.post_attention_layernorm.weight to F32	  size:3584
+Quantize param model.layers.23.self_attn.k_proj.bias to F32	  size:512
+Quantize param model.layers.23.self_attn.k_proj.weight to Q4_K	  size:64512
+Quantize param model.layers.23.self_attn.o_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.23.self_attn.q_proj.bias to F32	  size:3584
+Quantize param model.layers.23.self_attn.q_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.23.self_attn.v_proj.bias to F32	  size:512
+Quantize param model.layers.23.self_attn.v_proj.weight to Q4_0	  size:64512 type:Q4_0
+Quantize param model.layers.3.input_layernorm.weight to F32	  size:3584
+Quantize param model.layers.3.mlp.down_proj.weight to Q6_K	  size:3575040 type:Q6_K
+Quantize param model.layers.3.mlp.gate_proj.weight to F32	  size:17432576
+Quantize param model.layers.3.mlp.up_proj.weight to Q4_K	  size:2451456
+Quantize param model.layers.3.post_attention_layernorm.weight to F32	  size:3584
+Quantize param model.layers.3.self_attn.k_proj.bias to F32	  size:512
+Quantize param model.layers.3.self_attn.k_proj.weight to Q4_K	  size:64512
+Quantize param model.layers.3.self_attn.o_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.3.self_attn.q_proj.bias to F32	  size:3584
+Quantize param model.layers.3.self_attn.q_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.3.self_attn.v_proj.bias to F32	  size:512
+Quantize param model.layers.3.self_attn.v_proj.weight to Q4_0	  size:64512 type:Q4_0
+Quantize param model.layers.4.input_layernorm.weight to F32	  size:3584
+Quantize param model.layers.4.mlp.down_proj.weight to Q6_K	  size:3575040 type:Q6_K
+Quantize param model.layers.4.mlp.gate_proj.weight to F32	  size:17432576
+Quantize param model.layers.4.mlp.up_proj.weight to Q4_K	  size:2451456
+Quantize param model.layers.4.post_attention_layernorm.weight to F32	  size:3584
+Quantize param model.layers.4.self_attn.k_proj.bias to F32	  size:512
+Quantize param model.layers.4.self_attn.k_proj.weight to Q4_K	  size:64512
+Quantize param model.layers.4.self_attn.o_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.4.self_attn.q_proj.bias to F32	  size:3584
+Quantize param model.layers.4.self_attn.q_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.4.self_attn.v_proj.bias to F32	  size:512
+Quantize param model.layers.4.self_attn.v_proj.weight to Q4_0	  size:64512 type:Q4_0
+Quantize param model.layers.5.input_layernorm.weight to F32	  size:3584
+Quantize param model.layers.5.mlp.down_proj.weight to Q6_K	  size:3575040 type:Q6_K
+Quantize param model.layers.5.mlp.gate_proj.weight to F32	  size:17432576
+Quantize param model.layers.5.mlp.up_proj.weight to Q4_K	  size:2451456
+Quantize param model.layers.5.post_attention_layernorm.weight to F32	  size:3584
+Quantize param model.layers.5.self_attn.k_proj.bias to F32	  size:512
+Quantize param model.layers.5.self_attn.k_proj.weight to Q4_K	  size:64512
+Quantize param model.layers.5.self_attn.o_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.5.self_attn.q_proj.bias to F32	  size:3584
+Quantize param model.layers.5.self_attn.q_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.5.self_attn.v_proj.bias to F32	  size:512
+Quantize param model.layers.5.self_attn.v_proj.weight to Q4_0	  size:64512 type:Q4_0
+Quantize param model.layers.6.input_layernorm.weight to F32	  size:3584
+Quantize param model.layers.6.mlp.down_proj.weight to Q6_K	  size:3575040 type:Q6_K
+Quantize param model.layers.6.mlp.gate_proj.weight to F32	  size:17432576
+Quantize param model.layers.6.mlp.up_proj.weight to Q4_K	  size:2451456
+Quantize param model.layers.6.post_attention_layernorm.weight to F32	  size:3584
+Quantize param model.layers.6.self_attn.k_proj.bias to F32	  size:512
+Quantize param model.layers.6.self_attn.k_proj.weight to Q4_K	  size:64512
+Quantize param model.layers.6.self_attn.o_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.6.self_attn.q_proj.bias to F32	  size:3584
+Quantize param model.layers.6.self_attn.q_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.6.self_attn.v_proj.bias to F32	  size:512
+Quantize param model.layers.6.self_attn.v_proj.weight to Q4_0	  size:64512 type:Q4_0
+Quantize param model.layers.7.input_layernorm.weight to F32	  size:3584
+Quantize param model.layers.7.mlp.down_proj.weight to Q6_K	  size:3575040 type:Q6_K
+Quantize param model.layers.7.mlp.gate_proj.weight to F32	  size:17432576
+Quantize param model.layers.7.mlp.up_proj.weight to Q4_K	  size:2451456
+Quantize param model.layers.7.post_attention_layernorm.weight to F32	  size:3584
+Quantize param model.layers.7.self_attn.k_proj.bias to F32	  size:512
+Quantize param model.layers.7.self_attn.k_proj.weight to Q4_K	  size:64512
+Quantize param model.layers.7.self_attn.o_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.7.self_attn.q_proj.bias to F32	  size:3584
+Quantize param model.layers.7.self_attn.q_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.7.self_attn.v_proj.bias to F32	  size:512
+Quantize param model.layers.7.self_attn.v_proj.weight to Q4_0	  size:64512 type:Q4_0
+Quantize param model.layers.8.input_layernorm.weight to F32	  size:3584
+Quantize param model.layers.8.mlp.down_proj.weight to Q6_K	  size:3575040 type:Q6_K
+Quantize param model.layers.8.mlp.gate_proj.weight to F32	  size:17432576
+Quantize param model.layers.8.mlp.up_proj.weight to Q4_K	  size:2451456
+Quantize param model.layers.8.post_attention_layernorm.weight to F32	  size:3584
+Quantize param model.layers.8.self_attn.k_proj.bias to F32	  size:512
+Quantize param model.layers.8.self_attn.k_proj.weight to Q4_K	  size:64512
+Quantize param model.layers.8.self_attn.o_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.8.self_attn.q_proj.bias to F32	  size:3584
+Quantize param model.layers.8.self_attn.q_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.8.self_attn.v_proj.bias to F32	  size:512
+Quantize param model.layers.8.self_attn.v_proj.weight to Q4_0	  size:64512 type:Q4_0
+Quantize param model.layers.9.input_layernorm.weight to F32	  size:3584
+Quantize param model.layers.9.mlp.down_proj.weight to Q6_K	  size:3575040 type:Q6_K
+Quantize param model.layers.9.mlp.gate_proj.weight to F32	  size:17432576
+Quantize param model.layers.9.mlp.up_proj.weight to Q4_K	  size:2451456
+Quantize param model.layers.9.post_attention_layernorm.weight to F32	  size:3584
+Quantize param model.layers.9.self_attn.k_proj.bias to F32	  size:512
+Quantize param model.layers.9.self_attn.k_proj.weight to Q4_K	  size:64512
+Quantize param model.layers.9.self_attn.o_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.9.self_attn.q_proj.bias to F32	  size:3584
+Quantize param model.layers.9.self_attn.q_proj.weight to Q4_K	  size:451584
+Quantize param model.layers.9.self_attn.v_proj.bias to F32	  size:512
+Quantize param model.layers.9.self_attn.v_proj.weight to Q4_0	  size:64512 type:Q4_0
+Quantize param model.norm.weight to F32	  size:3584
+write param model.embed_tokens.weight size 544538624 offset 17886 type 0
+write param model.layers.0.input_layernorm.weight size 3584 offset 544556510 type 0
+write param model.layers.0.mlp.down_proj.weight size 3575040 offset 544560094 type 14
+write param model.layers.0.mlp.gate_proj.weight size 17432576 offset 548135134 type 0
+write param model.layers.0.mlp.up_proj.weight size 2451456 offset 565567710 type 12
+write param model.layers.0.post_attention_layernorm.weight size 3584 offset 568019166 type 0
+write param model.layers.0.self_attn.k_proj.bias size 512 offset 568022750 type 0
+write param model.layers.0.self_attn.k_proj.weight size 64512 offset 568023262 type 12
+write param model.layers.0.self_attn.o_proj.weight size 451584 offset 568087774 type 12
+write param model.layers.0.self_attn.q_proj.bias size 3584 offset 568539358 type 0
+write param model.layers.0.self_attn.q_proj.weight size 451584 offset 568542942 type 12
+write param model.layers.0.self_attn.v_proj.bias size 512 offset 568994526 type 0
+write param model.layers.0.self_attn.v_proj.weight size 64512 offset 568995038 type 2
+write param model.layers.1.input_layernorm.weight size 3584 offset 569059550 type 0
+write param model.layers.1.mlp.down_proj.weight size 3575040 offset 569063134 type 14
+write param model.layers.1.mlp.gate_proj.weight size 17432576 offset 572638174 type 0
+write param model.layers.1.mlp.up_proj.weight size 2451456 offset 590070750 type 12
+write param model.layers.1.post_attention_layernorm.weight size 3584 offset 592522206 type 0
+write param model.layers.1.self_attn.k_proj.bias size 512 offset 592525790 type 0
+write param model.layers.1.self_attn.k_proj.weight size 64512 offset 592526302 type 12
+write param model.layers.1.self_attn.o_proj.weight size 451584 offset 592590814 type 12
+write param model.layers.1.self_attn.q_proj.bias size 3584 offset 593042398 type 0
+write param model.layers.1.self_attn.q_proj.weight size 451584 offset 593045982 type 12
+write param model.layers.1.self_attn.v_proj.bias size 512 offset 593497566 type 0
+write param model.layers.1.self_attn.v_proj.weight size 64512 offset 593498078 type 2
+write param model.layers.10.input_layernorm.weight size 3584 offset 593562590 type 0
+write param model.layers.10.mlp.down_proj.weight size 3575040 offset 593566174 type 14
+write param model.layers.10.mlp.gate_proj.weight size 17432576 offset 597141214 type 0
+write param model.layers.10.mlp.up_proj.weight size 2451456 offset 614573790 type 12
+write param model.layers.10.post_attention_layernorm.weight size 3584 offset 617025246 type 0
+write param model.layers.10.self_attn.k_proj.bias size 512 offset 617028830 type 0
+write param model.layers.10.self_attn.k_proj.weight size 64512 offset 617029342 type 12
+write param model.layers.10.self_attn.o_proj.weight size 451584 offset 617093854 type 12
+write param model.layers.10.self_attn.q_proj.bias size 3584 offset 617545438 type 0
+write param model.layers.10.self_attn.q_proj.weight size 451584 offset 617549022 type 12
+write param model.layers.10.self_attn.v_proj.bias size 512 offset 618000606 type 0
+write param model.layers.10.self_attn.v_proj.weight size 64512 offset 618001118 type 2
+write param model.layers.11.input_layernorm.weight size 3584 offset 618065630 type 0
+write param model.layers.11.mlp.down_proj.weight size 3575040 offset 618069214 type 14
+write param model.layers.11.mlp.gate_proj.weight size 17432576 offset 621644254 type 0
+write param model.layers.11.mlp.up_proj.weight size 2451456 offset 639076830 type 12
+write param model.layers.11.post_attention_layernorm.weight size 3584 offset 641528286 type 0
+write param model.layers.11.self_attn.k_proj.bias size 512 offset 641531870 type 0
+write param model.layers.11.self_attn.k_proj.weight size 64512 offset 641532382 type 12
+write param model.layers.11.self_attn.o_proj.weight size 451584 offset 641596894 type 12
+write param model.layers.11.self_attn.q_proj.bias size 3584 offset 642048478 type 0
+write param model.layers.11.self_attn.q_proj.weight size 451584 offset 642052062 type 12
+write param model.layers.11.self_attn.v_proj.bias size 512 offset 642503646 type 0
+write param model.layers.11.self_attn.v_proj.weight size 64512 offset 642504158 type 2
+write param model.layers.12.input_layernorm.weight size 3584 offset 642568670 type 0
+write param model.layers.12.mlp.down_proj.weight size 3575040 offset 642572254 type 14
+write param model.layers.12.mlp.gate_proj.weight size 17432576 offset 646147294 type 0
+write param model.layers.12.mlp.up_proj.weight size 2451456 offset 663579870 type 12
+write param model.layers.12.post_attention_layernorm.weight size 3584 offset 666031326 type 0
+write param model.layers.12.self_attn.k_proj.bias size 512 offset 666034910 type 0
+write param model.layers.12.self_attn.k_proj.weight size 64512 offset 666035422 type 12
+write param model.layers.12.self_attn.o_proj.weight size 451584 offset 666099934 type 12
+write param model.layers.12.self_attn.q_proj.bias size 3584 offset 666551518 type 0
+write param model.layers.12.self_attn.q_proj.weight size 451584 offset 666555102 type 12
+write param model.layers.12.self_attn.v_proj.bias size 512 offset 667006686 type 0
+write param model.layers.12.self_attn.v_proj.weight size 64512 offset 667007198 type 2
+write param model.layers.13.input_layernorm.weight size 3584 offset 667071710 type 0
+write param model.layers.13.mlp.down_proj.weight size 3575040 offset 667075294 type 14
+write param model.layers.13.mlp.gate_proj.weight size 17432576 offset 670650334 type 0
+write param model.layers.13.mlp.up_proj.weight size 2451456 offset 688082910 type 12
+write param model.layers.13.post_attention_layernorm.weight size 3584 offset 690534366 type 0
+write param model.layers.13.self_attn.k_proj.bias size 512 offset 690537950 type 0
+write param model.layers.13.self_attn.k_proj.weight size 64512 offset 690538462 type 12
+write param model.layers.13.self_attn.o_proj.weight size 451584 offset 690602974 type 12
+write param model.layers.13.self_attn.q_proj.bias size 3584 offset 691054558 type 0
+write param model.layers.13.self_attn.q_proj.weight size 451584 offset 691058142 type 12
+write param model.layers.13.self_attn.v_proj.bias size 512 offset 691509726 type 0
+write param model.layers.13.self_attn.v_proj.weight size 64512 offset 691510238 type 2
+write param model.layers.14.input_layernorm.weight size 3584 offset 691574750 type 0
+write param model.layers.14.mlp.down_proj.weight size 3575040 offset 691578334 type 14
+write param model.layers.14.mlp.gate_proj.weight size 17432576 offset 695153374 type 0
+write param model.layers.14.mlp.up_proj.weight size 2451456 offset 712585950 type 12
+write param model.layers.14.post_attention_layernorm.weight size 3584 offset 715037406 type 0
+write param model.layers.14.self_attn.k_proj.bias size 512 offset 715040990 type 0
+write param model.layers.14.self_attn.k_proj.weight size 64512 offset 715041502 type 12
+write param model.layers.14.self_attn.o_proj.weight size 451584 offset 715106014 type 12
+write param model.layers.14.self_attn.q_proj.bias size 3584 offset 715557598 type 0
+write param model.layers.14.self_attn.q_proj.weight size 451584 offset 715561182 type 12
+write param model.layers.14.self_attn.v_proj.bias size 512 offset 716012766 type 0
+write param model.layers.14.self_attn.v_proj.weight size 64512 offset 716013278 type 2
+write param model.layers.15.input_layernorm.weight size 3584 offset 716077790 type 0
+write param model.layers.15.mlp.down_proj.weight size 3575040 offset 716081374 type 14
+write param model.layers.15.mlp.gate_proj.weight size 17432576 offset 719656414 type 0
+write param model.layers.15.mlp.up_proj.weight size 2451456 offset 737088990 type 12
+write param model.layers.15.post_attention_layernorm.weight size 3584 offset 739540446 type 0
+write param model.layers.15.self_attn.k_proj.bias size 512 offset 739544030 type 0
+write param model.layers.15.self_attn.k_proj.weight size 64512 offset 739544542 type 12
+write param model.layers.15.self_attn.o_proj.weight size 451584 offset 739609054 type 12
+write param model.layers.15.self_attn.q_proj.bias size 3584 offset 740060638 type 0
+write param model.layers.15.self_attn.q_proj.weight size 451584 offset 740064222 type 12
+write param model.layers.15.self_attn.v_proj.bias size 512 offset 740515806 type 0
+write param model.layers.15.self_attn.v_proj.weight size 64512 offset 740516318 type 2
+write param model.layers.16.input_layernorm.weight size 3584 offset 740580830 type 0
+write param model.layers.16.mlp.down_proj.weight size 3575040 offset 740584414 type 14
+write param model.layers.16.mlp.gate_proj.weight size 17432576 offset 744159454 type 0
+write param model.layers.16.mlp.up_proj.weight size 2451456 offset 761592030 type 12
+write param model.layers.16.post_attention_layernorm.weight size 3584 offset 764043486 type 0
+write param model.layers.16.self_attn.k_proj.bias size 512 offset 764047070 type 0
+write param model.layers.16.self_attn.k_proj.weight size 64512 offset 764047582 type 12
+write param model.layers.16.self_attn.o_proj.weight size 451584 offset 764112094 type 12
+write param model.layers.16.self_attn.q_proj.bias size 3584 offset 764563678 type 0
+write param model.layers.16.self_attn.q_proj.weight size 451584 offset 764567262 type 12
+write param model.layers.16.self_attn.v_proj.bias size 512 offset 765018846 type 0
+write param model.layers.16.self_attn.v_proj.weight size 64512 offset 765019358 type 2
+write param model.layers.17.input_layernorm.weight size 3584 offset 765083870 type 0
+write param model.layers.17.mlp.down_proj.weight size 3575040 offset 765087454 type 14
+write param model.layers.17.mlp.gate_proj.weight size 17432576 offset 768662494 type 0
+write param model.layers.17.mlp.up_proj.weight size 2451456 offset 786095070 type 12
+write param model.layers.17.post_attention_layernorm.weight size 3584 offset 788546526 type 0
+write param model.layers.17.self_attn.k_proj.bias size 512 offset 788550110 type 0
+write param model.layers.17.self_attn.k_proj.weight size 64512 offset 788550622 type 12
+write param model.layers.17.self_attn.o_proj.weight size 451584 offset 788615134 type 12
+write param model.layers.17.self_attn.q_proj.bias size 3584 offset 789066718 type 0
+write param model.layers.17.self_attn.q_proj.weight size 451584 offset 789070302 type 12
+write param model.layers.17.self_attn.v_proj.bias size 512 offset 789521886 type 0
+write param model.layers.17.self_attn.v_proj.weight size 64512 offset 789522398 type 2
+write param model.layers.18.input_layernorm.weight size 3584 offset 789586910 type 0
+write param model.layers.18.mlp.down_proj.weight size 3575040 offset 789590494 type 14
+write param model.layers.18.mlp.gate_proj.weight size 17432576 offset 793165534 type 0
+write param model.layers.18.mlp.up_proj.weight size 2451456 offset 810598110 type 12
+write param model.layers.18.post_attention_layernorm.weight size 3584 offset 813049566 type 0
+write param model.layers.18.self_attn.k_proj.bias size 512 offset 813053150 type 0
+write param model.layers.18.self_attn.k_proj.weight size 64512 offset 813053662 type 12
+write param model.layers.18.self_attn.o_proj.weight size 451584 offset 813118174 type 12
+write param model.layers.18.self_attn.q_proj.bias size 3584 offset 813569758 type 0
+write param model.layers.18.self_attn.q_proj.weight size 451584 offset 813573342 type 12
+write param model.layers.18.self_attn.v_proj.bias size 512 offset 814024926 type 0
+write param model.layers.18.self_attn.v_proj.weight size 64512 offset 814025438 type 2
+write param model.layers.19.input_layernorm.weight size 3584 offset 814089950 type 0
+write param model.layers.19.mlp.down_proj.weight size 3575040 offset 814093534 type 14
+write param model.layers.19.mlp.gate_proj.weight size 17432576 offset 817668574 type 0
+write param model.layers.19.mlp.up_proj.weight size 2451456 offset 835101150 type 12
+write param model.layers.19.post_attention_layernorm.weight size 3584 offset 837552606 type 0
+write param model.layers.19.self_attn.k_proj.bias size 512 offset 837556190 type 0
+write param model.layers.19.self_attn.k_proj.weight size 64512 offset 837556702 type 12
+write param model.layers.19.self_attn.o_proj.weight size 451584 offset 837621214 type 12
+write param model.layers.19.self_attn.q_proj.bias size 3584 offset 838072798 type 0
+write param model.layers.19.self_attn.q_proj.weight size 451584 offset 838076382 type 12
+write param model.layers.19.self_attn.v_proj.bias size 512 offset 838527966 type 0
+write param model.layers.19.self_attn.v_proj.weight size 64512 offset 838528478 type 2
+write param model.layers.2.input_layernorm.weight size 3584 offset 838592990 type 0
+write param model.layers.2.mlp.down_proj.weight size 3575040 offset 838596574 type 14
+write param model.layers.2.mlp.gate_proj.weight size 17432576 offset 842171614 type 0
+write param model.layers.2.mlp.up_proj.weight size 2451456 offset 859604190 type 12
+write param model.layers.2.post_attention_layernorm.weight size 3584 offset 862055646 type 0
+write param model.layers.2.self_attn.k_proj.bias size 512 offset 862059230 type 0
+write param model.layers.2.self_attn.k_proj.weight size 64512 offset 862059742 type 12
+write param model.layers.2.self_attn.o_proj.weight size 451584 offset 862124254 type 12
+write param model.layers.2.self_attn.q_proj.bias size 3584 offset 862575838 type 0
+write param model.layers.2.self_attn.q_proj.weight size 451584 offset 862579422 type 12
+write param model.layers.2.self_attn.v_proj.bias size 512 offset 863031006 type 0
+write param model.layers.2.self_attn.v_proj.weight size 64512 offset 863031518 type 2
+write param model.layers.20.input_layernorm.weight size 3584 offset 863096030 type 0
+write param model.layers.20.mlp.down_proj.weight size 3575040 offset 863099614 type 14
+write param model.layers.20.mlp.gate_proj.weight size 17432576 offset 866674654 type 0
+write param model.layers.20.mlp.up_proj.weight size 2451456 offset 884107230 type 12
+write param model.layers.20.post_attention_layernorm.weight size 3584 offset 886558686 type 0
+write param model.layers.20.self_attn.k_proj.bias size 512 offset 886562270 type 0
+write param model.layers.20.self_attn.k_proj.weight size 64512 offset 886562782 type 12
+write param model.layers.20.self_attn.o_proj.weight size 451584 offset 886627294 type 12
+write param model.layers.20.self_attn.q_proj.bias size 3584 offset 887078878 type 0
+write param model.layers.20.self_attn.q_proj.weight size 451584 offset 887082462 type 12
+write param model.layers.20.self_attn.v_proj.bias size 512 offset 887534046 type 0
+write param model.layers.20.self_attn.v_proj.weight size 64512 offset 887534558 type 2
+write param model.layers.21.input_layernorm.weight size 3584 offset 887599070 type 0
+write param model.layers.21.mlp.down_proj.weight size 3575040 offset 887602654 type 14
+write param model.layers.21.mlp.gate_proj.weight size 17432576 offset 891177694 type 0
+write param model.layers.21.mlp.up_proj.weight size 2451456 offset 908610270 type 12
+write param model.layers.21.post_attention_layernorm.weight size 3584 offset 911061726 type 0
+write param model.layers.21.self_attn.k_proj.bias size 512 offset 911065310 type 0
+write param model.layers.21.self_attn.k_proj.weight size 64512 offset 911065822 type 12
+write param model.layers.21.self_attn.o_proj.weight size 451584 offset 911130334 type 12
+write param model.layers.21.self_attn.q_proj.bias size 3584 offset 911581918 type 0
+write param model.layers.21.self_attn.q_proj.weight size 451584 offset 911585502 type 12
+write param model.layers.21.self_attn.v_proj.bias size 512 offset 912037086 type 0
+write param model.layers.21.self_attn.v_proj.weight size 64512 offset 912037598 type 2
+write param model.layers.22.input_layernorm.weight size 3584 offset 912102110 type 0
+write param model.layers.22.mlp.down_proj.weight size 3575040 offset 912105694 type 14
+write param model.layers.22.mlp.gate_proj.weight size 17432576 offset 915680734 type 0
+write param model.layers.22.mlp.up_proj.weight size 2451456 offset 933113310 type 12
+write param model.layers.22.post_attention_layernorm.weight size 3584 offset 935564766 type 0
+write param model.layers.22.self_attn.k_proj.bias size 512 offset 935568350 type 0
+write param model.layers.22.self_attn.k_proj.weight size 64512 offset 935568862 type 12
+write param model.layers.22.self_attn.o_proj.weight size 451584 offset 935633374 type 12
+write param model.layers.22.self_attn.q_proj.bias size 3584 offset 936084958 type 0
+write param model.layers.22.self_attn.q_proj.weight size 451584 offset 936088542 type 12
+write param model.layers.22.self_attn.v_proj.bias size 512 offset 936540126 type 0
+write param model.layers.22.self_attn.v_proj.weight size 64512 offset 936540638 type 2
+write param model.layers.23.input_layernorm.weight size 3584 offset 936605150 type 0
+write param model.layers.23.mlp.down_proj.weight size 3575040 offset 936608734 type 14
+write param model.layers.23.mlp.gate_proj.weight size 17432576 offset 940183774 type 0
+write param model.layers.23.mlp.up_proj.weight size 2451456 offset 957616350 type 12
+write param model.layers.23.post_attention_layernorm.weight size 3584 offset 960067806 type 0
+write param model.layers.23.self_attn.k_proj.bias size 512 offset 960071390 type 0
+write param model.layers.23.self_attn.k_proj.weight size 64512 offset 960071902 type 12
+write param model.layers.23.self_attn.o_proj.weight size 451584 offset 960136414 type 12
+write param model.layers.23.self_attn.q_proj.bias size 3584 offset 960587998 type 0
+write param model.layers.23.self_attn.q_proj.weight size 451584 offset 960591582 type 12
+write param model.layers.23.self_attn.v_proj.bias size 512 offset 961043166 type 0
+write param model.layers.23.self_attn.v_proj.weight size 64512 offset 961043678 type 2
+write param model.layers.3.input_layernorm.weight size 3584 offset 961108190 type 0
+write param model.layers.3.mlp.down_proj.weight size 3575040 offset 961111774 type 14
+write param model.layers.3.mlp.gate_proj.weight size 17432576 offset 964686814 type 0
+write param model.layers.3.mlp.up_proj.weight size 2451456 offset 982119390 type 12
+write param model.layers.3.post_attention_layernorm.weight size 3584 offset 984570846 type 0
+write param model.layers.3.self_attn.k_proj.bias size 512 offset 984574430 type 0
+write param model.layers.3.self_attn.k_proj.weight size 64512 offset 984574942 type 12
+write param model.layers.3.self_attn.o_proj.weight size 451584 offset 984639454 type 12
+write param model.layers.3.self_attn.q_proj.bias size 3584 offset 985091038 type 0
+write param model.layers.3.self_attn.q_proj.weight size 451584 offset 985094622 type 12
+write param model.layers.3.self_attn.v_proj.bias size 512 offset 985546206 type 0
+write param model.layers.3.self_attn.v_proj.weight size 64512 offset 985546718 type 2
+write param model.layers.4.input_layernorm.weight size 3584 offset 985611230 type 0
+write param model.layers.4.mlp.down_proj.weight size 3575040 offset 985614814 type 14
+write param model.layers.4.mlp.gate_proj.weight size 17432576 offset 989189854 type 0
+write param model.layers.4.mlp.up_proj.weight size 2451456 offset 1006622430 type 12
+write param model.layers.4.post_attention_layernorm.weight size 3584 offset 1009073886 type 0
+write param model.layers.4.self_attn.k_proj.bias size 512 offset 1009077470 type 0
+write param model.layers.4.self_attn.k_proj.weight size 64512 offset 1009077982 type 12
+write param model.layers.4.self_attn.o_proj.weight size 451584 offset 1009142494 type 12
+write param model.layers.4.self_attn.q_proj.bias size 3584 offset 1009594078 type 0
+write param model.layers.4.self_attn.q_proj.weight size 451584 offset 1009597662 type 12
+write param model.layers.4.self_attn.v_proj.bias size 512 offset 1010049246 type 0
+write param model.layers.4.self_attn.v_proj.weight size 64512 offset 1010049758 type 2
+write param model.layers.5.input_layernorm.weight size 3584 offset 1010114270 type 0
+write param model.layers.5.mlp.down_proj.weight size 3575040 offset 1010117854 type 14
+write param model.layers.5.mlp.gate_proj.weight size 17432576 offset 1013692894 type 0
+write param model.layers.5.mlp.up_proj.weight size 2451456 offset 1031125470 type 12
+write param model.layers.5.post_attention_layernorm.weight size 3584 offset 1033576926 type 0
+write param model.layers.5.self_attn.k_proj.bias size 512 offset 1033580510 type 0
+write param model.layers.5.self_attn.k_proj.weight size 64512 offset 1033581022 type 12
+write param model.layers.5.self_attn.o_proj.weight size 451584 offset 1033645534 type 12
+write param model.layers.5.self_attn.q_proj.bias size 3584 offset 1034097118 type 0
+write param model.layers.5.self_attn.q_proj.weight size 451584 offset 1034100702 type 12
+write param model.layers.5.self_attn.v_proj.bias size 512 offset 1034552286 type 0
+write param model.layers.5.self_attn.v_proj.weight size 64512 offset 1034552798 type 2
+write param model.layers.6.input_layernorm.weight size 3584 offset 1034617310 type 0
+write param model.layers.6.mlp.down_proj.weight size 3575040 offset 1034620894 type 14
+write param model.layers.6.mlp.gate_proj.weight size 17432576 offset 1038195934 type 0
+write param model.layers.6.mlp.up_proj.weight size 2451456 offset 1055628510 type 12
+write param model.layers.6.post_attention_layernorm.weight size 3584 offset 1058079966 type 0
+write param model.layers.6.self_attn.k_proj.bias size 512 offset 1058083550 type 0
+write param model.layers.6.self_attn.k_proj.weight size 64512 offset 1058084062 type 12
+write param model.layers.6.self_attn.o_proj.weight size 451584 offset 1058148574 type 12
+write param model.layers.6.self_attn.q_proj.bias size 3584 offset 1058600158 type 0
+write param model.layers.6.self_attn.q_proj.weight size 451584 offset 1058603742 type 12
+write param model.layers.6.self_attn.v_proj.bias size 512 offset 1059055326 type 0
+write param model.layers.6.self_attn.v_proj.weight size 64512 offset 1059055838 type 2
+write param model.layers.7.input_layernorm.weight size 3584 offset 1059120350 type 0
+write param model.layers.7.mlp.down_proj.weight size 3575040 offset 1059123934 type 14
+write param model.layers.7.mlp.gate_proj.weight size 17432576 offset 1062698974 type 0
+write param model.layers.7.mlp.up_proj.weight size 2451456 offset 1080131550 type 12
+write param model.layers.7.post_attention_layernorm.weight size 3584 offset 1082583006 type 0
+write param model.layers.7.self_attn.k_proj.bias size 512 offset 1082586590 type 0
+write param model.layers.7.self_attn.k_proj.weight size 64512 offset 1082587102 type 12
+write param model.layers.7.self_attn.o_proj.weight size 451584 offset 1082651614 type 12
+write param model.layers.7.self_attn.q_proj.bias size 3584 offset 1083103198 type 0
+write param model.layers.7.self_attn.q_proj.weight size 451584 offset 1083106782 type 12
+write param model.layers.7.self_attn.v_proj.bias size 512 offset 1083558366 type 0
+write param model.layers.7.self_attn.v_proj.weight size 64512 offset 1083558878 type 2
+write param model.layers.8.input_layernorm.weight size 3584 offset 1083623390 type 0
+write param model.layers.8.mlp.down_proj.weight size 3575040 offset 1083626974 type 14
+write param model.layers.8.mlp.gate_proj.weight size 17432576 offset 1087202014 type 0
+write param model.layers.8.mlp.up_proj.weight size 2451456 offset 1104634590 type 12
+write param model.layers.8.post_attention_layernorm.weight size 3584 offset 1107086046 type 0
+write param model.layers.8.self_attn.k_proj.bias size 512 offset 1107089630 type 0
+write param model.layers.8.self_attn.k_proj.weight size 64512 offset 1107090142 type 12
+write param model.layers.8.self_attn.o_proj.weight size 451584 offset 1107154654 type 12
+write param model.layers.8.self_attn.q_proj.bias size 3584 offset 1107606238 type 0
+write param model.layers.8.self_attn.q_proj.weight size 451584 offset 1107609822 type 12
+write param model.layers.8.self_attn.v_proj.bias size 512 offset 1108061406 type 0
+write param model.layers.8.self_attn.v_proj.weight size 64512 offset 1108061918 type 2
+write param model.layers.9.input_layernorm.weight size 3584 offset 1108126430 type 0
+write param model.layers.9.mlp.down_proj.weight size 3575040 offset 1108130014 type 14
+write param model.layers.9.mlp.gate_proj.weight size 17432576 offset 1111705054 type 0
+write param model.layers.9.mlp.up_proj.weight size 2451456 offset 1129137630 type 12
+write param model.layers.9.post_attention_layernorm.weight size 3584 offset 1131589086 type 0
+write param model.layers.9.self_attn.k_proj.bias size 512 offset 1131592670 type 0
+write param model.layers.9.self_attn.k_proj.weight size 64512 offset 1131593182 type 12
+write param model.layers.9.self_attn.o_proj.weight size 451584 offset 1131657694 type 12
+write param model.layers.9.self_attn.q_proj.bias size 3584 offset 1132109278 type 0
+write param model.layers.9.self_attn.q_proj.weight size 451584 offset 1132112862 type 12
+write param model.layers.9.self_attn.v_proj.bias size 512 offset 1132564446 type 0
+write param model.layers.9.self_attn.v_proj.weight size 64512 offset 1132564958 type 2
+write param model.norm.weight size 3584 offset 1132629470 type 0
+

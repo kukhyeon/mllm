@@ -47,12 +47,16 @@ int main(int argc, char **argv) {
     cmdParser.add<string>("input", 'I', "input dataset path of csv. ex) ./dataset/input.csv", false, ".");
     cmdParser.add<string>("output", 'O', "output directory path. ex) ./output/", false, ".");
     cmdParser.add<bool>("save", 'S', "save query-answer pairs with json", false, true);
+    
+  
     // arg parser: For DVFS
     cmdParser.add<string>("device", 'D', "specify your android phone [Pixel9 | S24]", true, "");
     cmdParser.add<int>("cpu-p", 'c', "specify CPU clock index for CPU DVFS", true, 0);
     cmdParser.add<int>("ram-p", 'r', "specify RAM clock index for RAM DVFS", true, 0);
     cmdParser.add<int>("cpu-d", 'C', "specify CPU clock index for CPU DVFS", true, 0);
     cmdParser.add<int>("ram-d", 'R', "specify RAM clock index for RAM DVFS", true, 0);
+    
+  
     // arg parser: For Pause Techniques
     cmdParser.add<int>("phase-pause", 'p', "specify a pause time between phases (ms)", true, 0);
     cmdParser.add<int>("token-pause", 'P', "specify a pause time between generation tokens (ms)", true, 0);
@@ -142,6 +146,10 @@ int main(int argc, char **argv) {
     }
     output_qa = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_result.json");
 
+    // variable initialization: For Throttling Detection
+    std::string command = "su -c\""; //prefix
+    command += "awk '{print \\$1/1000}' /sys/devices/system/cpu/cpu7/cpufreq/scaling_cur_freq;"; //cmd
+    command += "\""; //postfix
 
     // Model Configuration
     auto tokenizer = QWenTokenizer(vocab_path, merge_path);
@@ -149,6 +157,7 @@ int main(int argc, char **argv) {
     auto model = QWenForCausalLM(config);
     model.load(model_path);
     model.thread_sleep = layer_pause; // set layer-pause time
+
 
     
     // QA Dataset Load
@@ -247,7 +256,7 @@ int main(int argc, char **argv) {
         if (is_query_save){ ans.push_back(answer); } // accummulate answers
         model.clear_kvcache();
         qa_now++;
-	ft = 0;
+	      ft = 0;
 
 	// single query is done
 	// This throttling detection is valid for only Pixel9
