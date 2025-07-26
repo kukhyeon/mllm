@@ -51,6 +51,8 @@ int main(int argc, char **argv) {
     cmdParser.add<string>("device", 'D', "specify your android phone [Pixel9 | S24]", true, "");
     cmdParser.add<int>("cpu", 'C', "specify CPU clock index for CPU DVFS", true, 0);
     cmdParser.add<int>("ram", 'R', "specify RAM clock index for RAM DVFS", true, 0);
+    // arg parser: For Pause
+    cmdParser.add<int>("lp", 'y', "specify a time for layer pause", true, 0);
     cmdParser.parse_check(argc, argv);
 
 
@@ -81,13 +83,19 @@ int main(int argc, char **argv) {
     const string output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_cpu" + to_string(cpu_clk_idx) + "ram" + to_string(ram_clk_idx) + "_hard.txt");
     const string output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_cpu" + to_string(cpu_clk_idx) + "ram" + to_string(ram_clk_idx) + "_infer.txt");
     const string output_qa = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_result.json");
+    int layer_pause = cmdParser.get<int>("lp");
 
+    // variable initialization: For Throttling Detection
+    std::string command = "su -c\""; //prefix
+    command += "awk '{print \\$1/1000}' /sys/devices/system/cpu/cpu7/cpufreq/scaling_cur_freq;"; //cmd
+    command += "\""; //postfix
 
     // Model Configuration
     auto tokenizer = QWenTokenizer(vocab_path, merge_path);
     QWenConfig config(tokens_limit, model_billion, RoPEType::HFHUBROPE);
     auto model = QWenForCausalLM(config);
     model.load(model_path);
+    model.thread_sleep = layer_pause; // set layer pause
 
     
     // QA Dataset Load
@@ -156,6 +164,13 @@ int main(int argc, char **argv) {
         if (is_query_save){ ans.push_back(answer); } // accummulate answers
         model.clear_kvcache();
         qa_now++;
+
+	// single query is done
+	// This throttling detection is applied for only Pixel9
+	int cur_cpu_freq = std::stoi(split_string(execute_cmd(command.c_str()))[0]);
+	if (cur_cpu_freq*1000 != dvfs.get_cpu_freq().at(7).at(freq_config[2])){
+	    model.thread_sleep = 0;
+	}
     }
 
 

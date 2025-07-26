@@ -94,7 +94,9 @@ void Module::generate(
     }
 
     for (int step = 0; step < opt.max_new_tokens; ++step) {
-        auto _out = (*this)({input_ids});
+        //if (step == 0) { std::cout << std::flush << "[Prefill]";} // prefill when step == 0 
+        auto _out = (*this)({input_ids});                           
+        //if (step == 0) {std::cout << std::flush << "[Decode]";}   // decode start when step == 0
         auto out_token = text_generator_->generate(_out[0]);
         if (!call_back(out_token)) break;
         chatPostProcessing(out_token, input_ids, {});

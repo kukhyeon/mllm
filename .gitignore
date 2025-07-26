@@ -40,3 +40,5 @@ src/backends/qnn/sdk/*
 
 *.json
 !dataset/*.json
+
+*.patch
