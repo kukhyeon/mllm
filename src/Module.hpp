@@ -74,6 +74,9 @@ public:
     // For layer or phase pause
     int thread_sleep = 0;
 
+    // For layer pause
+    int thread_sleep;
+
 private:
     template <typename... Args>
     vector<std::any> convertArgsToAnyVector(Args... args) {

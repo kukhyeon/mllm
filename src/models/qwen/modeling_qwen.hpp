@@ -21,7 +21,6 @@
 #include <thread>
 #include <chrono>
 
-
 using namespace mllm;
 
 // Copied from GemmaMLP with Gemma->Qwen and using silu
@@ -188,17 +187,17 @@ public:
     std::vector<Tensor> Forward(std::vector<Tensor> inputs, std::vector<std::any> args) override {
         auto x = inputs[0];
         for (auto &block : blocks) { 
-            // call blk.layer
-            x = block({x})[0]; 
-            // input tensor size distinguishes the prefill and decode phases.
-            // here, we can inject the layer-wise pause
-            if (inputs[0].sequence() > 1){
-                // prefill phase
-                this_thread::sleep_for(chrono::milliseconds(thread_sleep));
-            } else {
-                // decode phase
-            }
-        }
+	        // call blk.layer
+	        x = block({x})[0]; 
+	        // input tensor size distinguishes the prefill and decode phases.
+	        // here, we can inject the layer-wise pause
+	        if (inputs[0].sequence() > 1){
+	          // prefill phase
+		        this_thread::sleep_for(chrono::milliseconds(thread_sleep));
+	        } else {
+		        // decode phase
+	        }
+	      }
         x = norm(x);
         return {x};
     }

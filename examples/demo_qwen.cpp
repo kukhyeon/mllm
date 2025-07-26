@@ -4,8 +4,11 @@
  * @version 0.1
  * @date 2024-05-01
  *
- * @copyright Copyright (c) 2024
+ * @modified by Jinhwi Kim (kjh2159@dgist.ac.kr)
+ * @date 2025-07-26
  *
+ * @copyright Copyright (c) 2024
+ * 
  */
 #include "cmdline.h"
 #include "models/qwen/configuration_qwen.hpp"
