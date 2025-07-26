@@ -103,7 +103,7 @@ int main(int argc, char **argv) {
     
 
     // variable initialization: For Thermal Throttling Detection
-    std::string command = "su -c\""; // prefix
+    std::string command = "su -c \""; // prefix
     command += "awk '{print \\$1/1000}' /sys/devices/system/cpu/cpu7/cpufreq/scaling_cur_freq;"; // command
     command += "\""; // postfix
 
