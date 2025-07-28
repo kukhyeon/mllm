@@ -90,7 +90,6 @@ int main(int argc, char **argv) {
     const bool is_query_save = cmdParser.get<bool>("save");
     int qa_now = qa_start;
     int qa_limit = 0;
-    const bool fixed_config = (cpu_clk_idx_p == cpu_clk_idx_d) && (ram_clk_idx_p == ram_clk_idx_d);
     string output_hard;
     string output_infer;
     string output_qa;
@@ -101,51 +100,82 @@ int main(int argc, char **argv) {
     int phase_pause = cmdParser.get<int>("phase-pause");
     int layer_pause = cmdParser.get<int>("layer-pause"); 
     
+    
+    // variable initialization: For File Naming
+    bool fixed_config = (cpu_clk_idx_p == cpu_clk_idx_d) && (ram_clk_idx_p == ram_clk_idx_d);
+    bool tp = (token_pause > 0);
+    bool pp = (phase_pause > 0);
+    bool lp = (layer_pause > 0);
+    char mode = 0b00000000; // 1byte
+
+    // 0-th bit: clock control
+    // 1-th bit: phase-pause
+    // 2-th bit: layer-pause
+    // 3-th bit: token-pause
+    // ex) 0b0101 : clock config control + layer pause
+    //     3 <-> 0
+
+    // [control mode checker]
+    mode |= (!fixed_config) ? ( 1 << 0 ) : 0;
+    mode |= pp ? ( 1 << 1 ) : 0;
+    mode |= lp ? ( 1 << 2 ) : 0;
+    mode |= tp ? ( 1 << 3 ) : 0;
+
+    switch (mode)
+    {
+    case 0:
+        // Fixed Config
+        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_hard.txt");
+        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_infer.txt");
+        break;
+    case 1:
+        // Only Config Control
+        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_hard.txt");
+        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_infer.txt");
+        break;
+    case 2:
+        // Only Phase Pause
+        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_pp_" + to_string(phase_pause) + "_hard.txt");
+        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_pp_" + to_string(phase_pause) + "_infer.txt");
+        break;
+    case 4:
+        // Only Layer Pause
+        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_lp_" + to_string(layer_pause) + "_hard.txt");
+        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_lp_" + to_string(layer_pause) + "_infer.txt");
+        break;
+    case 5:
+        // Config Control + Layer Pause
+        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_lp_" + to_string(layer_pause) + "_hard.txt");
+        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_lp_" + to_string(layer_pause) + "_infer.txt");
+	break;	
+    case 8:
+        // Only Token Pause
+        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_tp_" + to_string(token_pause) + "_hard.txt");
+        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_tp_" + to_string(token_pause) + "_infer.txt");
+        break;
+    case 3:  // Config Control + Phase Pause 
+    case 6:  // Phase Pause + Layer Pause
+    case 7:  // Config Control + Pase Pause + Layer Pause
+    case 9:  // Config Control + Token Pause
+    case 10: // Phase Pause + Token Pause
+    case 11: // Config Control + Phase Pause + Token Pause
+    case 12: // Layer Pause + Token Pause
+    case 13: // Config Control + Layer Pause + Token Pause
+    case 14: // Phase Pause + Layer Pause + Token Pause
+    case 15: // Config Control + Phase Pause + Layer Pause + Token Pause
+    default:
+        // Not controlled cases
+        cerr << "[ERROR] Not Controlled Configuration\n";
+        return 1;
+    }
+    output_qa = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_result.json");
+    
 
     // variable initialization: For Thermal Throttling Detection
     std::string command = "su -c \""; // prefix
     command += "awk '{print \\$1/1000}' /sys/devices/system/cpu/cpu7/cpufreq/scaling_cur_freq;"; // command
     command += "\""; // postfix
 
-
-    // TODO: Refactoring to switch-case
-    if (token_pause <= 0 && phase_pause <= 0 && layer_pause <= 0 && !fixed_config){
-	// phase clock control
-        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_hard.txt");
-        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_infer.txt");
-
-    } else if (token_pause <= 0 && phase_pause <= 0 && layer_pause <= 0 && fixed_config) {
-	// only fixed configuration
-        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_hard.txt");
-        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_infer.txt");
-
-    } else if (token_pause <= 0 && phase_pause > 0 && layer_pause <= 0 && fixed_config) {
-	// only phase pause
-        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_pp_" + to_string(phase_pause) + "_hard.txt");
-        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_pp_" + to_string(phase_pause) + "_infer.txt");
-
-    } else if (token_pause > 0 && phase_pause <=0 && layer_pause <=0 && fixed_config) {
-	// only token pause
-	output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_tp_" + to_string(token_pause) + "_hard.txt");
-        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_tp_" + to_string(token_pause) + "_infer.txt");
-
-    } else if (token_pause <= 0 && phase_pause > 0 && layer_pause <= 0 && !fixed_config){
-        // config + phase-puase
-	output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_pp_" + to_string(phase_pause) + "_hard.txt");
-        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_pp_" + to_string(phase_pause) + "_infer.txt");	
-
-    } else if (token_pause <= 0 && phase_pause <= 0 && layer_pause > 0 && !fixed_config){
-        // config + layer-puase
-	output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_lp_" + to_string(layer_pause) + "_hard.txt");
-        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_lp_" + to_string(layer_pause) + "_infer.txt");	
-
-    } else {
-	// not controled config
-	cout << "ERROR: Not Controlled Configuration\n";
-	return 0;
-    }
-    output_qa = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_result.json");
-    
     
     // Model Configuration
     auto tokenizer = QWenTokenizer(vocab_path, merge_path);
