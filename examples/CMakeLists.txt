@@ -86,6 +86,7 @@ endmacro()
 # func_llm_add_executable(demo_minicpm_moe_mbm)
 func_llm_add_executable(run_qwen)
 func_llm_add_executable(stream_qwen)
+func_llm_add_executable(stream_llama3)
 func_llm_add_executable(qwen_eval)
 func_llm_add_executable(llama3_eval)
 

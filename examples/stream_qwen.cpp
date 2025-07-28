@@ -47,12 +47,16 @@ int main(int argc, char **argv) {
     cmdParser.add<string>("input", 'I', "input dataset path of csv. ex) ./dataset/input.csv", false, ".");
     cmdParser.add<string>("output", 'O', "output directory path. ex) ./output/", false, ".");
     cmdParser.add<bool>("save", 'S', "save query-answer pairs with json", false, true);
+    
+  
     // arg parser: For DVFS
     cmdParser.add<string>("device", 'D', "specify your android phone [Pixel9 | S24]", true, "");
     cmdParser.add<int>("cpu-p", 'c', "specify CPU clock index for CPU DVFS", true, 0);
     cmdParser.add<int>("ram-p", 'r', "specify RAM clock index for RAM DVFS", true, 0);
     cmdParser.add<int>("cpu-d", 'C', "specify CPU clock index for CPU DVFS", true, 0);
     cmdParser.add<int>("ram-d", 'R', "specify RAM clock index for RAM DVFS", true, 0);
+    
+  
     // arg parser: For Pause Techniques
     cmdParser.add<int>("phase-pause", 'p', "specify a pause time between phases (ms)", true, 0);
     cmdParser.add<int>("token-pause", 'P', "specify a pause time between generation tokens (ms)", true, 0);
@@ -99,7 +103,7 @@ int main(int argc, char **argv) {
     
 
     // variable initialization: For Thermal Throttling Detection
-    std::string command = "su -c\""; // prefix
+    std::string command = "su -c \""; // prefix
     command += "awk '{print \\$1/1000}' /sys/devices/system/cpu/cpu7/cpufreq/scaling_cur_freq;"; // command
     command += "\""; // postfix
 
@@ -132,8 +136,8 @@ int main(int argc, char **argv) {
 
     } else if (token_pause <= 0 && phase_pause <= 0 && layer_pause > 0 && !fixed_config){
         // config + layer-puase
-	output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_lp_" + to_string(phase_pause) + "_hard.txt");
-        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_lp_" + to_string(phase_pause) + "_infer.txt");	
+	output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_lp_" + to_string(layer_pause) + "_hard.txt");
+        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_lp_" + to_string(layer_pause) + "_infer.txt");	
 
     } else {
 	// not controled config
@@ -141,14 +145,15 @@ int main(int argc, char **argv) {
 	return 0;
     }
     output_qa = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_result.json");
-
-
+    
+    
     // Model Configuration
     auto tokenizer = QWenTokenizer(vocab_path, merge_path);
     QWenConfig config(tokens_limit, model_billion, RoPEType::HFHUBROPE);
     auto model = QWenForCausalLM(config);
     model.load(model_path);
     Module::thread_sleep = layer_pause; // set layer-pause time
+
 
     
     // QA Dataset Load
@@ -247,7 +252,7 @@ int main(int argc, char **argv) {
         if (is_query_save){ ans.push_back(answer); } // accummulate answers
         model.clear_kvcache();
         qa_now++;
-	ft = 0;
+	      ft = 0;
 
 	// single query is done
 	// This throttling detection is valid for only Pixel9

@@ -41,6 +41,9 @@ int main(int argc, char **argv) {
     auto model = QWenForCausalLM(config);
     model.load(model_path);
 
+    // The number of layers
+    std::cout << model.get_blocks().size() << std::endl;
+
     vector<string> in_strs = {
         "Hello, who are you?",
         "What can you do?",
@@ -60,6 +63,7 @@ int main(int argc, char **argv) {
             .top_p = 0.F,
         };
         model.generate(input_tensor, opt, [&](unsigned int out_token) -> bool {
+            // prefill and decode phase is distinguished internally
             auto out_string = tokenizer.detokenize({out_token});
             auto [not_end, output_string] = tokenizer.postprocess(out_string);
             if (!not_end) { return false; }
