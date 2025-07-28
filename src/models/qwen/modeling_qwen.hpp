@@ -193,7 +193,7 @@ public:
 	    // here, we can inject the layer-wise pause
 	    if (inputs[0].sequence() > 1){
 	        // prefill phase
-		this_thread::sleep_for(chrono::milliseconds(thread_sleep));
+		    this_thread::sleep_for(chrono::milliseconds(thread_sleep));
 	    } else {
 		// decode phase
 	    }
