@@ -17,18 +17,19 @@ su -c "echo 0 > /sys/devices/system/cpu/cpu3/online"
   -i 1 \
   -s 1 \
   -L 20 \
-  -I dataset/hotpot_qa.csv \
+  -I dataset/64tok_qa.csv \
   -O output/ \
   -S 0 \
   -D Pixel9 \
-  --cpu-p $1 \
-  --ram-p $2 \
-  --cpu-d $3 \
-  --ram-d $4 \
+  --cpu-l $1 \
+  --ram-l $2 \
+  --cpu-s $3 \
+  --ram-s $4 \
   --phase-pause 0 \
   --token-pause 0 \
   --layer-pause 0
 
+# DO NOT TOUCH ANY PAUSE OPTIONS
 # [pause-unit] = ms
 
 # turn-on screen

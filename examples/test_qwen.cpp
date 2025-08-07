@@ -35,8 +35,10 @@ int main(int argc, char **argv) {
     // arg parser: BASIC
     cmdParser.add<string>("vocab", 'v', "specify mllm tokenizer model path", false, "../vocab/qwen_vocab.mllm");
     cmdParser.add<string>("merge", 'e', "specify mllm merge file path", false, "../vocab/qwen_merges.txt");
-    cmdParser.add<string>("model", 'm', "specify mllm model path", false, "../models/qwen-1.5-1.8b-q8_0.mllm");
-    cmdParser.add<string>("billion", 'b', "[0.5B | 1.8B | 1.5B |]", false, "1.8B");
+    cmdParser.add<string>("model_l", 'M', "specify mllm model path", false, "../models/qwen-1.5-1.8b-q4_k.mllm");
+    cmdParser.add<string>("model_s", 'm', "specify mllm model path", false, "../models/qwen-1.5-0.5b-q4_k.mllm");
+    cmdParser.add<string>("billion_l", 'B', "[0.5B | 1.8B | 1.5B |]", false, "1.8B");
+    cmdParser.add<string>("billion_s", 'b', "[0.5B | 1.8B | 1.5B |]", false, "0.5B");
     cmdParser.add<int>("limits", 'l', "max KV cache size", false, 1024);
     cmdParser.add<int>("thread", 't', "num of threads", false, 4);
 
@@ -50,10 +52,10 @@ int main(int argc, char **argv) {
 
     // arg parser: For DVFS
     cmdParser.add<string>("device", 'D', "specify your android phone [Pixel9 | S24]", true, "");
-    cmdParser.add<int>("cpu-p", 'c', "specify CPU clock index for CPU DVFS", true, 0);
-    cmdParser.add<int>("ram-p", 'r', "specify RAM clock index for RAM DVFS", true, 0);
-    cmdParser.add<int>("cpu-d", 'C', "specify CPU clock index for CPU DVFS", true, 0);
-    cmdParser.add<int>("ram-d", 'R', "specify RAM clock index for RAM DVFS", true, 0);
+    cmdParser.add<int>("cpu-l", 'c', "specify CPU clock index for CPU DVFS", true, 0);
+    cmdParser.add<int>("ram-l", 'r', "specify RAM clock index for RAM DVFS", true, 0);
+    cmdParser.add<int>("cpu-s", 'C', "specify CPU clock index for CPU DVFS", true, 0);
+    cmdParser.add<int>("ram-s", 'R', "specify RAM clock index for RAM DVFS", true, 0);
 
     // arg parser: For Pause Techniques
     cmdParser.add<int>("phase-pause", 'p', "specify a pause time between phases (ms)", true, 0);
@@ -64,17 +66,19 @@ int main(int argc, char **argv) {
     // variable initialization: BASIC
     string vocab_path = cmdParser.get<string>("vocab");
     string merge_path = cmdParser.get<string>("merge");
-    string model_path = cmdParser.get<string>("model");
-    string model_billion = cmdParser.get<string>("billion");
+    string model_path_l = cmdParser.get<string>("model_l");
+    string model_path_s = cmdParser.get<string>("model_s");
+    string model_billion_l = cmdParser.get<string>("billion_l");
+    string model_billion_s = cmdParser.get<string>("billion_s");
     int tokens_limit = cmdParser.get<int>("limits");
     CPUBackend::cpu_threads = cmdParser.get<int>("thread");
 
     // variable initialization: For DVFS
     const string device_name = cmdParser.get<string>("device");
-    const int cpu_clk_idx_p = cmdParser.get<int>("cpu-p");
-    const int ram_clk_idx_p = cmdParser.get<int>("ram-p");
-    const int cpu_clk_idx_d = cmdParser.get<int>("cpu-d");
-    const int ram_clk_idx_d = cmdParser.get<int>("ram-d");
+    const int cpu_clk_idx_l = cmdParser.get<int>("cpu-l");
+    const int ram_clk_idx_l = cmdParser.get<int>("ram-l");
+    const int cpu_clk_idx_s = cmdParser.get<int>("cpu-s");
+    const int ram_clk_idx_s = cmdParser.get<int>("ram-s");
 
     // variable initialization: For Stream
     const bool interface = cmdParser.get<bool>("interface");
@@ -95,7 +99,7 @@ int main(int argc, char **argv) {
     int layer_pause = cmdParser.get<int>("layer-pause");
 
     // variable initialization: For File Naming
-    bool fixed_config = (cpu_clk_idx_p == cpu_clk_idx_d) && (ram_clk_idx_p == ram_clk_idx_d);
+    bool fixed_config = (cpu_clk_idx_l == cpu_clk_idx_s) && (ram_clk_idx_l == ram_clk_idx_s);
     bool tp = (token_pause > 0);
     bool pp = (phase_pause > 0);
     bool lp = (layer_pause > 0);
@@ -114,36 +118,37 @@ int main(int argc, char **argv) {
     mode |= lp ? (1 << 2) : 0;
     mode |= tp ? (1 << 3) : 0;
 
+    string model_billion = "1.8B+0.5B";
     switch (mode) {
     case 0:
         // Fixed Config
-        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_hard.txt");
-        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_infer.txt");
+        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_l) + "-" + to_string(ram_clk_idx_l) + "_hard.txt");
+        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_l) + "-" + to_string(ram_clk_idx_l) + "_infer.txt");
         break;
     case 1:
         // Only Config Control
-        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_hard.txt");
-        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_infer.txt");
+        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_l) + "-" + to_string(ram_clk_idx_l) + "_to_" + to_string(cpu_clk_idx_s) + "-" + to_string(ram_clk_idx_s) + "_hard.txt");
+        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_l) + "-" + to_string(ram_clk_idx_l) + "_to_" + to_string(cpu_clk_idx_s) + "-" + to_string(ram_clk_idx_s) + "_infer.txt");
         break;
     case 2:
         // Only Phase Pause
-        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_pp_" + to_string(phase_pause) + "_hard.txt");
-        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_pp_" + to_string(phase_pause) + "_infer.txt");
+        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_l) + "-" + to_string(ram_clk_idx_l) + "_pp_" + to_string(phase_pause) + "_hard.txt");
+        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_l) + "-" + to_string(ram_clk_idx_l) + "_pp_" + to_string(phase_pause) + "_infer.txt");
         break;
     case 4:
         // Only Layer Pause
-        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_lp_" + to_string(layer_pause) + "_hard.txt");
-        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_lp_" + to_string(layer_pause) + "_infer.txt");
+        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_l) + "-" + to_string(ram_clk_idx_l) + "_lp_" + to_string(layer_pause) + "_hard.txt");
+        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_l) + "-" + to_string(ram_clk_idx_l) + "_lp_" + to_string(layer_pause) + "_infer.txt");
         break;
     case 5:
         // Config Control + Layer Pause
-        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_lp_" + to_string(layer_pause) + "_hard.txt");
-        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_lp_" + to_string(layer_pause) + "_infer.txt");
+        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_l) + "-" + to_string(ram_clk_idx_l) + "_to_" + to_string(cpu_clk_idx_s) + "-" + to_string(ram_clk_idx_s) + "_lp_" + to_string(layer_pause) + "_hard.txt");
+        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_l) + "-" + to_string(ram_clk_idx_l) + "_to_" + to_string(cpu_clk_idx_s) + "-" + to_string(ram_clk_idx_s) + "_lp_" + to_string(layer_pause) + "_infer.txt");
         break;
     case 8:
         // Only Token Pause
-        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_tp_" + to_string(token_pause) + "_hard.txt");
-        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_tp_" + to_string(token_pause) + "_infer.txt");
+        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_l) + "-" + to_string(ram_clk_idx_l) + "_tp_" + to_string(token_pause) + "_hard.txt");
+        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen_" + model_billion + "_" + to_string(cpu_clk_idx_l) + "-" + to_string(ram_clk_idx_l) + "_tp_" + to_string(token_pause) + "_infer.txt");
         break;
     case 3:  // Config Control + Phase Pause
     case 6:  // Phase Pause + Layer Pause
@@ -169,9 +174,12 @@ int main(int argc, char **argv) {
 
     // Model Configuration
     auto tokenizer = QWenTokenizer(vocab_path, merge_path);
-    QWenConfig config(tokens_limit, model_billion, RoPEType::HFHUBROPE);
-    auto model = QWenForCausalLM(config);
-    model.load(model_path);
+    QWenConfig config_l(tokens_limit, model_billion_l, RoPEType::HFHUBROPE);
+    QWenConfig config_s(tokens_limit, model_billion_s, RoPEType::HFHUBROPE);
+    auto model_l = QWenForCausalLM(config_l);
+    auto model_s = QWenForCausalLM(config_s);
+    model_l.load(model_path_l);
+    model_s.load(model_path_s);
     Module::thread_sleep = layer_pause; // set layer-pause time
 
     // QA Dataset Load
@@ -182,7 +190,7 @@ int main(int argc, char **argv) {
     DVFS dvfs(device_name);
     dvfs.output_filename = output_hard; // dvfs.output_filename requires hardware recording output path
     cout << pid << endl;
-    vector<int> freq_config = dvfs.get_cpu_freqs_conf(cpu_clk_idx_p);
+    vector<int> freq_config = dvfs.get_cpu_freqs_conf(cpu_clk_idx_l);
     for (auto f : freq_config) { cout << f << " "; }
     cout << endl; // to validate (print freq-configuration)
 
@@ -206,9 +214,9 @@ int main(int argc, char **argv) {
         int ft = 0; // first token
         auto now_sys_time = chrono::system_clock::now();
 
-        freq_config = dvfs.get_cpu_freqs_conf(cpu_clk_idx_p);
+        freq_config = dvfs.get_cpu_freqs_conf(cpu_clk_idx_l);
         dvfs.set_cpu_freq(freq_config);
-        dvfs.set_ram_freq(ram_clk_idx_p);
+        dvfs.set_ram_freq(ram_clk_idx_l);
 
         auto time1 = chrono::system_clock::now();
         auto input_str = tokenizer.apply_chat_template(question);
@@ -221,57 +229,102 @@ int main(int argc, char **argv) {
         }
 
         // Decode
-        size_t max_new_tokens = tokens_limit - input_tensor.sequence();
-        //size_t max_new_tokens = 256;
+        //size_t max_new_tokens = tokens_limit - input_tensor.sequence();
+        size_t max_new_tokens = 256;
         LlmTextGeneratorOpts opt{
             .max_new_tokens = max_new_tokens,
             .do_sample = false,
-            .temperature = 0.0F};
-        model.generate(input_tensor, opt, [&](unsigned int out_token) -> bool {
-            auto out_string = tokenizer.detokenize({out_token});
-            // now prefill done (when ft==0)
+            .temperature = 0.0F
+        };
 
-            // phase clock control
-            if (ft == 0 && !fixed_config) {
-                freq_config = dvfs.get_cpu_freqs_conf(cpu_clk_idx_d);
-                dvfs.set_cpu_freq(freq_config);
-                dvfs.set_ram_freq(ram_clk_idx_d);
-            }
-            // phase pause
-            if (ft == 0 && phase_pause > 0) {
-                // std::cout << std::flush << "sleep\n"; // test
-                this_thread::sleep_for(chrono::milliseconds(phase_pause));
-            }
+        if ((qa_now - qa_start)%2 == 0) {
+            model_l.generate(input_tensor, opt, [&](unsigned int out_token) -> bool {
+                auto out_string = tokenizer.detokenize({out_token});
+                // now prefill done (when ft==0)
 
-            // generation start
-            auto [not_end, output_string] = tokenizer.postprocess(out_string);
-            if (!not_end) {
-                return false;
-            } else {
-                // std::cout << std::flush << " tp "; // test
-                this_thread::sleep_for(chrono::milliseconds(token_pause)); // token pause
-            }
+                // phase clock control
+                if (ft == 0 && !fixed_config) {
+                    freq_config = dvfs.get_cpu_freqs_conf(cpu_clk_idx_l);
+                    dvfs.set_cpu_freq(freq_config);
+                    dvfs.set_ram_freq(ram_clk_idx_l);
+                }
+                // phase pause
+                if (ft == 0 && phase_pause > 0) {
+                    // std::cout << std::flush << "sleep\n"; // test
+                    this_thread::sleep_for(chrono::milliseconds(phase_pause));
+                }
 
-            // interface support
-            if (interface) {
-                std::cout << output_string << std::flush;
-                output_string.erase(std::remove(output_string.begin(), output_string.end(), '\0'), output_string.end());
-            }
-            answer += output_string;
-            ft++;
-            return true;
-        });
+                // generation start
+                auto [not_end, output_string] = tokenizer.postprocess(out_string);
+                if (!not_end) {
+                    return false;
+                } else {
+                    // std::cout << std::flush << " tp "; // test
+                    this_thread::sleep_for(chrono::milliseconds(token_pause)); // token pause
+                }
+
+                // interface support
+                if (interface) {
+                    std::cout << output_string << std::flush;
+                    output_string.erase(std::remove(output_string.begin(), output_string.end(), '\0'), output_string.end());
+                }
+            
+                answer += output_string;
+                ft++;
+                return true;
+            });
+        } else {
+            model_s.generate(input_tensor, opt, [&](unsigned int out_token) -> bool {
+                auto out_string = tokenizer.detokenize({out_token});
+                // now prefill done (when ft==0)
+
+                // phase clock control
+                if (ft == 0 && !fixed_config) {
+                    freq_config = dvfs.get_cpu_freqs_conf(cpu_clk_idx_s);
+                    dvfs.set_cpu_freq(freq_config);
+                    dvfs.set_ram_freq(ram_clk_idx_s);
+                }
+                // phase pause
+                if (ft == 0 && phase_pause > 0) {
+                    // std::cout << std::flush << "sleep\n"; // test
+                    this_thread::sleep_for(chrono::milliseconds(phase_pause));
+                }
+
+                // generation start
+                auto [not_end, output_string] = tokenizer.postprocess(out_string);
+                if (!not_end) {
+                    return false;
+                } else {
+                    // std::cout << std::flush << " tp "; // test
+                    this_thread::sleep_for(chrono::milliseconds(token_pause)); // token pause
+                }
+
+                // interface support
+                if (interface) {
+                    std::cout << output_string << std::flush;
+                    output_string.erase(std::remove(output_string.begin(), output_string.end(), '\0'), output_string.end());
+                }
+            
+                answer += output_string;
+                ft++;
+                return true;
+            });
+        }
         std::cout << "\n";
 
         // store data
         auto sys_time = chrono::duration_cast<chrono::milliseconds>(now_sys_time - start_sys_time).count();
         // proifle_res = { prefill_speed, decode_speed, input_token, output_token, ttft  }
-        auto profile_res = model.profiling("Inference");
+        
+        std::vector<double> profile_res;
+        if ((qa_now - qa_start)%2 == 0) profile_res = model_l.profiling("Inference");
+        else profile_res = model_s.profiling("Inference");
         profile_res.insert(profile_res.begin(), (double)sys_time / (double)1000.0);
         write_file(profile_res, output_infer); // store in real time
 
         if (is_query_save) { ans.push_back(answer); } // accummulate answers
-        model.clear_kvcache();
+        if ((qa_now - qa_start)%2 == 0) model_l.clear_kvcache();
+        else model_s.clear_kvcache();
         qa_now++;
         ft = 0;
 
