@@ -32,7 +32,7 @@ vector<double> Module::profiling(string name) {
     // printf("\n");
     std::cout << "===========================================\r" << std::endl;
     if (!name.empty()) {
-        std::cout << "            " << name << std::endl;
+        std::cout << "            " << name << "\r\n";
         std::cout << "-------------------------------------------\r" << std::endl;
     }
     double load_time_s = load_time_ / 1000.0F;
