@@ -30,7 +30,6 @@ def model_selecter(model_info):
     bit = list(model_info[fam][param].keys())[bit_choice]
 
     model = model_info[fam][param][bit]
-    print(f"\nSelected model: {fam} - {param} - {bit}")
     return model
 
 def model_downloader(url, output):
@@ -39,8 +38,11 @@ def model_downloader(url, output):
         subprocess.run(cmd, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Could not download the model: {e}")
+        return
     except FileNotFoundError as e:
         print(f"Could not find a directory. {e}")
+        return
+    print(f"\nSelected model: {output.split('/')[-1]}")
     return
 
 if __name__ == "__main__":
