@@ -3,7 +3,8 @@
 Device::Device(const std::string& device_name) : device(device_name){
     if (device_name == "S22_Ultra" || device_name == "Fold4" ||  device_name == "Pixel9"){
 	    cluster_indices = {0, 4, 7};
-    } else if (device_name == "S24"){
+    } else if (device_name == "S24" || device_name == "SM-S921N"){
+        // SM-S921N: Galaxy S24
 	    cluster_indices = {0, 4, 7, 9};
     }
 }
