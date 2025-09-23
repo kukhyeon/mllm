@@ -4,12 +4,13 @@ DEV="$(printf '%s' "$MODEL" | tr -d '[:space:]')"
 echo "Device: $DEV"
 
 # turn-off screen
-if [ "$DEV" != "Pixel9" ]; then
+if [ "$DEV" = "Pixel9" ]; then
   # Pixel9
   su -c "echo 0 > /sys/class/backlight/panel0-backlight/brightness"
 else
   # S24
   su -c "echo 0 > /sys/class/backlight/panel/brightness"
+  $DEV="S24"
 fi
 
 sleep 3 # stabilize
@@ -32,7 +33,7 @@ su -c "echo 0 > /sys/devices/system/cpu/cpu3/online"
   -I dataset/hotpot_qa.csv \
   -O output/ \
   -S 0 \
-  -D $DEV \
+  -D "$DEV" \
   --cpu-p $1 \
   --ram-p $2 \
   --cpu-d $3 \
@@ -47,7 +48,7 @@ su -c "echo 0 > /sys/devices/system/cpu/cpu3/online"
 
 # turn-on screen
 # turn-off screen
-if [ "$DEV" != "Pixel9" ]; then
+if [ "$DEV" = "Pixel9" ]; then
   # Pixel9
   su -c "echo 1023 > /sys/class/backlight/panel0-backlight/brightness"
 else
