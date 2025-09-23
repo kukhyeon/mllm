@@ -5,6 +5,7 @@ Device::Device(const std::string& device_name) : device(device_name){
 	    cluster_indices = {0, 4, 7};
     } else if (device_name == "S24" || device_name == "SM-S921N"){
         // SM-S921N: Galaxy S24
+        device = "S24";
 	    cluster_indices = {0, 4, 7, 9};
     }
 }
