@@ -150,7 +150,7 @@ Download the model from [here](https://huggingface.co/mllmTeam/qwen-1.5-0.5b-mll
 ```bash
 mkdir ../models && cd ../models
 # Download qwen-1.5-0.5b-q4_k.mllm
-wget https://huggingface.co/mllmTeam/qwen-1.5-0.5b-mllm/resolve/main/qwen-1.5-0.5b-q4_k.mllm?download=true  -O qwen-1.5-0.5b-q4_k.mllm
+wget https://huggingface.co/mllmTeam/qwen-1.5-0.5b-mllm/resolve/main/qwen-1.5-0.5b-q4_k.mllm?download=true -o qwen-1.5-0.5b-q4_k.mllm
 ```
 
 #### c. *Run on Android phone*
@@ -165,6 +165,14 @@ chmod +x scripts-termux/ignite-qwen.sh
 su -c "taskset f0 scripts-termux/ignite-qwen.sh 10 10 6 6" # to control cpu core allocation
 ```
 
+## 🛰️ Utils
+
+### Download supported models
+
+```bash
+mkdir -p models
+python3 tools/py/downloader.py
+```
 
 ## 🪐 Customization
 
