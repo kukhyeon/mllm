@@ -162,7 +162,7 @@ sh scripts-termux/run.sh
 # or -->
 ```bash
 chmod +x scripts-termux/ignite-runfile.sh
-su -c "taskset f0 scripts-termux/ignite-runfile.sh 10 10" # to control cpu core allocation
+su -c "taskset f0 scripts-termux/ignite-qwen.sh 10 10" # to control cpu core allocation
 ```
 
 
