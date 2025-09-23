@@ -1,6 +1,18 @@
+# product name
+DEV="$(getprop ro.product.product.model)"
+DEV="$(printf '%s' "$MODEL" | tr -d '[:space:]')"
+echo "Device: $DEV"
+
 # turn-off screen
-# Pixel9-only
-su -c "echo 0 > /sys/class/backlight/panel0-backlight/brightness"
+if [ "$DEV" != "Pixel9" ]; then
+  # Pixel9
+  su -c "echo 0 > /sys/class/backlight/panel0-backlight/brightness"
+else
+  # S24
+  su -c "echo 0 > /sys/class/backlight/panel/brightness"
+fi
+
+sleep 3 # stabilize
 
 # silver core control
 su -c "echo 0 > /sys/devices/system/cpu/cpu1/online"
@@ -20,7 +32,7 @@ su -c "echo 0 > /sys/devices/system/cpu/cpu3/online"
   -I dataset/hotpot_qa.csv \
   -O output/ \
   -S 0 \
-  -D Pixel9 \
+  -D $DEV \
   --cpu-p $1 \
   --ram-p $2 \
   --cpu-d $3 \
@@ -34,5 +46,11 @@ su -c "echo 0 > /sys/devices/system/cpu/cpu3/online"
 # [interval-unit] = s
 
 # turn-on screen
-# Pixel9-only
-su -c "echo 1023 > /sys/class/backlight/panel0-backlight/brightness"
+# turn-off screen
+if [ "$DEV" != "Pixel9" ]; then
+  # Pixel9
+  su -c "echo 1023 > /sys/class/backlight/panel0-backlight/brightness"
+else
+  # S24
+  su -c "echo 1023 > /sys/class/backlight/panel/brightness"
+fi
