@@ -7,11 +7,11 @@ su -c "echo 0 > /sys/devices/system/cpu/cpu1/online"
 su -c "echo 0 > /sys/devices/system/cpu/cpu2/online"
 su -c "echo 0 > /sys/devices/system/cpu/cpu3/online"
 
-./bin-arm/stream_qwen \
-  -m models/qwen-1.5-1.8b-q4_k.mllm \
-  -v vocab/qwen_vocab.mllm \
-  -e vocab/qwen_merges.txt \
-  -b 1.8B \
+./bin-arm/stream_qwen3 \
+  -m models/qwen3-1.7b-q4_k.mllm \
+  -v vocab/qwen3_vocab.mllm \
+  -e vocab/qwen3_merges.txt \
+  -b 1.7B \
   -t 4 \
   -l 1024 \
   -i 1 \
@@ -27,9 +27,11 @@ su -c "echo 0 > /sys/devices/system/cpu/cpu3/online"
   --ram-d $4 \
   --phase-pause 0 \
   --token-pause 0 \
-  --layer-pause 0
+  --layer-pause 0 \
+  --query-interval 0
 
 # [pause-unit] = ms
+# [interval-unit] = s
 
 # turn-on screen
 # Pixel9-only

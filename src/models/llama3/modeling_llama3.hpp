@@ -6,6 +6,9 @@
 #include "Module.hpp"
 #include "configuration_llama3.hpp"
 
+#include <thread>
+#include <chrono>
+
 using namespace mllm;
 
 class Llama3MLP final : public Module {
@@ -73,6 +76,8 @@ public:
 
         // Initialize KV cache
         if (cache_limit > 0) {
+            // k_cache = KVCache(kv_head_size, hidden_dim / head_size, head_size / kv_head_size, cache_limit, base_name + "k_cache");
+            // v_cache = KVCache(kv_head_size, hidden_dim / head_size, head_size / kv_head_size, cache_limit, base_name + "v_cache");
             k_cache = KVCache(head_size / kv_head_size, cache_limit, base_name + "k_cache");
             v_cache = KVCache(head_size / kv_head_size, cache_limit, base_name + "v_cache");
         }
@@ -205,7 +210,16 @@ public:
     vector<Tensor> Forward(vector<Tensor> inputs, vector<std::any> args) override {
         auto x = embedding(inputs[0]);
         for (auto &block : blocks) {
-            x = block({x})[0];
+            // call blk.layer
+	        x = block({x})[0]; 
+	        // input tensor size distinguishes the prefill and decode phases.
+	        // here, we can inject the layer-wise pause
+	        if (inputs[0].sequence() > 1){
+	            // prefill phase
+		        this_thread::sleep_for(chrono::milliseconds(thread_sleep));
+	        } else {
+		        // decode phase
+	        }
         }
         x = norm(x);
         x = Tensor::mm(x, lm_head().transpose(Chl::SEQUENCE, Chl::DIMENSION));

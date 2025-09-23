@@ -39,7 +39,10 @@ if (ARM)
     add_compile_definitions(__ARM_FEATURE_DOTPROD)
     # 检查是否使用的是 GCC 或 Clang 编译器
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=armv8.2-a+dotprod")
+        # 默认使用 armv8.2-a+dotprod，除非用户自定义了 CMAKE_CXX_FLAGS
+        if(NOT DEFINED CMAKE_CXX_FLAGS OR CMAKE_CXX_FLAGS STREQUAL "")
+            set(CMAKE_CXX_FLAGS "-march=armv8.6-a+dotprod+i8mm")
+        endif()
     endif()
 else ()
     if (MSVC)
@@ -132,6 +135,7 @@ aux_source_directory(${PROJECT_SOURCE_DIR}/src/express DIR_SRC_EXP)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/processor DIR_SRC_PROCESSOE)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/memory DIR_SRC_MEM_MANAGER)
 aux_source_directory(${PROJECT_SOURCE_DIR}/examples EMP_SRC)
+aux_source_directory(${PROJECT_SOURCE_DIR}/main MAIN_SRC)
 aux_source_directory(${PROJECT_SOURCE_DIR}/test TEST_SRC)
 aux_source_directory(${PROJECT_SOURCE_DIR}/third_party/wenet_audio DIR_THIRDPARTY_AUDIO)
 
@@ -223,15 +227,9 @@ if(QUANT)
     endif()
 endif()
 
+# if compile to x86_64
 if(ANALYZE)
     include_directories(${PROJECT_SOURCE_DIR}/src/analyzer)
-    # file(GLOB_RECURSE MLLM_ANALYZE
-    #     ${PROJECT_SOURCE_DIR}/src/backends/cpu/compute/GEMM_AArch64.hpp
-    #     ${PROJECT_SOURCE_DIR}/src/backends/cpu/compute/GEMM_AArch64.cpp
-    #     ${PROJECT_SOURCE_DIR}/src/backends/cpu/quantize/*.hpp
-    #     ${PROJECT_SOURCE_DIR}/src/backends/cpu/quantize/*.cpp
-    # )
-
     file(GLOB_RECURSE MLLM_ANALYZER
         ${CMAKE_CURRENT_LIST_DIR}/src/analyzer/*.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/analyzer/*.hpp)
@@ -240,14 +238,13 @@ if(ANALYZE)
     add_executable(
         analyzer
         ${PROJECT_SOURCE_DIR}/src/analyzer/main.cpp
-        # ${MLLM_QUANT}
         ${MLLM_ANALYZER}
-
-        # ${DIR_SRC}
         ${PROJECT_SOURCE_DIR}/src/ParamLoader.cpp
     )
     target_link_libraries(analyzer fmt::fmt-header-only)
 endif()
+
+
 
 if(TEST)
     add_subdirectory(test)
@@ -256,6 +253,7 @@ endif()
 # add_executable(demo examples/demo.cpp)
 # target_link_libraries(demo fmt::fmt-header-only)
 add_subdirectory(examples)
+add_subdirectory(main)
 
 if(APK)
     add_library(mllm_lib STATIC ${DIR_SRC_CPU} ${DIR_SRC_EXP} ${DIR_SRC} ${DIR_SRC_MEM_MANAGER} ${DIR_SRC_PROCESSOE}

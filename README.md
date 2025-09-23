@@ -1,35 +1,34 @@
 <h1 align="center">
-mllm
+  <em>IGNITE</em>
 </h1>
 
 <h3 align="center">
-fast and lightweight <ins>multimodal LLM</ins> inference engine for mobile and edge devices
+Inference Governed by Nested lazy Ignition for Thermal Efficiency
 </h3>
 
 <h4 align="center">
-| Arm CPU | X86 CPU | Qualcomm NPU(QNN) |
+| Arm CPU | X86 CPU |
 </h4>
 
 <h4 align="center">
 
-[![Website](https://img.shields.io/badge/website-visit-green)](https://ubiquitouslearning.github.io/mllm_website/)
-[![Documentation](https://img.shields.io/badge/view-docs-blue)](https://ubiquitouslearning.github.io/mllm_website/introduction/getstarted/)
-[![Android App](https://img.shields.io/badge/android-app-pink)](https://github.com/lx200916/ChatBotApp/)
-[![Actions Status](https://github.com/UbiquitousLearning/mllm/workflows/Tests/badge.svg)](https://github.com/UbiquitousLearning/mllm/actions)
+[![Paper](https://img.shields.io/badge/view-paper-blue)](#)
+[![Android App](https://img.shields.io/badge/android-app-pink)](https://github.com/kjh2159/ChatBotApp/)
+[![Actions Status](https://github.com/UbiquitousLearning/mllm/workflows/Tests/badge.svg)](https://github.com/kjh2159/mllm/actions)
 </h4>
 
 - Plain C/C++ implementation without dependencies
 - Optimized for multimodal LLMs like Qwen2-VL and LLaVA
-- Supported: ARM NEON, x86 AVX2, Qualcomm NPU (QNN), etc
+- Supported: ARM NEON, x86 AVX2, etc
 - Various quantization schemes
 - End-to-end Android app demo
-- Advanced support: MoE, Prompt Cache, etc..
+- Advanced support for *IGNITE*
+  - Phase-level DVFS control (CPU/RAM)
+  - Phase-level pause injection
+  - Layer-level pause injection
 
-mllm is a lightweight, fast, and easy-to-use (multimodal) on-device LLM inference engine for mobile devices (mainly supporting CPU/NPU), initiated by the research groups led by [Mengwei Xu](https://xumengwei.github.io/) (BUPT) and [Xuanzhe Liu](https://www.liuxuanzhe.com/) (PKU).
 
-**This repository is a customized version of [mllm](https://github.com/UbiquitousLearning/mllm) for hardware control(e.g. CPU/RAM DVFS).**
-
-### Contents
+<!-- ### Contents
 - [Android Demo](#android-demo)
 - [Support models](#support-models)
 - [Quick Start](#quick-start)
@@ -43,72 +42,41 @@ mllm is a lightweight, fast, and easy-to-use (multimodal) on-device LLM inferenc
     - [Convert vocabulary](#convert-vocabulary)
     - [Quantize models](#quantize-models)
 - [Acknowledgments](#acknowledgments)
-- [License](#license)
+- [License](#license) -->
 
+## 🚂 Support engines
 
-## Android Demo
+### Announcement
 
-<table>
-    <tr>
-<!--         <td>Chatting</td> -->
-        <td>Android Intent Invocation</td>
-        <td>Image Understanding</td>
-    </tr>
-    <tr>
-<!--         <td>  <video src="https://github.com/user-attachments/assets/972b3bad-d659-4d76-9141-64ad0ad34d64"> </td> -->
-        <td>  <video src="https://github.com/user-attachments/assets/deb99f8d-9727-4519-9ca7-c39deb7c5b47"> </td>
-        <td>  <video src="https://github.com/user-attachments/assets/55321a43-8484-4f74-b7b2-d4495f3626d9"> </td>
-    </tr>
-    <tr>
-        <td>Chat CPU</td>
-        <td>Chat NPU</td>
-    </tr>    
-    <tr>
-        <td>  <video src="https://github.com/user-attachments/assets/2b0ab0d6-6727-4b85-9ee3-b39d23de5dde"> </td>
-        <td>  <video src="https://github.com/user-attachments/assets/395f8e6e-2ab9-40bc-bf26-164ba5695c64"> </td>
-    </tr>
-</table>
+**Now, mllm engine is only supported. We are preparing llama.cpp support for public version.**
 
-## Support models
+## 🎟️ Support models
 
 ### Language models
 
-| Model                                                                       | CPU <br> FP32 | CPU <br> INT4  | Hexagon NPU <br> INT8 |
-|-----------------------------------------------------------------------------|------|-----|----------------------------|
-| [LLaMA 2 7B](https://github.com/facebookresearch/llama)                   | [✔️](https://huggingface.co/mllmTeam/llama-2-7b-mllm/tree/main)  | [✔️](https://huggingface.co/mllmTeam/llama-2-7b-mllm/tree/main)   |  |
-| [LLaMA 3 1B](https://github.com/meta-llama/llama3)                   | [✔️](https://huggingface.co/mllmTeam/llama-3.2-1b-mllm/tree/main)  | [✔️](https://huggingface.co/mllmTeam/llama-3.2-1b-mllm/tree/main)   |  |
-| [LLaMA 3 3B](https://github.com/meta-llama/llama3)                   | [✔️](https://huggingface.co/mllmTeam/llama-3.2-3b-mllm/tree/main)  | [✔️](https://huggingface.co/mllmTeam/llama-3.2-3b-mllm/tree/main)   |  |
-| [Alpaca 7B](https://github.com/ymcui/Chinese-LLaMA-Alpaca-2)                | [✔️](https://huggingface.co/mllmTeam/chinese-alpaca-7b-mllm/tree/main)  | [✔️](https://huggingface.co/mllmTeam/chinese-alpaca-7b-mllm/tree/main)   |  |
-| [TinyLLaMA 1.1B](https://github.com/jzhang38/TinyLlama)                     | [✔️](https://huggingface.co/mllmTeam/tinyllama-1.1b-mllm/tree/main)  | [✔️](https://huggingface.co/mllmTeam/tinyllama-1.1b-mllm/tree/main)   |  |
-| [LLaVA 7B](https://github.com/haotian-liu/LLaVA)                            | [✔️](https://huggingface.co/mllmTeam/llava-1.5-7b-mllm/tree/main)  | [✔️](https://huggingface.co/mllmTeam/llava-1.5-7b-mllm/tree/main)   |  |
-| [Gemma 2B](https://github.com/google/gemma_pytorch)                         | [✔️](https://huggingface.co/mllmTeam/gemma-2b-mllm/tree/main)  | [✔️](https://huggingface.co/mllmTeam/gemma-2b-mllm/tree/main)   |  |
-| [Gemma 2 2B](https://github.com/google/gemma_pytorch)                         | [✔️](https://huggingface.co/mllmTeam/gemma-2-2b-mllm/tree/main)  | [✔️](https://huggingface.co/mllmTeam/gemma-2-2b-mllm/tree/main)   |  |
-| [Qwen 1.5 0.5B](https://github.com/QwenLM/Qwen)                                 | [✔️](https://huggingface.co/mllmTeam/qwen-1.5-0.5b-mllm/tree/main)  | [✔️](https://huggingface.co/mllmTeam/qwen-1.5-0.5b-mllm/tree/main)   |  |
-| [Qwen 1.5 1.8B](https://github.com/QwenLM/Qwen)                            | [✔️](https://huggingface.co/mllmTeam/qwen-1.5-1.8b-chat-mllm)  | [✔️](https://huggingface.co/mllmTeam/qwen-1.5-1.8b-chat-mllm)   | [✔️](https://huggingface.co/mllmTeam/qwen-1.5-1.8b-chat-mllm) |
-| [Qwen 2.5 1.5B](https://github.com/QwenLM/Qwen2.5) | [✔️](https://huggingface.co/mllmTeam/qwen-2.5-1.5b-mllm/tree/main) | [✔️](https://huggingface.co/mllmTeam/qwen-2.5-1.5b-mllm/tree/main) | |
-| [Mistral 7B](https://github.com/mistralai/mistral-src)                      | [✔️](https://huggingface.co/mllmTeam/mistral-7b-instruct-v0.2-mllm/tree/main)  | [✔️](https://huggingface.co/mllmTeam/mistral-7b-instruct-v0.2-mllm/tree/main)   |  |
-| [Yi 6B](https://huggingface.co/01-ai/Yi-1.5-6B)                             | [✔️](https://huggingface.co/mllmTeam/yi-1.5-6b-chat-mllm/tree/main)  | [✔️](https://huggingface.co/mllmTeam/yi-1.5-6b-chat-mllm/tree/main)   |  |
-| [StableLM 2 1.6B](https://github.com/Stability-AI/StableLM)                     | [✔️](https://huggingface.co/mllmTeam/stablelm-2-1.6b-chat-mllm/tree/main)  | [✔️](https://huggingface.co/mllmTeam/stablelm-2-1.6b-chat-mllm/tree/main)   |  |
-| [OPT 1.3B](https://github.com/facebookresearch/metaseq/tree/main/projects/OPT)                     | [✔️](https://huggingface.co/mllmTeam/opt-1.3b-mllm/tree/main)  | [✔️](https://huggingface.co/mllmTeam/opt-1.3b-mllm/tree/main)   |  |
-| [Phi 3 mini 3.8B](https://huggingface.co/microsoft/Phi-3-mini-4k-instruct)                     |  [✔️](https://huggingface.co/mllmTeam/phi-3-mini-instruct-mllm/tree/main)   | [✔️](https://huggingface.co/mllmTeam/phi-3-mini-instruct-mllm/tree/main)   |  |
-| [MiniCPM 2B](https://huggingface.co/openbmb/MiniCPM-2B-dpo-fp32)                     |  [✔️](https://huggingface.co/mllmTeam/minicpm-2b-dpo-mllm/tree/main)   | [✔️](https://huggingface.co/mllmTeam/minicpm-2b-dpo-mllm/tree/main)   |  |
-| [MiniCPM 3 4B](https://huggingface.co/openbmb/MiniCPM3-4B)                     |  [✔️](https://huggingface.co/mllmTeam/minicpm3-4b-mllm/tree/main)   | [✔️](https://huggingface.co/mllmTeam/minicpm3-4b-mllm/tree/main)   |  |
-| [MiniCPM MoE 8x2B](https://huggingface.co/openbmb/MiniCPM-MoE-8x2B)                     |  [✔️](https://huggingface.co/mllmTeam/minicpm-moe-8x2b-mllm/tree/main)   | [✔️](https://huggingface.co/mllmTeam/minicpm-moe-8x2b-mllm/tree/main)   |  |
-| [SmolLM 1.7B](https://huggingface.co/HuggingFaceTB/SmolLM-1.7B-Instruct)                     |  [✔️](https://huggingface.co/mllmTeam/smollm-1.7b-instruct-mllm/tree/main)   | [✔️](https://huggingface.co/mllmTeam/smollm-1.7b-instruct-mllm/tree/main)   |  |
-| [DCLM 1B](https://huggingface.co/TRI-ML/DCLM-1B) | [✔️](https://huggingface.co/mllmTeam/dclm-1b-mllm/tree/main)| [✔️](https://huggingface.co/mllmTeam/dclm-1b-mllm/tree/main)| |
-| [OpenELM 1.1B](https://github.com/apple/corenet/tree/main/projects/openelm) | [✔️](https://huggingface.co/mllmTeam/openelm-1.1b-mllm/tree/main)| [✔️](https://huggingface.co/mllmTeam/openelm-1.1b-mllm/tree/main)| |
-[PhoneLM 1.5B](https://github.com/UbiquitousLearning/PhoneLM) | [✔️](https://huggingface.co/mllmTeam/phonelm-1.5b-mllm/tree/main)| [✔️](https://huggingface.co/mllmTeam/phonelm-1.5b-mllm/tree/main)| [✔️](https://huggingface.co/mllmTeam/phonelm-1.5b-mllm/tree/main)|
+| Model                                                                       | CPU <br> FP32 | CPU <br> INT4  | *IGNITE* |
+|-----------------------------------------------------------------------------|---------------|----------------|----------|
+| [LLaMA3.2 1B](https://github.com/meta-llama/llama3) | [✔️](https://huggingface.co/mllmTeam/llama-3.2-1b-mllm/tree/main)  | [✔️](https://huggingface.co/mllmTeam/llama-3.2-1b-mllm/tree/main)   | ⭕ |
+| [LLaMA3.2 3B](https://github.com/meta-llama/llama3) | [✔️](https://huggingface.co/mllmTeam/llama-3.2-3b-mllm/tree/main)  | [✔️](https://huggingface.co/mllmTeam/llama-3.2-3b-mllm/tree/main) | ⭕ |
+| [Qwen1.5 0.5B](https://github.com/QwenLM/Qwen) | [✔️](https://huggingface.co/mllmTeam/qwen-1.5-0.5b-mllm/tree/main)  | [✔️](https://huggingface.co/mllmTeam/qwen-1.5-0.5b-mllm/tree/main) | ⭕ |
+| [Qwen1.5 1.8B](https://github.com/QwenLM/Qwen) | [✔️](https://huggingface.co/mllmTeam/qwen-1.5-1.8b-mllm/tree/main)  | [✔️](https://huggingface.co/mllmTeam/qwen-1.5-1.8b-mllm/tree/main) | ⭕ |
+| [Qwen2.5 0.5B](https://github.com/QwenLM/Qwen3) | [✔️](https://huggingface.co/kjh2159/Qwen2.5-0.5B-MLLM/tree/main)  | [✔️](https://huggingface.co/kjh2159/Qwen2.5-0.5B-MLLM/tree/main) | ⭕ |
+| [Qwen2.5 1.5B](https://github.com/QwenLM/Qwen3) | [✔️](https://huggingface.co/mllmTeam/qwen-2.5-1.5b-mllm/tree/main)  | [✔️](https://huggingface.co/mllmTeam/qwen-2.5-1.5b-mllm/tree/main) | ⭕ |
+| [Qwen3 0.6B](https://github.com/QwenLM/Qwen3) | [✔️](https://huggingface.co/mllmTeam/qwen-3-0.6b-mllm/tree/main)  | [✔️](https://huggingface.co/mllmTeam/qwen-3-0.6b-mllm/tree/main) | ⭕ |
+| [Qwen3 1.7B](https://github.com/QwenLM/Qwen3) | [✔️](https://huggingface.co/kjh2159/Qwen3-1.7B-MLLM/tree/main)  | [✔️](https://huggingface.co/kjh2159/Qwen3-1.7B-MLLM/tree/main) | ⭕ |
 
-## Quick Start
+> For other models, please refer to the following two hugging face repositories (extension type is .mllm): [mllm](https://huggingface.co/mllmTeam/models) and [*IGNITE*](https://huggingface.co/kjh2159/models/).
 
-### Get the Code
+## 🚀 Quick Start
+
+### 1. Get the code
 
 ```bash
 git clone https://github.com/kjh2159/mllm
 cd mllm
 ```
 
-### Check prerequisites
+### 2. Check prerequisites
 
 Building mllm requires following tools:
 
@@ -119,11 +87,11 @@ Building mllm requires following tools:
 
 > Note that building OpenMP libs on macOS may fail due to Apple LLVM compiler, so we disable OpenMP on macOS by default, you may experience slower performance on macOS. Build mllm is more recommended on Linux.
 
-### Run with the CPU of Android
+### 3-1. Run with CPU on Android shell
 
 *`NOTE:` This project requires to root an android phone. Also, depending on your phones, RAM DVFS may not be supported. Please first check if your phone is available for RAM DVFS*
 
-#### 1. Build
+#### a. *Build*
 
   ```bash
   export ANDROID_NDK=/path/to/your/ndk
@@ -131,7 +99,7 @@ Building mllm requires following tools:
   ./build_android.sh
   ```
 
-#### 2. Download Qwen1.5 0.5B
+#### b. *Download model: Qwen1.5 0.5B*
 
 Download the model from [here](https://huggingface.co/mllmTeam/qwen-1.5-0.5b-mllm/tree/main) and place the model file in the directory of `models`, or using the following instructions
 
@@ -141,7 +109,7 @@ mkdir ../models && cd ../models
 wget https://huggingface.co/mllmTeam/qwen-1.5-0.5b-mllm/resolve/main/qwen-1.5-0.5b-q4_k.mllm?download=true  -O qwen-1.5-0.5b-q4_k.mllm
 ```
 
-#### 3. Run remote on Android Phone
+#### c. *Run remote on Android Phone*
 
 ```bash
 sh scripts-arm/run-setup.sh
@@ -164,18 +132,18 @@ Result are as followed:
 ```
 
 
-### Run with the CPU on Termux
+### 3-2. Run with CPU on Termux
 
 *`NOTE:` This project requires to root an android phone. Also, depending on your phones, RAM DVFS may not be supported. Please first check if your phone is available for RAM DVFS*
 
-#### 1. Build
+#### a. *Build*
 
 ```bash
 cd scripts
 sh build.sh
 ```
 
-#### 2. Download Qwen1.5 0.5B
+#### b. *Download Qwen1.5 0.5B*
 
 Download the model from [here](https://huggingface.co/mllmTeam/qwen-1.5-0.5b-mllm/tree/main) and place the model file in the directory of `models`, or using the following instructions
 
@@ -185,24 +153,24 @@ mkdir ../models && cd ../models
 wget https://huggingface.co/mllmTeam/qwen-1.5-0.5b-mllm/resolve/main/qwen-1.5-0.5b-q4_k.mllm?download=true  -O qwen-1.5-0.5b-q4_k.mllm
 ```
 
-#### 3. Run remote on Android Phone
+#### c. *Run on Android phone*
 
-```bash
+<!-- ```bash
 sh scripts-termux/run-setup.sh
 sh scripts-termux/run.sh
 
-# or
-chmod +x scripts-termux/run.sh
-su -c "taskset f0 scripts-termux/run.sh" # to control cpu core allocation
+# or -->
+```bash
+chmod +x scripts-termux/ignite-runfile.sh
+su -c "taskset f0 scripts-termux/ignite-runfile.sh 10 10" # to control cpu core allocation
 ```
 
 
-## Customization
+## 🪐 Customization
 
 ### Convert models
 
-You can download models from [here](https://huggingface.co/mllmTeam), or you can convert a pytorch/safetensor model to
-mllm model by yourself.
+You can convert a pytorch/safetensor model to mllm model by yourself.
 
 ```bash
 cd tools/convertor
@@ -240,9 +208,10 @@ cd bin
 ./quantize model.mllm model_q4_k.mllm Q4_K
 ```
 
-## Acknowledgments
+## ✨ Acknowledgments
 
-mllm reuses many low-level kernel implementation from [ggml](https://github.com/ggerganov/ggml) on ARM CPU.
+*IGNITE* project reuses the base kernels and implementation of [mllm](https://github.com/UbiquitousLearning/mllm).
+Also, mllm reuses many low-level kernel implementation from [ggml](https://github.com/ggerganov/ggml) on ARM CPU.
 It also utilizes [stb](https://github.com/nothings/stb) and [wenet](https://github.com/wenet-e2e/wenet) for
 pre-processing images and audios.
 mllm also has benefitted from following projects: [llama.cpp](https://github.com/ggerganov/llama.cpp)
@@ -261,22 +230,3 @@ Certain component([wenet](https://github.com/wenet-e2e/wenet)) of this project i
 These component is clearly identified in their respective subdirectories along with a copy of the Apache License 2.0.
 For the full text of the Apache License 2.0, please refer to the [LICENSE-APACHE](third_party/wenet_audio/LICENSE) file
 located in the relevant subdirectories.
-
-## Citation
-```
-@article{xu2025fast,
-  title={Fast On-device LLM Inference with NPUs},
-  author={Xu, Daliang and Zhang, Hao and Yang, Liming and Liu, Ruiqi and Huang, Gang and Xu, Mengwei and Liu, Xuanzhe},
-  booktitle={International Conference on Architectural Support for Programming Languages and Operating Systems (ASPLOS)},
-  year={2025}
-}
-@misc{yi2023mllm,
-  title = {mllm: fast and lightweight multimodal LLM inference engine for mobile and edge devices},
-  author = {Rongjie Yi and Xiang Li and Zhenyan Lu and Hao Zhang and Daliang Xu and Liming Yang and Weikai Xie and Chenghua Wang and Xuanzhe Liu and Mengwei Xu},
-  year = {2023},
-  publisher = {mllm Team},
-  url = {https://github.com/UbiquitousLearning/mllm}
-}
-```
-
-

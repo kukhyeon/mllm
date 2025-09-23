@@ -115,7 +115,7 @@ struct QWenConfig : public TransformerConfig {
             initializer_range = 0.02;
             intermediate_size = 4864;
             max_position_embeddings = 32768;
-            max_window_layers = 21;
+            max_window_layers = 24;
             model_type = "qwen2";
             num_attention_heads = 14;
             num_hidden_layers = 24;
