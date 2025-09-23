@@ -1,6 +1,6 @@
 # product name
 DEV="$(getprop ro.product.product.model)"
-DEV="$(printf '%s' "$MODEL" | tr -d '[:space:]')"
+DEV="$(printf '%s' "$DEV" | tr -d '[:space:]')"
 echo "Device: $DEV"
 
 # turn-off screen
@@ -10,7 +10,7 @@ if [ "$DEV" = "Pixel9" ]; then
 else
   # S24
   su -c "echo 0 > /sys/class/backlight/panel/brightness"
-  $DEV="S24"
+  DEV="S24"
 fi
 
 sleep 3 # stabilize
