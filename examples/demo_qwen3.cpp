@@ -69,7 +69,7 @@ int main(int argc, char **argv) {
                 model.clear_kvcache();
                 return false;
             }
-            std::cout << replaceFirst(output_string, "\n\n", "") << std::flush;
+            std::cout << replaceFirst(output_string, "\r\n\n", "") << std::flush;
             return true;
         });
         
