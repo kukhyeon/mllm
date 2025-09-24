@@ -45,6 +45,7 @@ int main(int argc, char **argv) {
     cmdParser.add<string>("merge", 'e', "specify mllm merge file path", false, "../vocab/qwen3_merges.txt");
     cmdParser.add<string>("model", 'm', "specify mllm model path", false, "../models/qwen3-1.7b-q4_k.mllm");
     cmdParser.add<string>("billion", 'b', "[0.6B | 1.7B | 4B |]", false, "0.6B");
+    cmdParser.add<string>("family", 'f', "[Qwen1.5 | Qwen2.5 |]", false, "Qwen1.5"); // not used in Qwen3
     cmdParser.add<int>("limits", 'l', "max KV cache size", false, 1024);
     cmdParser.add<int>("thread", 't', "num of threads", false, 4);
     cmdParser.add<bool>("thinking", 'T', "enable thinking [1: thinking | 0: non-thinking]", false, 0);

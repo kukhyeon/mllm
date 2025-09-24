@@ -24,6 +24,7 @@ su -c "echo 0 > /sys/devices/system/cpu/cpu3/online"
   -m models/qwen3-1.7b-q4_k.mllm \
   -v vocab/qwen3_vocab.mllm \
   -e vocab/qwen3_merges.txt \
+  -f Qwen1.5 \
   -b 1.7B \
   -t 4 \
   -l 1024 \
