@@ -21,7 +21,7 @@ su -c "echo 0 > /sys/devices/system/cpu/cpu2/online"
 su -c "echo 0 > /sys/devices/system/cpu/cpu3/online"
 
 ./bin-arm/stream_qwen3 \
-  -m models/qwen3-1.7b-q4_k.mllm \
+  -m models/qwen-3-1.7b-q4k.mllm \
   -v vocab/qwen3_vocab.mllm \
   -e vocab/qwen3_merges.txt \
   -f Qwen1.5 \

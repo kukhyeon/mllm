@@ -99,19 +99,20 @@ Building mllm requires following tools:
   ./build_android.sh
   ```
 
-#### b. *Download model: Qwen1.5 0.5B*
+#### b. *Download model: Qwen3 1.7B*
 
 Download the model from [here](https://huggingface.co/mllmTeam/qwen-1.5-0.5b-mllm/tree/main) and place the model file in the directory of `models`, or using the following instructions
 
 ```bash
 mkdir ../models && cd ../models
 # Download qwen-1.5-0.5b-q4_k.mllm
-wget https://huggingface.co/mllmTeam/qwen-1.5-0.5b-mllm/resolve/main/qwen-1.5-0.5b-q4_k.mllm?download=true  -O qwen-1.5-0.5b-q4_k.mllm
+wget https://huggingface.co/kjh2159/Qwen3-1.7B-MLLM/resolve/main/qwen3-1.7b-q4_k.mllm?download=true -o qwen-3-1.7b-q4k.mllm
 ```
 
 #### c. *Run remote on Android Phone*
 
 ```bash
+cd ..
 sh scripts-arm/run-setup.sh
 sh scripts-arm/run-remote.sh
 ```
@@ -143,14 +144,14 @@ cd scripts
 sh build.sh
 ```
 
-#### b. *Download Qwen1.5 0.5B*
+#### b. *Download Qwen3 1.7B*
 
 Download the model from [here](https://huggingface.co/mllmTeam/qwen-1.5-0.5b-mllm/tree/main) and place the model file in the directory of `models`, or using the following instructions
 
 ```bash
 mkdir ../models && cd ../models
 # Download qwen-1.5-0.5b-q4_k.mllm
-wget https://huggingface.co/mllmTeam/qwen-1.5-0.5b-mllm/resolve/main/qwen-1.5-0.5b-q4_k.mllm?download=true -o qwen-1.5-0.5b-q4_k.mllm
+wget https://huggingface.co/kjh2159/Qwen3-1.7B-MLLM/resolve/main/qwen3-1.7b-q4_k.mllm?download=true -o qwen-3-1.7b-q4k.mllm
 ```
 
 #### c. *Run on Android phone*
@@ -161,6 +162,7 @@ sh scripts-termux/run.sh
 
 # or -->
 ```bash
+cd ..
 chmod +x scripts-termux/ignite-qwen.sh
 su -c "taskset f0 scripts-termux/ignite-qwen.sh 10 10 6 6" # to control cpu core allocation
 ```
