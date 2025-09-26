@@ -72,8 +72,8 @@ Inference Governed by Nested lazy Ignition for Thermal Efficiency
 ### 1. Get the code
 
 ```bash
-git clone https://github.com/kjh2159/mllm
-cd mllm
+git clone --recursive https://github.com/kjh2159/mllm ignite
+cd ignite
 ```
 
 ### 2. Check prerequisites
