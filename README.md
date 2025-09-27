@@ -80,7 +80,7 @@ Inference Governed by Nested lazy Ignition for Thermal Efficiency
 | Galaxy S24       | armv8  | Exynos 2400 | Android |
 | Our workstation* | amd64  | Intel i9    | Linux   |
 
-> * Linux device (our workstation) is tested for only response generation not ignite.
+> \* Linux device (our workstation) is tested for only response generation not ignite.
 
 </details>
 
