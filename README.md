@@ -50,9 +50,9 @@ Inference Governed by Nested lazy Ignition for Thermal Efficiency
 
 **Now, mllm engine is only supported. We are preparing llama.cpp support for public version.**
 
-## 🎟️ Support models
-
-### Language models
+## 🎟️ Supports
+<details>
+  <summary><strong>Language models</strong></summary>
 
 | Model                                                                       | CPU <br> FP32 | CPU <br> INT4  | *IGNITE* |
 |-----------------------------------------------------------------------------|---------------|----------------|----------|
@@ -66,6 +66,23 @@ Inference Governed by Nested lazy Ignition for Thermal Efficiency
 | [Qwen3 1.7B](https://github.com/QwenLM/Qwen3) | [✔️](https://huggingface.co/kjh2159/Qwen3-1.7B-MLLM/tree/main)  | [✔️](https://huggingface.co/kjh2159/Qwen3-1.7B-MLLM/tree/main) | ⭕ |
 
 > For other models, please refer to the following two hugging face repositories (extension type is .mllm): [mllm](https://huggingface.co/mllmTeam/models) and [*IGNITE*](https://huggingface.co/kjh2159/models/).
+
+</details>
+
+<details>
+  <summary><strong>Devices</strong></summary>
+
+#### Tested
+
+| Model            | Arch.  | Backend     | OS      |
+|------------------|--------|-------------|---------|
+| Google Pixel9    | armv8  | Tensor G4   | Android |
+| Galaxy S24       | armv8  | Exynos 2400 | Android |
+| Our workstation* | amd64  | Intel i9    | Linux   |
+
+> * Linux device (our workstation) is tested for only response generation not ignite.
+
+</details>
 
 ## 🚀 Quick Start
 
