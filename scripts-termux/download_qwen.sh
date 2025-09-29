@@ -1,1 +1,0 @@
-curl -L https://huggingface.co/mllmTeam/qwen-1.5-1.8b-mllm/resolve/main/qwen-1.5-1.8b-q4_k.mllm -o models/qwen-1.5-1.8b-q4_k.mllm
