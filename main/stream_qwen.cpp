@@ -11,10 +11,10 @@
 #include "models/qwen/configuration_qwen.hpp"
 #include "models/qwen/modeling_qwen.hpp"
 #include "models/qwen/tokenization_qwen.hpp"
-#include "utils/utils.h"
 #include "utils/json.hpp"
 #include "hardware/dvfs.h"
 #include "hardware/record.h"
+#include "hardware/utils.h"
 
 #include <cstdlib>
 #include <thread>

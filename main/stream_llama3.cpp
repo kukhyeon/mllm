@@ -11,10 +11,10 @@
 #include "models/llama3/modeling_llama3.hpp"
 #include "models/llama3/tokenization_llama3.hpp"
 #include "processor/PostProcess.hpp"
-#include "utils/utils.h"
 #include "utils/json.hpp"
 #include "hardware/dvfs.h"
 #include "hardware/record.h"
+#include "hardware/utils.h"
 
 #include <cstdlib>
 #include <thread>

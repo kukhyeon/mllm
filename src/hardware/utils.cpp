@@ -1,4 +1,7 @@
 #include "utils.h"
+#include <fstream>
+#include <sstream>
+#include <iostream>
 
 std::vector<std::string> parseCSVLine(const std::string& line) {
     std::vector<std::string> values;
@@ -53,3 +56,49 @@ std::string joinPaths(const std::string& path1, const std::string& path2) {
         return path1 + path2;
     }
 }
+
+std::string replace(std::string origin, std::string target, std::string destination) {
+    size_t pos = 0;
+    while ((pos = origin.find(target, pos)) != std::string::npos) {
+        origin.replace(pos, target.length(), destination);
+        pos += destination.length();
+    }
+    return origin;
+}
+
+// -------------------------------------------
+// TODO: move to utils (refactoring)
+std::vector<std::string> split_string(const std::string& str){
+    // initialization
+    std::vector<std::string> result;
+    // conversion to stream string
+    std::istringstream iss(str);
+    std::string value; // splited value
+
+    while (iss >> value){
+        result.push_back(value); // accumulation
+    }
+
+    return result;
+}
+
+
+std::string execute_cmd(const char* cmd){
+    // command execution
+    FILE* pipe = popen(cmd, "r");
+    
+    // check pipe open
+    if (!pipe) { std::cerr << "failed to pipe open (record.h)\n"; return "";}
+
+    // get output from buffer
+    std::ostringstream result;
+    char buff[8192];
+    while (fgets(buff, sizeof(buff), pipe) != nullptr){
+        result << buff;
+    }
+
+    // close pipe
+    pclose(pipe); 
+    return result.str();
+}
+// -------------------------------------------

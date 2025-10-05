@@ -3,6 +3,7 @@
 #define RECORD
 
 #include "dvfs.h"
+#include "utils.h"
 
 #include <stdlib.h>
 
@@ -21,10 +22,6 @@
 #define INFER_RECORD_FILE "./data/infer_info.csv"
 #define TIME_T std::chrono::system_clock::time_point
 
-
-// internal static functions
-std::vector<std::string> split_string(const std::string& str);
-std::string execute_cmd(const char* cmd);
 
 //test
 void get_cpu_info();

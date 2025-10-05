@@ -2,12 +2,30 @@
 #define DVFS_H
 
 #include "device.h"
+#include "utils.h"
 
 #include <stdlib.h>
 
 #include <map>
 #include <cmath>
+#include <algorithm>
+#include <fstream>
+#include <cstdio>
+#include <sstream>
 
+class Collector;
+
+class Collector : public Device {
+private:
+    // pixel9
+    // BIG: thermal/thermal_zone0
+    // MID: thermal/thermal_zone1
+    static const std::map<std::string, std::vector<std::string>> thermal_zones_cpu;
+public:
+    explicit Collector(const std::string& device_name);
+    double collect_high_temp();
+
+};
 
 class DVFS : public Device {
 private:
@@ -31,6 +49,8 @@ public:
     int unset_ram_freq();
 
     std::vector<int> get_cpu_freqs_conf(int prime_cpu_index);
+
+    Collector get_collector() { return Collector(this->get_device_name()); }
 };
 
 #endif //DVFS_H

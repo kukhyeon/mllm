@@ -11,10 +11,11 @@
 #include "models/qwen3/configuration_qwen3.hpp"
 #include "models/qwen3/modeling_qwen3.hpp"
 #include "models/qwen3/tokenization_qwen3.hpp"
-#include "utils/utils.h"
 #include "utils/json.hpp"
 #include "hardware/dvfs.h"
 #include "hardware/record.h"
+#include "hardware/utils.h"
+#include "hardware/utils.h"
 
 #include <cstdlib>
 #include <thread>
@@ -27,6 +28,26 @@ using json = nlohmann::json;
 
 std::atomic_bool sigterm(false);
 
+// TODO: move to common
+struct ignite_params {
+    // resource plane
+    double time_slot = 0.5; // s
+    double temp_threshold = 75.0; // Celsius
+    std::vector<double> temp_history = {}; // temperature history
+    int temp_cap = 10; // max length of temperature history
+    double temp_alpha = 0.6; // for EMA
+    int max_cpu_clk_idx = 0; // fixed by device
+    int cur_cpu_clk_idx = 0; // dynamic
+    int max_ram_clk_idx = 0; // fixed by device
+    int cur_ram_clk_idx = 0; // dynamic
+
+    // model plane
+    int phase_pause = 0; // ms
+    int token_pause = 0; // ms
+    int layer_pause = 0; // ms
+    int query_interval = 0; // ms
+};
+
 std::string replaceFirst(std::string& str, const std::string& from, const std::string& to) {
     size_t pos = 0;
     if (str.substr(pos, from.length()) == from) {
@@ -35,10 +56,54 @@ std::string replaceFirst(std::string& str, const std::string& from, const std::s
     return str;
 }
 
+void agent(struct ignite_params* params, /*to control*/ DVFS& dvfs, /*to monitor*/ Collector collector, std::atomic<bool>& sigterm) {
+    while (!sigterm.load()) {
+        /* Here, agents run the algorithm! */
+
+        double cur_temp = collector.collect_high_temp();
+        std::this_thread::sleep_for(std::chrono::milliseconds((int)(params->time_slot * 1000)));
+
+        if (cur_temp < 0) {
+            std::cerr << "[WARNING] Thermal zone not found. Skip this monitoring.\n";
+            break;
+        }
+
+        // collecting temperature
+        if (params->temp_history.size() < params->temp_cap) {
+            params->temp_history.push_back(cur_temp);
+            continue;
+        } else {
+            params->temp_history.erase(params->temp_history.begin());
+            params->temp_history.push_back(cur_temp);
+        }
+
+        // calculating average and standard deviation
+        double avg_temp = 0.0;
+        double standard_deviation = 0.0;
+        for (auto t : params->temp_history) { avg_temp += t;}
+        avg_temp /= params->temp_cap;
+        for (auto t : params->temp_history) { standard_deviation += (t - avg_temp) * (t - avg_temp); }
+
+        // DVFS control (action)
+        if (avg_temp + params->temp_alpha*standard_deviation >= params->temp_threshold) {
+            // Throttling
+            params->cur_cpu_clk_idx = std::max(0, params->cur_cpu_clk_idx - 2); // step down 2
+            params->cur_ram_clk_idx = std::max(0, params->cur_ram_clk_idx - 1); // step down 1
+        } else {
+            // Recovery
+            params->cur_cpu_clk_idx = std::min(params->max_cpu_clk_idx, params->cur_cpu_clk_idx + 1); // step up 1
+            params->cur_ram_clk_idx = std::min(params->max_ram_clk_idx, params->cur_ram_clk_idx + 1); // step up 1
+        }
+    }
+    std::cout << std::flush << "agent loop done\n"; // test
+    return;
+}
+
 int main(int argc, char **argv) {
     std::iostream::sync_with_stdio(false);
     cmdline::parser cmdParser;
     pid_t pid = getpid();
+    ignite_params params;
 
     // arg parser: BASIC
     cmdParser.add<string>("vocab", 'v', "specify mllm tokenizer model path", false, "../vocab/qwen3_vocab.mllm");
@@ -85,8 +150,8 @@ int main(int argc, char **argv) {
 
     // variable initialization: For DVFS
     const string device_name = cmdParser.get<string>("device");
-    const int cpu_clk_idx_p = cmdParser.get<int>("cpu-p");
-    const int ram_clk_idx_p = cmdParser.get<int>("ram-p");
+    params.cur_cpu_clk_idx = cmdParser.get<int>("cpu-p"); const int cpu_clk_idx_p = params.cur_cpu_clk_idx;
+    params.cur_ram_clk_idx = cmdParser.get<int>("ram-p"); const int ram_clk_idx_p = params.cur_ram_clk_idx;
     const int cpu_clk_idx_d = cmdParser.get<int>("cpu-d");
     const int ram_clk_idx_d = cmdParser.get<int>("ram-d");
 
@@ -104,10 +169,10 @@ int main(int argc, char **argv) {
     string output_qa;
 
     // variable initialization: For Pause Techniques
-    int token_pause = cmdParser.get<int>("token-pause");
-    int phase_pause = cmdParser.get<int>("phase-pause");
-    int layer_pause = cmdParser.get<int>("layer-pause");
-    int query_interval = cmdParser.get<int>("query-interval") * 1000;
+    params.token_pause = cmdParser.get<int>("token-pause"); int token_pause = params.token_pause;
+    params.phase_pause = cmdParser.get<int>("phase-pause"); int phase_pause = params.phase_pause;
+    params.layer_pause = cmdParser.get<int>("layer-pause"); int layer_pause = params.layer_pause;
+    params.query_interval = cmdParser.get<int>("query-interval") * 1000; int query_interval = params.query_interval;
 
     // variable initialization: For File Naming
     bool fixed_config = (cpu_clk_idx_p == cpu_clk_idx_d) && (ram_clk_idx_p == ram_clk_idx_d);
@@ -225,6 +290,14 @@ int main(int argc, char **argv) {
     for (auto f : freq_config) { cout << f << " "; }
     cout << "\r\n"; // to validate (print freq-configuration)
 
+    // param setting for dvfs
+    params.max_cpu_clk_idx = dvfs.get_cpu_freq().at(
+        dvfs.get_cluster_indices().at(
+            dvfs.get_cluster_indices().size() - 1
+        )
+    ).size() - 1;
+    params.max_ram_clk_idx = dvfs.get_ddr_freq().size() - 1;
+
     // inference recording contents
     const vector<string> infer_record_names = {"sys_time", "load_time", "prefill_speed", "decode_speed", "prefill_token", "decode_token", "ttft"};
     write_file(infer_record_names, output_infer);
@@ -235,6 +308,10 @@ int main(int argc, char **argv) {
     } else {
         qa_limit = MIN(qa_list.size(), qa_start + qa_len) - 1;
     }
+
+    // Prepare collector
+    auto collector = dvfs.get_collector();
+    agent(&params, dvfs, collector, sigterm); // for future
 
     // measurement start
     auto start_sys_time = chrono::system_clock::now();

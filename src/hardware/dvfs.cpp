@@ -1,5 +1,6 @@
 #include "dvfs.h"
 
+// DVFS --------------------------------------
 const std::map<std::string, std::map<int, std::vector<int>>> DVFS::cpufreq = {
     { "S22_Ultra", {
         { 0, { 307200, 403200, 518400, 614400, 729600, 844800, 960000, 1075200, 1171200, 1267200, 1363200, 1478400, 1574400, 1689600, 1785600 } },
@@ -155,3 +156,38 @@ std::vector<int> DVFS::get_cpu_freqs_conf(int prime_cpu_index){
 
     return freq_conf;
 }
+// -------------------------------------------
+
+
+// Collector ----------------------------------
+Collector::Collector(const std::string& device_name) : Device(device_name) {}
+
+// pixel9
+// BIG: thermal/thermal_zone0
+// MID: thermal/thermal_zone1
+const std::map<std::string, std::vector<std::string>> Collector::thermal_zones_cpu = {
+    { "Pixel9", { /*BIG*/ "/sys/devices/virtual/thermal/thermal_zone0", /*MID*/ "/sys/devices/virtual/thermal/thermal_zone1" } }
+};
+
+double Collector::collect_high_temp(){
+    if (this->device != "Pixel9") return 0.0;
+
+    std::string command = "su -c \"";
+    for (auto zone_path : this->thermal_zones_cpu.at(this->device)){
+        command += std::string("awk '{print \\$1/1000}' ")+zone_path+std::string("/temp; ");
+    }
+    command += "\""; // closing quote
+
+    std::string output = execute_cmd(command.c_str());
+    std::vector<std::string> temps = split_string(output);
+
+    // print high temperature
+    std::vector<double> temp_vals = {};
+    for (auto t_str : temps){
+        temp_vals.push_back(std::stod(t_str));
+    }
+
+    return std::max_element(temp_vals.begin(), temp_vals.end())[0];
+}
+
+// -------------------------------------------
