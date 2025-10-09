@@ -36,7 +36,6 @@ macro(func_llm_add_executable target)
         ${PROJECT_SOURCE_DIR}/src/hardware/dvfs.cpp
         ${PROJECT_SOURCE_DIR}/src/hardware/record.cpp
         ${PROJECT_SOURCE_DIR}/src/hardware/utils.cpp
-        ${PROJECT_SOURCE_DIR}/src/hardware/utils.h
     )
     func_link_libaries(${target})
 endmacro()

@@ -416,6 +416,8 @@ int main(int argc, char **argv) {
     for (int i = 0; i < ans.size(); ++i) {
         json pair;
         pair["question"] = qa_list[qa_start + i][1];
+    std::cout << params.temp_cap << std::endl; // test
+    std::cout << params.temp_alpha << std::endl; // test
         pair["answer"] = ans[i];
         qa_array.push_back(pair);
     }
