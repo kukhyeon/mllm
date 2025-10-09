@@ -1,0 +1,28 @@
+#ifndef COMMON_H
+#define COMMON_H
+
+// This common file is for IGNITE technique parameters
+
+#include <vector>
+#include <string>
+
+struct ignite_params {
+    // resource plane
+    double time_slot = 0.5; // s
+    double temp_threshold = 75.0; // Celsius
+    std::vector<double> temp_history = {}; // temperature history
+    int temp_cap = 10; // max length of temperature history
+    double temp_alpha = 0.6; // for EMA
+    int max_cpu_clk_idx = 0; // fixed by device
+    int cur_cpu_clk_idx = 0; // dynamic
+    int max_ram_clk_idx = 0; // fixed by device
+    int cur_ram_clk_idx = 0; // dynamic
+
+    // model plane
+    int phase_pause = 0; // ms
+    int token_pause = 0; // ms
+    int layer_pause = 0; // ms
+    int query_interval = 0; // ms
+};
+
+#endif // COMMON_H

@@ -16,6 +16,7 @@
 #include "hardware/record.h"
 #include "hardware/utils.h"
 #include "hardware/utils.h"
+#include "common/common.h"
 
 #include <cstdlib>
 #include <thread>
@@ -27,26 +28,6 @@ using namespace std;
 using json = nlohmann::json;
 
 std::atomic_bool sigterm(false);
-
-// TODO: move to common
-struct ignite_params {
-    // resource plane
-    double time_slot = 0.5; // s
-    double temp_threshold = 75.0; // Celsius
-    std::vector<double> temp_history = {}; // temperature history
-    int temp_cap = 10; // max length of temperature history
-    double temp_alpha = 0.6; // for EMA
-    int max_cpu_clk_idx = 0; // fixed by device
-    int cur_cpu_clk_idx = 0; // dynamic
-    int max_ram_clk_idx = 0; // fixed by device
-    int cur_ram_clk_idx = 0; // dynamic
-
-    // model plane
-    int phase_pause = 0; // ms
-    int token_pause = 0; // ms
-    int layer_pause = 0; // ms
-    int query_interval = 0; // ms
-};
 
 std::string replaceFirst(std::string& str, const std::string& from, const std::string& to) {
     size_t pos = 0;
