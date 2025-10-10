@@ -60,10 +60,11 @@ void agent(struct ignite_params* params, /*to control*/ DVFS& dvfs, /*to monitor
 
         // calculating average and standard deviation
         double avg_temp = 0.0;
-        double standard_deviation = 0.0;
+        double standard_deviation = 0.0; double temp = 0.0;
         for (auto t : params->temp_history) { avg_temp += t;}
         avg_temp /= params->temp_cap;
-        for (auto t : params->temp_history) { standard_deviation += (t - avg_temp) * (t - avg_temp); }
+        for (auto t : params->temp_history) { temp += (t - avg_temp) * (t - avg_temp);}
+        standard_deviation = sqrt(temp / params->temp_cap); 
 
         // DVFS control (action)
         if (avg_temp + params->temp_alpha*standard_deviation >= params->temp_threshold) {
