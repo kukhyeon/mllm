@@ -297,11 +297,14 @@ int main(int argc, char **argv) {
 
     // Prepare collector
     auto collector = dvfs.get_collector();
-    agent(&params, dvfs, collector, sigterm); // for future
+    //agent(&params, dvfs, collector, sigterm); // for future
 
     // measurement start
     auto start_sys_time = chrono::system_clock::now();
     std::thread record_thread = std::thread(record_hard, std::ref(sigterm), dvfs);
+
+    // start agent
+    std::this_thread scheduler_agent = std::thread(agent, &params, std::ref(dvfs), collector, std::ref(sigterm));
 
     while ((qa_now - qa_start) < qa_limit) {
         string question = qa_list[qa_now][1];
@@ -403,6 +406,7 @@ int main(int argc, char **argv) {
     dvfs.unset_cpu_freq();
     dvfs.unset_ram_freq();
     record_thread.join();
+    scheduler_agent.join();
 
     cout << "DONE\r\n";
     this_thread::sleep_for(chrono::milliseconds(1000));
