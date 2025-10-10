@@ -37,7 +37,7 @@ std::string replaceFirst(std::string& str, const std::string& from, const std::s
     return str;
 }
 
-void agent(struct ignite_params* params, /*to control*/ DVFS& dvfs, /*to monitor*/ Collector collector, std::atomic<bool>& sigterm) {
+void agent(struct ignite_params* params, /*to control*/ DVFS& dvfs, /*to monitor*/ Collector& collector, std::atomic<bool>& sigterm) {
     while (!sigterm.load()) {
         /* Here, agents run the algorithm! */
 
