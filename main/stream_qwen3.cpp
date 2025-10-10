@@ -75,6 +75,11 @@ void agent(struct ignite_params* params, /*to control*/ DVFS& dvfs, /*to monitor
             params->cur_cpu_clk_idx = std::min(params->max_cpu_clk_idx, params->cur_cpu_clk_idx + 1); // step up 1
             params->cur_ram_clk_idx = std::min(params->max_ram_clk_idx, params->cur_ram_clk_idx + 1); // step up 1
         }
+
+        // actual DVFS setting
+        auto freq_config = dvfs.get_cpu_freqs_conf(params->cur_cpu_clk_idx);
+        dvfs.set_cpu_freq(freq_config);
+        dvfs.set_ram_freq(params->cur_ram_clk_idx);
     }
     std::cout << std::flush << "agent loop done\n"; // test
     return;
