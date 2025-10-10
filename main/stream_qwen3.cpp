@@ -304,7 +304,7 @@ int main(int argc, char **argv) {
     std::thread record_thread = std::thread(record_hard, std::ref(sigterm), dvfs);
 
     // start agent
-    std::thread scheduler_agent = std::thread(agent, &params, dvfs, collector, std::ref(sigterm));
+    std::thread scheduler_agent = std::thread(agent, &params, std::ref(dvfs), std::ref(collector), std::ref(sigterm));
 
     while ((qa_now - qa_start) < qa_limit) {
         string question = qa_list[qa_now][1];
