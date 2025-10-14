@@ -13,6 +13,7 @@
 #include "Trace.hpp"
 #include "Types.hpp"
 #include "backends/cpu/CPUBackend.hpp"
+#include "common/common.h"
 #include <any>
 #include <functional>
 #include <iostream>
@@ -73,6 +74,7 @@ public:
 
     // For layer pause
     static int thread_sleep;
+    static ignite_params params;
 
 private:
     template <typename... Args>
@@ -102,6 +104,14 @@ public:
     BackendType device() const {
         return device_;
     }
+#ifdef IGNITE_USE_SYSTEM
+    static ignite_params* init_ignite_params() {
+        return &params;
+    }
+    static void init_ignite_params(ignite_params& p) {
+        params = p;
+    }
+#endif
 
     static void initBackend(BackendType type = BackendType::MLLM_CPU) {
         if (Backend::global_backends.find(type) == Backend::global_backends.end() || Backend::global_backends[type] == nullptr) {

@@ -90,7 +90,7 @@ int main(int argc, char **argv) {
     std::iostream::sync_with_stdio(false);
     cmdline::parser cmdParser;
     pid_t pid = getpid();
-    ignite_params params;
+    ignite_params _params;
 
     // arg parser: BASIC
     cmdParser.add<string>("vocab", 'v', "specify mllm tokenizer model path", false, "../vocab/qwen3_vocab.mllm");
@@ -137,8 +137,8 @@ int main(int argc, char **argv) {
 
     // variable initialization: For DVFS
     const string device_name = cmdParser.get<string>("device");
-    params.cur_cpu_clk_idx = cmdParser.get<int>("cpu-p"); const int cpu_clk_idx_p = params.cur_cpu_clk_idx;
-    params.cur_ram_clk_idx = cmdParser.get<int>("ram-p"); const int ram_clk_idx_p = params.cur_ram_clk_idx;
+    _params.cur_cpu_clk_idx = cmdParser.get<int>("cpu-p"); const int cpu_clk_idx_p = _params.cur_cpu_clk_idx;
+    _params.cur_ram_clk_idx = cmdParser.get<int>("ram-p"); const int ram_clk_idx_p = _params.cur_ram_clk_idx;
     const int cpu_clk_idx_d = cmdParser.get<int>("cpu-d");
     const int ram_clk_idx_d = cmdParser.get<int>("ram-d");
 
@@ -156,10 +156,10 @@ int main(int argc, char **argv) {
     string output_qa;
 
     // variable initialization: For Pause Techniques
-    params.token_pause = cmdParser.get<int>("token-pause"); int token_pause = params.token_pause;
-    params.phase_pause = cmdParser.get<int>("phase-pause"); int phase_pause = params.phase_pause;
-    params.layer_pause = cmdParser.get<int>("layer-pause"); int layer_pause = params.layer_pause;
-    params.query_interval = cmdParser.get<int>("query-interval") * 1000; int query_interval = params.query_interval;
+    _params.token_pause = cmdParser.get<int>("token-pause"); int token_pause = _params.token_pause;
+    _params.phase_pause = cmdParser.get<int>("phase-pause"); int phase_pause = _params.phase_pause;
+    _params.layer_pause = cmdParser.get<int>("layer-pause"); int layer_pause = _params.layer_pause;
+    _params.query_interval = cmdParser.get<int>("query-interval") * 1000; int query_interval = _params.query_interval;
 
     // variable initialization: For File Naming
     bool fixed_config = (cpu_clk_idx_p == cpu_clk_idx_d) && (ram_clk_idx_p == ram_clk_idx_d);
@@ -263,6 +263,8 @@ int main(int argc, char **argv) {
     QWen3Config config(tokens_limit, model_billion, RoPEType::HFHUBROPE);
     auto model = QWen3ForCausalLM(config);
     model.load(model_path);
+    model.init_ignite_params(_params);  // for this, must turn on "IGNITE_USE_SYSTEM" option when building MLLM
+                                        // see scripts/build.sh
     Module::thread_sleep = layer_pause; // set layer-pause time
 
     // QA Dataset Load
@@ -278,12 +280,12 @@ int main(int argc, char **argv) {
     cout << "\r\n"; // to validate (print freq-configuration)
 
     // param setting for dvfs
-    params.max_cpu_clk_idx = dvfs.get_cpu_freq().at(
+    model.params.max_cpu_clk_idx = dvfs.get_cpu_freq().at(
         dvfs.get_cluster_indices().at(
             dvfs.get_cluster_indices().size() - 1
         )
     ).size() - 1;
-    params.max_ram_clk_idx = dvfs.get_ddr_freq().size() - 1;
+    model.params.max_ram_clk_idx = dvfs.get_ddr_freq().size() - 1;
 
     // inference recording contents
     const vector<string> infer_record_names = {"sys_time", "load_time", "prefill_speed", "decode_speed", "prefill_token", "decode_token", "ttft"};
@@ -298,14 +300,14 @@ int main(int argc, char **argv) {
 
     // Prepare collector
     auto collector = dvfs.get_collector();
-    //agent(&params, dvfs, collector, sigterm); // for future
+    //agent(&model.params, dvfs, collector, sigterm); // for future
 
     // measurement start
     auto start_sys_time = chrono::system_clock::now();
     std::thread record_thread = std::thread(record_hard, std::ref(sigterm), dvfs);
 
     // start agent
-    std::thread scheduler_agent = std::thread(agent, &params, std::ref(dvfs), std::ref(collector), std::ref(sigterm));
+    std::thread scheduler_agent = std::thread(agent, &model.params, std::ref(dvfs), std::ref(collector), std::ref(sigterm));
 
     while ((qa_now - qa_start) < qa_limit) {
         string question = qa_list[qa_now][1];
@@ -426,8 +428,8 @@ int main(int argc, char **argv) {
     for (int i = 0; i < ans.size(); ++i) {
         json pair;
         pair["question"] = qa_list[qa_start + i][1];
-    std::cout << params.temp_cap << std::endl; // test
-    std::cout << params.temp_alpha << std::endl; // test
+    std::cout << model.params.temp_cap << std::endl; // test
+    std::cout << model.params.temp_alpha << std::endl; // test
         pair["answer"] = ans[i];
         qa_array.push_back(pair);
     }
