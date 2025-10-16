@@ -36,6 +36,55 @@ std::string replaceFirst(std::string& str, const std::string& from, const std::s
     return str;
 }
 
+void agent(struct ignite_params* params, /*to control*/ DVFS& dvfs, /*to monitor*/ Collector& collector, std::atomic<bool>& sigterm) {
+    while (!sigterm.load()) {
+        /* Here, agents run the algorithm! */
+
+        double cur_temp = collector.collect_high_temp();
+        std::this_thread::sleep_for(std::chrono::milliseconds((int)(params->time_slot * 1000)));
+
+        if (cur_temp < 0) {
+            std::cerr << "[WARNING] Thermal zone not found. Skip this monitoring.\n";
+            break;
+        }
+
+        // collecting temperature
+        if (params->temp_history.size() < params->temp_cap) {
+            params->temp_history.push_back(cur_temp);
+            continue;
+        } else {
+            params->temp_history.erase(params->temp_history.begin());
+            params->temp_history.push_back(cur_temp);
+        }
+
+        // calculating average and standard deviation
+        double avg_temp = 0.0;
+        double standard_deviation = 0.0; double temp = 0.0;
+        for (auto t : params->temp_history) { avg_temp += t;}
+        avg_temp /= params->temp_cap;
+        for (auto t : params->temp_history) { temp += (t - avg_temp) * (t - avg_temp);}
+        standard_deviation = sqrt(temp / params->temp_cap); 
+
+        // DVFS control (action)
+        if (avg_temp + params->temp_alpha*standard_deviation >= params->temp_threshold) {
+            // Throttling
+            params->cur_cpu_clk_idx = std::max(0, params->cur_cpu_clk_idx - 2); // step down 2
+            params->cur_ram_clk_idx = std::max(0, params->cur_ram_clk_idx - 1); // step down 1
+        } else {
+            // Recovery
+            params->cur_cpu_clk_idx = std::min(params->max_cpu_clk_idx, params->cur_cpu_clk_idx + 1); // step up 1
+            params->cur_ram_clk_idx = std::min(params->max_ram_clk_idx, params->cur_ram_clk_idx + 1); // step up 1
+        }
+
+        // actual DVFS setting
+        auto freq_config = dvfs.get_cpu_freqs_conf(params->cur_cpu_clk_idx);
+        dvfs.set_cpu_freq(freq_config);
+        dvfs.set_ram_freq(params->cur_ram_clk_idx);
+    }
+    std::cout << std::flush << "agent loop done\n"; // test
+    return;
+}
+
 int main(int argc, char **argv) {
     std::iostream::sync_with_stdio(false);
     cmdline::parser cmdParser;
@@ -248,9 +297,16 @@ int main(int argc, char **argv) {
         qa_limit = MIN(qa_list.size(), qa_start + qa_len) - 1;
     }
 
+    // Prepare collector
+    auto collector = dvfs.get_collector();
+    //agent(&model.params, dvfs, collector, sigterm); // for future
+
     // measurement start
     auto start_sys_time = chrono::system_clock::now();
     std::thread record_thread = std::thread(record_hard, std::ref(sigterm), dvfs);
+
+    // start agent
+    std::thread scheduler_agent = std::thread(agent, &model.params, std::ref(dvfs), std::ref(collector), std::ref(sigterm));
 
     while ((qa_now - qa_start) < qa_limit) {
         string question = qa_list[qa_now][1];
@@ -352,6 +408,7 @@ int main(int argc, char **argv) {
     dvfs.unset_cpu_freq();
     dvfs.unset_ram_freq();
     record_thread.join();
+    scheduler_agent.join();
 
     cout << "DONE\r\n";
     this_thread::sleep_for(chrono::milliseconds(1000));
