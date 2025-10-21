@@ -39,6 +39,7 @@ int main(int argc, char **argv) {
     cmdParser.add<string>("billion", 'b', "[0.5B | 1.8B | 1.5B |]", false, "1.8B");
     cmdParser.add<string>("family", 'f', "[Qwen1.5 | Qwen2.5 |]", false, "Qwen1.5");
     cmdParser.add<int>("limits", 'l', "max KV cache size", false, 1024);
+    cmdParser.add<bool>("strict", 0, "apply token limits to only output tokens", false, false);
     cmdParser.add<int>("thread", 't', "num of threads", false, 4);
 
     // arg parser: For Stream
@@ -73,6 +74,7 @@ int main(int argc, char **argv) {
     string model_family = cmdParser.get<string>("family");
     int tokens_limit = cmdParser.get<int>("limits");
     CPUBackend::cpu_threads = cmdParser.get<int>("thread");
+    bool strict_limit = cmdParser.get<bool>("strict");
 
     // variable initialization: For DVFS
     const string device_name = cmdParser.get<string>("device");
@@ -175,7 +177,9 @@ int main(int argc, char **argv) {
 
     // Model Configuration
     auto tokenizer = QWenTokenizer(vocab_path, merge_path);
-    QWenConfig config(tokens_limit, model_billion, RoPEType::HFHUBROPE, model_family);
+    QWenConfig config(
+        strict_limit ? tokens_limit + 8192 : tokens_limit, 
+        model_billion, RoPEType::HFHUBROPE, model_family);
     auto model = QWenForCausalLM(config);
     model.load(model_path);
     Module::thread_sleep = layer_pause; // set layer-pause time
@@ -227,7 +231,7 @@ int main(int argc, char **argv) {
         }
 
         // INFERENCE
-        size_t max_new_tokens = tokens_limit - input_tensor.sequence();
+        std::size_t max_new_tokens = strict_limit ? tokens_limit : tokens_limit - input_tensor.sequence();
         //size_t max_new_tokens = 256;
         LlmTextGeneratorOpts opt{
             .max_new_tokens = max_new_tokens,

@@ -70,6 +70,7 @@ int main(int argc, char **argv) {
     string model_billion = cmdParser.get<string>("billion");
     int tokens_limit = cmdParser.get<int>("limits");
     CPUBackend::cpu_threads = cmdParser.get<int>("thread");
+    bool strict_limit = cmdParser.get<bool>("strict");
     
 
     // variable initialization: For DVFS
@@ -174,7 +175,9 @@ int main(int argc, char **argv) {
 
 
     // Model Configuration
-    Llama3Config config(tokens_limit, model_billion);
+    Llama3Config config(
+        strict_limit ? tokens_limit + 8192 : tokens_limit, 
+        model_billion);
     auto tokenizer = LLama3Tokenizer(vocab_path);
     config.cache_limit = tokens_limit;
     auto model = Llama3Model(config);
@@ -227,7 +230,7 @@ int main(int argc, char **argv) {
         }
 
         // INFERENCE
-        size_t max_new_tokens = tokens_limit - input_tensor.sequence();
+        std::size_t max_new_tokens = strict_limit ? tokens_limit : tokens_limit - input_tensor.sequence();
         //size_t max_new_tokens = 256;
         LlmTextGeneratorOpts opt{
             .max_new_tokens = max_new_tokens,

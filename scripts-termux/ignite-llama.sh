@@ -33,6 +33,7 @@ su -c "echo 0 > /sys/devices/system/cpu/cpu3/online"
   -O output/ \
   -S 0 \
   -D "$DEV" \
+  --strict 0 \
   --cpu-p $1 \
   --ram-p $2 \
   --cpu-d $3 \
