@@ -37,18 +37,19 @@ std::string replaceFirst(std::string& str, const std::string& from, const std::s
 }
 
 void agent(struct ignite_params* params, /*to control*/ DVFS& dvfs, /*to monitor*/ Collector& collector, std::atomic<bool>& sigterm) {
+    /* Here, variables for the algorithm! */
+    std::size_t skip_tick = 0; bool skip = false; // action and skip
     while (!sigterm.load()) {
-        /* Here, agents run the algorithm! */
-
+        /* Here, agents run the algorithm! */                                                                           
+        std::size_t tick = 3;
         double cur_temp = collector.collect_high_temp();
-        std::this_thread::sleep_for(std::chrono::milliseconds((int)(params->time_slot * 1000)));
-
+        std::this_thread::sleep_for(std::chrono::milliseconds((int)(params->time_slot * 500)));
         if (cur_temp < 0) {
             std::cerr << "[WARNING] Thermal zone not found. Skip this monitoring.\n";
             break;
-        }
-
+        }                                               
         // collecting temperature
+        // temp_history: [ past <---> recent ]
         if (params->temp_history.size() < params->temp_cap) {
             params->temp_history.push_back(cur_temp);
             continue;
@@ -56,30 +57,58 @@ void agent(struct ignite_params* params, /*to control*/ DVFS& dvfs, /*to monitor
             params->temp_history.erase(params->temp_history.begin());
             params->temp_history.push_back(cur_temp);
         }
-
+        
+        if (skip_tick == 0){ skip = false; }
+        if (skip) { skip_tick--; continue; }
+        
         // calculating average and standard deviation
-        double avg_temp = 0.0;
-        double standard_deviation = 0.0; double temp = 0.0;
+        double avg_temp = 0.0; double standard_deviation = 0.0; double temp = 0.0;
         for (auto t : params->temp_history) { avg_temp += t;}
         avg_temp /= params->temp_cap;
         for (auto t : params->temp_history) { temp += (t - avg_temp) * (t - avg_temp);}
-        standard_deviation = sqrt(temp / params->temp_cap); 
-
-        // DVFS control (action)
-        if (avg_temp + params->temp_alpha*standard_deviation >= params->temp_threshold) {
-            // Throttling
-            params->cur_cpu_clk_idx = std::max(0, params->cur_cpu_clk_idx - 2); // step down 2
-            params->cur_ram_clk_idx = std::max(0, params->cur_ram_clk_idx - 1); // step down 1
-        } else {
-            // Recovery
-            params->cur_cpu_clk_idx = std::min(params->max_cpu_clk_idx, params->cur_cpu_clk_idx + 1); // step up 1
-            params->cur_ram_clk_idx = std::min(params->max_ram_clk_idx, params->cur_ram_clk_idx + 1); // step up 1
+        standard_deviation = sqrt(temp / params->temp_cap);
+        bool drop = true; double delta = 0.0; // tick is hysterisis
+        for (std::size_t i = params->temp_cap-1; i+tick >= params->temp_cap; --i){
+            delta = params->temp_history[i] - params->temp_history[i-1];
+            if ( delta >= 0 ){ // increase tendency
+                drop = false;                                           
+                //std::cout << std::flush << "<inc>";
+                break;
+            }
         }
-
+        
+        // DVFS control (action)
+        if (
+            avg_temp
+            //+ params->temp_alpha*standard_deviation
+            < params->temp_threshold
+            ||
+            drop) {
+            // Recovery || temp dropping
+            params->cur_cpu_clk_idx = std::min(params->max_cpu_clk_idx, params->cur_cpu_clk_idx + 1); // step up 1
+            //params->cur_ram_clk_idx = std::min(params->max_ram_clk_idx, params->cur_ram_clk_idx + 1); // step up 1
+            //std::cout << std::flush << "<rec>"; // test
+            skip = true; skip_tick = tick;
+        } else if (
+            avg_temp
+            //+ params->temp_alpha*standard_deviation
+            >= params->temp_threshold)  {
+            // Throttling
+            params->cur_cpu_clk_idx = std::max(0, params->cur_cpu_clk_idx - 1); // step up 1
+            //params->cur_ram_clk_idx = std::min(params->max_ram_clk_idx, params->cur_ram_clk_idx + 1); // step up 1
+            //std::cout << std::flush << "<tht>"; // test
+            skip = true; skip_tick = tick;
+        } else {
+            // hold
+            //std::cout << std::flush << "<hld>"; // test
+            skip = false;
+            continue;
+        }
+        
         // actual DVFS setting
         auto freq_config = dvfs.get_cpu_freqs_conf(params->cur_cpu_clk_idx);
         dvfs.set_cpu_freq(freq_config);
-        dvfs.set_ram_freq(params->cur_ram_clk_idx);
+        //dvfs.set_ram_freq(params->cur_ram_clk_idx);
     }
     std::cout << std::flush << "agent loop done\n"; // test
     return;
