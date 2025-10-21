@@ -15,7 +15,7 @@
 #include "hardware/dvfs.h"
 #include "hardware/record.h"
 #include "hardware/utils.h"
-#include "common/common.h"
+#include "common/common.h" // common for ignite
 
 #include <cstdlib>
 #include <thread>
@@ -50,6 +50,7 @@ int main(int argc, char **argv) {
     cmdParser.add<string>("family", 'f', "[Qwen1.5 | Qwen2.5 |]", false, "Qwen1.5"); // not used in Qwen3
     cmdParser.add<int>("limits", 'l', "max KV cache size", false, 1024);
     cmdParser.add<int>("thread", 't', "num of threads", false, 4);
+    cmdParser.add<bool>("strict", 0, "apply token limits to only output tokens", false, false);
     cmdParser.add<bool>("thinking", 'T', "enable thinking [1: thinking | 0: non-thinking]", false, 0);
 
     // arg parser: For Stream
@@ -83,6 +84,7 @@ int main(int argc, char **argv) {
     string model_billion = cmdParser.get<string>("billion");
     int tokens_limit = cmdParser.get<int>("limits");
     CPUBackend::cpu_threads = cmdParser.get<int>("thread");
+    bool strict_limit = cmdParser.get<bool>("strict");
     const bool enable_thinking = cmdParser.get<bool>("thinking");
 
     // variable initialization: For DVFS
@@ -210,7 +212,9 @@ int main(int argc, char **argv) {
 
     // Model Configuration
     auto tokenizer = QWen3Tokenizer(vocab_path, merge_path, false, enable_thinking);
-    QWen3Config config(tokens_limit, model_billion, RoPEType::HFHUBROPE);
+    QWen3Config config(
+        strict_limit ? tokens_limit + 8192 : tokens_limit, 
+        model_billion, RoPEType::HFHUBROPE);
     auto model = QWen3ForCausalLM(config);
     model.load(model_path);
     model.init_ignite_params(_params);  // for this, must turn on "IGNITE_USE_SYSTEM" option when building MLLM
@@ -273,7 +277,7 @@ int main(int argc, char **argv) {
         }
 
         // Inference option setting
-        size_t max_new_tokens = tokens_limit - input_tensor.sequence();
+        std::size_t max_new_tokens = strict_limit ? tokens_limit : tokens_limit - input_tensor.sequence();
         //size_t max_new_tokens = 256;
         LlmTextGeneratorOpts opt{
             .max_new_tokens = max_new_tokens,
