@@ -49,7 +49,7 @@ def regenerate_winogrande():
     
 
     winogrande = load_dataset("allenai/winogrande", "winogrande_l")
-    data = concatenate_datasets([winogrande['validation']])
+    data = concatenate_datasets([winogrande['validation']]) # winogrande does not have answer key in test set
     
     js = list()
 
