@@ -32,6 +32,7 @@ def regenerate_arc_challenge():
     with open("dataset/arc_challenge.json", 'w') as f:
         json.dump(js, f, indent=4)
 
+
 def regenerate_winogrande():
     def make_prompt(dic):
         sentence = dic['sentence']
@@ -62,6 +63,34 @@ def regenerate_winogrande():
         json.dump(js, f, indent=4)
 
 
+def regenerate_humaneval():
+    def make_prompt(dic):
+        instruction = dic['prompt']
+        output = dic['canonical_solution']
+        answer_key = dic['test']
+        
+        return instruction, output, answer_key
+    
+
+    humaneval = load_dataset("openai_humaneval")
+    data = concatenate_datasets([humaneval['test']])
+    
+    js = list()
+
+    for i in range(1, 3):
+        print(make_prompt(data[i]))
+        
+
+    # data store
+    # for i in range(len(data)):
+    #     ins, out, ans_key = make_prompt(data[i])
+    #     js.append({"instruction":ins, "output":out, "answerKey": ans_key})
+
+    # with open("dataset/humaneval.json", 'w') as f:
+    #     json.dump(js, f, indent=4)
+
+
 if __name__ == "__main__":
     # regenerate_arc_challenge()
-    regenerate_winogrande()
+    # regenerate_winogrande()
+    regenerate_humaneval()
