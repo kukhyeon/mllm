@@ -113,7 +113,7 @@ int main(int argc, char **argv) {
         model.generate(input_tensor, opt, [&](unsigned int out_token) -> bool {
             auto out_string = tokenizer.detokenize({out_token});
             auto [not_end, output_string] = tokenizer.postprocess(out_string);
-            if (!not_end) { return false; }
+            if (!not_end) { model.clear_kvcache(); return false; }
             std::cout << output_string << std::flush;
             output_string.erase(std::remove(output_string.begin(), output_string.end(), '\0'), output_string.end());
             answer += output_string;
@@ -141,7 +141,7 @@ int main(int argc, char **argv) {
         if (qa_now < qa_start) { ++qa_now; continue; } // skip
         
         try {
-            string a = ans[qa_now-qa_start];
+            string a = qa_start == -1 ? ans[qa_now] : ans[qa_now-qa_start];
             a = remove_invalid_utf8(a);
 
             json pair;

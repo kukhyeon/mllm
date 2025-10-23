@@ -47,6 +47,7 @@ macro(func_llm_add_executable target)
 endmacro()
 
 # func_llm_add_executable(qwen_eval)
+func_llm_add_executable(qwen3_eval)
 # func_llm_add_executable(test_qwen)
 func_llm_add_executable(stream_qwen)
 func_llm_add_executable(stream_qwen3)
