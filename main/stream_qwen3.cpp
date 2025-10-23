@@ -206,9 +206,7 @@ int main(int argc, char **argv) {
     output_qa = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_result.json");
 
     // variable initialization: For Thermal Throttling Detection
-    std::string command = "su -c \"";                                                            // prefix
-    command += "awk '{print \\$1/1000}' /sys/devices/system/cpu/cpu7/cpufreq/scaling_cur_freq;"; // command
-    command += "\"";                                                                             // postfix
+    std::string command = apply_sudo_and_get(""); // this function get the command of cpu clock
 
     // Model Configuration
     auto tokenizer = QWen3Tokenizer(vocab_path, merge_path, false, enable_thinking);
@@ -246,11 +244,8 @@ int main(int argc, char **argv) {
     write_file(infer_record_names, output_infer);
 
     // limit=-1 -> infinite query stream
-    if (qa_len == -1) {
-        qa_limit = qa_list.size();
-    } else {
-        qa_limit = MIN(qa_list.size(), qa_start + qa_len) - 1;
-    }
+    if (qa_len == -1) { qa_limit = qa_list.size();
+    } else { qa_limit = MIN(qa_list.size(), qa_start + qa_len) - 1; }
 
     // measurement start
     auto start_sys_time = chrono::system_clock::now();
@@ -374,8 +369,6 @@ int main(int argc, char **argv) {
     for (int i = 0; i < ans.size(); ++i) {
         json pair;
         pair["question"] = qa_list[qa_start + i][1];
-    std::cout << model.params.temp_cap << std::endl; // test
-    std::cout << model.params.temp_alpha << std::endl; // test
         pair["answer"] = ans[i];
         qa_array.push_back(pair);
     }

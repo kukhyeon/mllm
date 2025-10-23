@@ -13,4 +13,7 @@ std::string replace(std::string origin, std::string target, std::string destinat
 std::vector<std::string> split_string(const std::string& str);
 std::string execute_cmd(const char* cmd);
 
+// throttling detection support
+std::string apply_sudo_and_get(std::string command);
+
 #endif // HARD_UTILS_H

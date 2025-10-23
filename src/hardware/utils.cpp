@@ -101,4 +101,14 @@ std::string execute_cmd(const char* cmd){
     pclose(pipe); 
     return result.str();
 }
+
+// throttling detection support
+std::string apply_sudo_and_get(std::string command = "") {
+    std::string cmd = "su -c \"";                                                                 // prefix
+    if (command != "")  cmd += command;
+    else cmd += "awk '{print \\$1/1000}' /sys/devices/system/cpu/cpu7/cpufreq/scaling_cur_freq;"; // command
+    cmd += "\"";                                                                                  // postfix
+
+    return cmd;
+}
 // -------------------------------------------
