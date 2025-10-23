@@ -108,9 +108,27 @@ def regenerate_humaneval():
     with open("dataset/humaneval.json", 'w') as f:
         json.dump(js, f, indent=4)
 
+def regenerate_xsum():
+    def make_prompt(dic):
+        instruction = f"Summarize the following article in only one sentence:\n\n{dic['document']}"
+        output = dic['summary']
+        return instruction, output, ''
+    
+    xsum = load_dataset("EdinburghNLP/xsum", revision="refs/convert/parquet", split="test")
+    data = xsum['test']
+    sampled = sample_dataset(data, num_samples=1000)
+    
+    js = list()
 
+    for i in sampled:
+        ins, out, ans_key = make_prompt(data[i])
+        js.append({"instruction": ins, "output": out, "answerKey": ans_key})
+
+    with open("dataset/xsum.json", 'w') as f:
+        json.dump(js, f, indent=4)
 
 if __name__ == "__main__":
     # regenerate_arc_challenge()
     # regenerate_winogrande()
-    regenerate_humaneval()
+    # regenerate_humaneval()
+    regenerate_xsum()
