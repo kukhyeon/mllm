@@ -96,10 +96,6 @@ def regenerate_humaneval():
 
     js = list()
 
-    for i in sampled[:3]:
-        print(make_prompt(data[i]))
-        
-
     # data store
     for i in sampled:
         ins, out, ans_key = make_prompt(data[i])
@@ -107,6 +103,7 @@ def regenerate_humaneval():
 
     with open("dataset/humaneval.json", 'w') as f:
         json.dump(js, f, indent=4)
+
 
 def regenerate_xsum():
     def make_prompt(dic):
@@ -126,6 +123,7 @@ def regenerate_xsum():
 
     with open("dataset/xsum.json", 'w') as f:
         json.dump(js, f, indent=4)
+
 
 if __name__ == "__main__":
     # regenerate_arc_challenge()
