@@ -1,7 +1,17 @@
 from datasets import load_dataset
 from datasets import concatenate_datasets
+import numpy as np
 
 import json
+
+def sample_dataset(data, num_samples=1000):
+    sampled = None
+    if len(data) < num_samples:
+        sampled = [i for i in range(len(data))]
+    else:
+        sampled = np.random.choice(np.arange(0, len(data)), size=num_samples, replace=False)
+
+    return sampled
 
 def regenerate_arc_challenge():
     def make_prompt(dic):
@@ -21,11 +31,12 @@ def regenerate_arc_challenge():
     
     
     arc_challenge = load_dataset("ai2_arc", "ARC-Challenge")
-    data = concatenate_datasets([arc_challenge['test'], arc_challenge["train"], arc_challenge['validation']])
+    data = arc_challenge['test']
+    sampled = sample_dataset(data, num_samples=1000)
 
     js = list()
 
-    for i in range(len(data)):
+    for i in sampled:
         ins, out, ans_key = make_prompt(data[i])
         js.append({"instruction":ins, "output":out, "answerKey": ans_key})
 
@@ -52,6 +63,12 @@ def regenerate_winogrande():
     winogrande = load_dataset("allenai/winogrande", "winogrande_l")
     data = concatenate_datasets([winogrande['validation']]) # winogrande does not have answer key in test set
     
+    sampled = sample_dataset(data, num_samples=1000)
+
+    for i in sampled:
+        print(make_prompt(data[i]))
+    print(f"sampled {len(sampled)} items.")
+
     js = list()
 
     # data store
@@ -73,21 +90,24 @@ def regenerate_humaneval():
     
 
     humaneval = load_dataset("openai_humaneval")
-    data = concatenate_datasets([humaneval['test']])
-    
+    data = humaneval['test']
+
+    sampled = sample_dataset(data, num_samples=1000)
+
     js = list()
 
-    for i in range(1, 3):
+    for i in sampled[:3]:
         print(make_prompt(data[i]))
         
 
     # data store
-    # for i in range(len(data)):
-    #     ins, out, ans_key = make_prompt(data[i])
-    #     js.append({"instruction":ins, "output":out, "answerKey": ans_key})
+    for i in sampled:
+        ins, out, ans_key = make_prompt(data[i])
+        js.append({"instruction":ins, "output":out, "answerKey": ans_key})
 
-    # with open("dataset/humaneval.json", 'w') as f:
-    #     json.dump(js, f, indent=4)
+    with open("dataset/humaneval.json", 'w') as f:
+        json.dump(js, f, indent=4)
+
 
 
 if __name__ == "__main__":
