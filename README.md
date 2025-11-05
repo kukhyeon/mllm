@@ -21,7 +21,6 @@ Inference Governed by Nested lazy Ignition for Thermal Efficiency
 - Optimized for multimodal LLMs like Qwen2-VL and LLaVA
 - Supported: ARM NEON, x86 AVX2, etc
 - Various quantization schemes
-- End-to-end Android app demo
 - Advanced support for *IGNITE*
   - Phase-level DVFS control (CPU/RAM)
   - Phase-level pause injection
