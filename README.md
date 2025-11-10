@@ -64,8 +64,8 @@ Inference Governed by Nested lazy Ignition for Thermal Efficiency
 | [Qwen3 0.6B](https://github.com/QwenLM/Qwen3) | [✔️](https://huggingface.co/mllmTeam/qwen-3-0.6b-mllm/tree/main)  | [✔️](https://huggingface.co/mllmTeam/qwen-3-0.6b-mllm/tree/main) | ⭕ |
 | [Qwen3 1.7B](https://github.com/QwenLM/Qwen3) | [✔️](https://huggingface.co/kjh2159/Qwen3-1.7B-MLLM/tree/main)  | [✔️](https://huggingface.co/kjh2159/Qwen3-1.7B-MLLM/tree/main) | ⭕ |
 
-> For other models, please refer to the following two hugging face repositories (extension type is .mllm): [mllm](https://huggingface.co/mllmTeam/models) and [*IGNITE*](https://huggingface.co/kjh2159/models/).
-
+> For other models, please refer to the following two hugging face repositories (extension type is .mllm): [mllm](https://huggingface.co/mllmTeam/models) and [*IGNITE*](https://huggingface.co/kjh2159/models/). <br>
+> For Qwen3 family, it supports seamless thinking mode, which is possible to toggle through the `enable` option.
 </details>
 
 <details>
