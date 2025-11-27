@@ -58,10 +58,10 @@ void agent(struct ignite_params* params, /*to control*/ DVFS& dvfs, /*to monitor
             // can clock up
             if (params->prefill_phase && (params->prefill_speed < 7)) {
                 now_cpu_idx = std::min(max_cpu_idx, params->cur_cpu_clk_idx + 1);
-                now_ram_idx = std::min(max_ram_idx, params->cur_cpu_clk_idx + 1);
+                now_ram_idx = std::min(max_ram_idx, params->cur_ram_clk_idx + 1);
             } else if (!params->prefill_phase && (params->decode_speed < 5)) {
                 now_cpu_idx = std::min(max_cpu_idx, params->cur_cpu_clk_idx + 2);
-                now_ram_idx = std::min(max_ram_idx, params->cur_cpu_clk_idx + 2);
+                now_ram_idx = std::min(max_ram_idx, params->cur_ram_clk_idx + 2);
             }
         }
 
