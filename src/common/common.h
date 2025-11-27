@@ -9,7 +9,7 @@
 struct ignite_params {
     // resource plane
     double time_slot = 0.5; // s
-    double temp_threshold = 75.0; // Celsius
+    double temp_threshold = 80.0; // Celsius
     std::vector<double> temp_history = {}; // temperature history
     int temp_cap = 10; // max length of temperature history
     double temp_alpha = 0.6; // for EMA
