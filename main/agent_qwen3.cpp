@@ -217,8 +217,8 @@ int main(int argc, char **argv) {
     _params.query_interval = cmdParser.get<int>("query-interval") * 1000; int query_interval = _params.query_interval;
 
     // variable initialization: For File Naming
-    output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_" + to_string(start_cpu_clk_idx) + "-" + to_string(start_ram_clk_idx) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_resource_agent_hard.txt");
-    output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_" + to_string(start_cpu_clk_idx) + "-" + to_string(start_ram_clk_idx) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_resource_agent_infer.txt");
+    output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_" + to_string(start_cpu_clk_idx) + "-" + to_string(start_ram_clk_idx) + "_resource_agent_hard.txt");
+    output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_" + to_string(start_cpu_clk_idx) + "-" + to_string(start_ram_clk_idx) + "_resource_agent_infer.txt");
     output_qa = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_result.json");
 
     // variable initialization: For Thermal Throttling Detection
@@ -245,7 +245,7 @@ int main(int argc, char **argv) {
     DVFS dvfs(device_name);
     dvfs.output_filename = output_hard; // dvfs.output_filename requires hardware recording output path
     cout << pid << "\r\n";
-    vector<int> freq_config = dvfs.get_cpu_freqs_conf(cpu_clk_idx_p);
+    vector<int> freq_config = dvfs.get_cpu_freqs_conf(start_cpu_clk_idx);
     for (auto f : freq_config) { cout << f << " "; }
     cout << "\r\n"; // to validate (print freq-configuration)
 
@@ -277,9 +277,9 @@ int main(int argc, char **argv) {
     std::thread record_thread = std::thread(record_hard, std::ref(sigterm), dvfs);
 
     // Start DVFS setting is only meaningful in this agent case
-    freq_config = dvfs.get_cpu_freqs_conf(cpu_clk_idx_p);
+    freq_config = dvfs.get_cpu_freqs_conf(start_cpu_clk_idx);
     dvfs.set_cpu_freq(freq_config);
-    dvfs.set_ram_freq(ram_clk_idx_p);
+    dvfs.set_ram_freq(start_ram_clk_idx);
 
     // start agent
     std::thread scheduler_agent = std::thread(agent, &model.params, std::ref(dvfs), std::ref(collector), std::ref(sigterm));
