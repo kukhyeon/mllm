@@ -52,12 +52,17 @@ void agent(struct ignite_params* params, /*to control*/ DVFS& dvfs, /*to monitor
 
         if (cur_temp >= target_temp) {
             // should clock down
-            now_cpu_idx = std::max(0, params->cur_cpu_clk_idx - 1);
+            now_cpu_idx = std::max(0, params->cur_cpu_clk_idx - 2);
             now_ram_idx = std::max(0, params->cur_cpu_clk_idx - 1);
         } else {
             // can clock up
-            now_cpu_idx = std::min(max_cpu_idx, params->cur_cpu_clk_idx + 1);
-            now_ram_idx = std::max(max_ram_idx, params->cur_cpu_clk_idx + 2);
+            if (params->prefill_phase && (params->prefill_speed < 7)) {
+                now_cpu_idx = std::min(max_cpu_idx, params->cur_cpu_clk_idx + 1);
+                now_ram_idx = std::max(max_ram_idx, params->cur_cpu_clk_idx + 1);
+            } else if (!params->prefill_phase && (params->decode_speed < 5)) {
+                now_cpu_idx = std::min(max_cpu_idx, params->cur_cpu_clk_idx + 2);
+                now_ram_idx = std::max(max_ram_idx, params->cur_cpu_clk_idx + 2);
+            }
         }
 
         // actual DVFS setting

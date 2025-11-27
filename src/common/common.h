@@ -24,6 +24,8 @@ struct ignite_params {
     int layer_pause = 0; // ms
     int query_interval = 0; // ms
     bool prefill_phase = true; // prefill phase or not
+    double prefill_speed = 0.0; // tokens/s
+    double decode_speed = 0.0; // tokens/s
 };
 
 #endif // COMMON_H
