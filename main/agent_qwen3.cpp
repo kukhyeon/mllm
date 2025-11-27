@@ -39,76 +39,105 @@ std::string replaceFirst(std::string& str, const std::string& from, const std::s
 void agent(struct ignite_params* params, /*to control*/ DVFS& dvfs, /*to monitor*/ Collector& collector, std::atomic<bool>& sigterm) {
     /* Here, variables for the algorithm! */
     std::size_t skip_tick = 0; bool skip = false; // action and skip
+    const std::size_t monitor_interval_ms = 200; // ms
+    const double target_temp = params->temp_threshold; // target temperature
+    const int max_cpu_idx = params->max_cpu_clk_idx;
+    const int max_ram_idx = params->max_ram_clk_idx;
     while (!sigterm.load()) {
         /* Here, agents run the algorithm! */                                                                           
-        std::size_t tick = 3;
-        double cur_temp = collector.collect_high_temp();
-        std::this_thread::sleep_for(std::chrono::milliseconds((int)(params->time_slot * 500)));
-        if (cur_temp < 0) {
-            std::cerr << "[WARNING] Thermal zone not found. Skip this monitoring.\n";
-            break;
-        }                                               
-        // collecting temperature
-        // temp_history: [ past <---> recent ]
-        if (params->temp_history.size() < params->temp_cap) {
-            params->temp_history.push_back(cur_temp);
-            continue;
+        int now_cpu_idx = params->cur_cpu_clk_idx; // maybe, we can detect throttling through this info?
+        int now_ram_idx = params->cur_ram_clk_idx; 
+        double cur_temp = collector.collect_high_temp(); // collect the highest temperature from CPU cores!
+        cur_temp = cur_temp > 10000.0 ? cur_temp / 1000.0 : cur_temp; // avoid millidegree
+
+        if (cur_temp >= target_temp) {
+            // should clock down
+            now_cpu_idx = std::max(0, params->cur_cpu_clk_idx - 1);
+            now_ram_idx = std::max(0, params->cur_cpu_clk_idx - 1);
         } else {
-            params->temp_history.erase(params->temp_history.begin());
-            params->temp_history.push_back(cur_temp);
+            // can clock up
+            now_cpu_idx = std::min(max_cpu_idx, params->cur_cpu_clk_idx + 1);
+            now_ram_idx = std::max(max_ram_idx, params->cur_cpu_clk_idx + 2);
         }
-        
-        if (skip_tick == 0){ skip = false; }
-        if (skip) { skip_tick--; continue; }
-        
-        // calculating average and standard deviation
-        double avg_temp = 0.0; double standard_deviation = 0.0; double temp = 0.0;
-        for (auto t : params->temp_history) { avg_temp += t;}
-        avg_temp /= params->temp_cap;
-        for (auto t : params->temp_history) { temp += (t - avg_temp) * (t - avg_temp);}
-        standard_deviation = sqrt(temp / params->temp_cap);
-        bool drop = true; double delta = 0.0; // tick is hysterisis
-        for (std::size_t i = params->temp_cap-1; i+tick >= params->temp_cap; --i){
-            delta = params->temp_history[i] - params->temp_history[i-1];
-            if ( delta >= 0 ){ // increase tendency
-                drop = false;                                           
-                //std::cout << std::flush << "<inc>";
-                break;
-            }
-        }
-        
-        // DVFS control (action)
-        if (
-            avg_temp
-            //+ params->temp_alpha*standard_deviation
-            < params->temp_threshold
-            ||
-            drop) {
-            // Recovery || temp dropping
-            params->cur_cpu_clk_idx = std::min(params->max_cpu_clk_idx, params->cur_cpu_clk_idx + 1); // step up 1
-            //params->cur_ram_clk_idx = std::min(params->max_ram_clk_idx, params->cur_ram_clk_idx + 1); // step up 1
-            //std::cout << std::flush << "<rec>"; // test
-            skip = true; skip_tick = tick;
-        } else if (
-            avg_temp
-            //+ params->temp_alpha*standard_deviation
-            >= params->temp_threshold)  {
-            // Throttling
-            params->cur_cpu_clk_idx = std::max(0, params->cur_cpu_clk_idx - 1); // step up 1
-            //params->cur_ram_clk_idx = std::min(params->max_ram_clk_idx, params->cur_ram_clk_idx + 1); // step up 1
-            //std::cout << std::flush << "<tht>"; // test
-            skip = true; skip_tick = tick;
-        } else {
-            // hold
-            //std::cout << std::flush << "<hld>"; // test
-            skip = false;
-            continue;
-        }
-        
+
         // actual DVFS setting
-        auto freq_config = dvfs.get_cpu_freqs_conf(params->cur_cpu_clk_idx);
+        params->cur_cpu_clk_idx = now_cpu_idx;
+        params->cur_ram_clk_idx = now_ram_idx;
+        auto freq_config = dvfs.get_cpu_freqs_conf(now_cpu_idx);
         dvfs.set_cpu_freq(freq_config);
-        //dvfs.set_ram_freq(params->cur_ram_clk_idx);
+        dvfs.set_ram_freq(now_ram_idx);
+
+        // wait for next monitoring
+        std::this_thread::sleep_for(std::chrono::milliseconds((int)monitor_interval_ms));
+
+        // std::size_t tick = 3;
+        // double cur_temp = collector.collect_high_temp();
+        // std::this_thread::sleep_for(std::chrono::milliseconds((int)(params->time_slot * 500)));
+        // if (cur_temp < 0) {
+        //     std::cerr << "[WARNING] Thermal zone not found. Skip this monitoring.\n";
+        //     break;
+        // }                                               
+        // // collecting temperature
+        // // temp_history: [ past <---> recent ]
+        // if (params->temp_history.size() < params->temp_cap) {
+        //     params->temp_history.push_back(cur_temp);
+        //     continue;
+        // } else {
+        //     params->temp_history.erase(params->temp_history.begin());
+        //     params->temp_history.push_back(cur_temp);
+        // }
+        
+        // if (skip_tick == 0){ skip = false; }
+        // if (skip) { skip_tick--; continue; }
+        
+        // // calculating average and standard deviation
+        // double avg_temp = 0.0; double standard_deviation = 0.0; double temp = 0.0;
+        // for (auto t : params->temp_history) { avg_temp += t;}
+        // avg_temp /= params->temp_cap;
+        // for (auto t : params->temp_history) { temp += (t - avg_temp) * (t - avg_temp);}
+        // standard_deviation = sqrt(temp / params->temp_cap);
+        // bool drop = true; double delta = 0.0; // tick is hysterisis
+        // for (std::size_t i = params->temp_cap-1; i+tick >= params->temp_cap; --i){
+        //     delta = params->temp_history[i] - params->temp_history[i-1];
+        //     if ( delta >= 0 ){ // increase tendency
+        //         drop = false;                                           
+        //         //std::cout << std::flush << "<inc>";
+        //         break;
+        //     }
+        // }
+        
+        // // DVFS control (action)
+        // if (
+        //     avg_temp
+        //     //+ params->temp_alpha*standard_deviation
+        //     < params->temp_threshold
+        //     ||
+        //     drop) {
+        //     // Recovery || temp dropping
+        //     params->cur_cpu_clk_idx = std::min(params->max_cpu_clk_idx, params->cur_cpu_clk_idx + 1); // step up 1
+        //     //params->cur_ram_clk_idx = std::min(params->max_ram_clk_idx, params->cur_ram_clk_idx + 1); // step up 1
+        //     //std::cout << std::flush << "<rec>"; // test
+        //     skip = true; skip_tick = tick;
+        // } else if (
+        //     avg_temp
+        //     //+ params->temp_alpha*standard_deviation
+        //     >= params->temp_threshold)  {
+        //     // Throttling
+        //     params->cur_cpu_clk_idx = std::max(0, params->cur_cpu_clk_idx - 1); // step up 1
+        //     //params->cur_ram_clk_idx = std::min(params->max_ram_clk_idx, params->cur_ram_clk_idx + 1); // step up 1
+        //     //std::cout << std::flush << "<tht>"; // test
+        //     skip = true; skip_tick = tick;
+        // } else {
+        //     // hold
+        //     //std::cout << std::flush << "<hld>"; // test
+        //     skip = false;
+        //     continue;
+        // }
+        
+        // // actual DVFS setting
+        // auto freq_config = dvfs.get_cpu_freqs_conf(params->cur_cpu_clk_idx);
+        // dvfs.set_cpu_freq(freq_config);
+        // //dvfs.set_ram_freq(params->cur_ram_clk_idx);
     }
     std::cout << std::flush << "agent loop done\n"; // test
     return;
@@ -141,10 +170,8 @@ int main(int argc, char **argv) {
 
     // arg parser: For DVFS
     cmdParser.add<string>("device", 'D', "specify your android phone [Pixel9 | S24]", true, "");
-    cmdParser.add<int>("cpu-p", 'c', "specify CPU clock index for CPU DVFS", true, 0);
-    cmdParser.add<int>("ram-p", 'r', "specify RAM clock index for RAM DVFS", true, 0);
-    cmdParser.add<int>("cpu-d", 'C', "specify CPU clock index for CPU DVFS", true, 0);
-    cmdParser.add<int>("ram-d", 'R', "specify RAM clock index for RAM DVFS", true, 0);
+    cmdParser.add<int>("cpu", 'c', "specify starting CPU clock index for CPU DVFS", true, 0);
+    cmdParser.add<int>("ram", 'r', "specify starting RAM clock index for RAM DVFS", true, 0);
 
     // arg parser: For IGNITE techniques
     /* Unit [ms] */
@@ -167,10 +194,8 @@ int main(int argc, char **argv) {
 
     // variable initialization: For DVFS
     const string device_name = cmdParser.get<string>("device");
-    _params.cur_cpu_clk_idx = cmdParser.get<int>("cpu-p"); const int cpu_clk_idx_p = _params.cur_cpu_clk_idx;
-    _params.cur_ram_clk_idx = cmdParser.get<int>("ram-p"); const int ram_clk_idx_p = _params.cur_ram_clk_idx;
-    const int cpu_clk_idx_d = cmdParser.get<int>("cpu-d");
-    const int ram_clk_idx_d = cmdParser.get<int>("ram-d");
+    _params.cur_cpu_clk_idx = cmdParser.get<int>("cpu"); const int start_cpu_clk_idx = _params.cur_cpu_clk_idx;
+    _params.cur_ram_clk_idx = cmdParser.get<int>("ram"); const int start_ram_clk_idx= _params.cur_ram_clk_idx;
 
     // variable initialization: For Stream
     const bool interface = cmdParser.get<bool>("interface");
@@ -192,95 +217,8 @@ int main(int argc, char **argv) {
     _params.query_interval = cmdParser.get<int>("query-interval") * 1000; int query_interval = _params.query_interval;
 
     // variable initialization: For File Naming
-    bool fixed_config = (cpu_clk_idx_p == cpu_clk_idx_d) && (ram_clk_idx_p == ram_clk_idx_d);
-    bool tp = (token_pause > 0);
-    bool pp = (phase_pause > 0);
-    bool lp = (layer_pause > 0);
-    bool qi = (query_interval > 0);
-    char mode = 0b00000000; // 1byte
-
-    // 0-th bit: clock control
-    // 1-st bit: phase-pause
-    // 2-nd bit: layer-pause
-    // 3-rd bit: token-pause
-    // 4-th bit: query-interval
-    // ex) 0b0101 : clock config control + layer pause
-    //     3 <-> 0
-
-    // [control mode checker]
-    mode |= (!fixed_config) ? (1 << 0) : 0;
-    mode |= pp ? (1 << 1) : 0;
-    mode |= lp ? (1 << 2) : 0;
-    mode |= tp ? (1 << 3) : 0;
-    mode |= qi ? (1 << 4) : 0;
-
-    switch (mode) {
-    case 0:
-        // Fixed Config
-        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_hard.txt");
-        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_infer.txt");
-        break;
-    case 1:
-        // Only Config Control
-        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_hard.txt");
-        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_infer.txt");
-        break;
-    case 2:
-        // Only Phase Pause
-        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_pp_" + to_string(phase_pause) + "_hard.txt");
-        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_pp_" + to_string(phase_pause) + "_infer.txt");
-        break;
-    case 4:
-        // Only Layer Pause
-        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_lp_" + to_string(layer_pause) + "_hard.txt");
-        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_lp_" + to_string(layer_pause) + "_infer.txt");
-        break;
-    case 5:
-        // Config Control + Layer Pause
-        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_lp_" + to_string(layer_pause) + "_hard.txt");
-        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_lp_" + to_string(layer_pause) + "_infer.txt");
-        break;
-    case 8:
-        // Only Token Pause
-        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_tp_" + to_string(token_pause) + "_hard.txt");
-        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_tp_" + to_string(token_pause) + "_infer.txt");
-        break;
-    case 16:
-        // Only query interval
-        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_qi_" + to_string(query_interval) + "_hard.txt");
-        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_qi_" + to_string(query_interval) + "_infer.txt");
-        break;
-    case 17:
-        // Config Control + Query Interval
-        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_qi_" + to_string(query_interval) + "_hard.txt");
-        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_qi_" + to_string(query_interval) + "_infer.txt");
-        break;
-    case 20:
-        // Layer Pause + Query Interval
-        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_lp_" + to_string(layer_pause) + "_qi_" + to_string(query_interval) + "_hard.txt");
-        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_lp_" + to_string(layer_pause) + "_qi_" + to_string(query_interval) + "_infer.txt");
-        break;
-    case 21:
-        // Config Control + Layer Pause + Query Interval
-        output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_lp_" + to_string(layer_pause) + "_qi_" + to_string(query_interval) + "_hard.txt");
-        output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_" + to_string(cpu_clk_idx_p) + "-" + to_string(ram_clk_idx_p) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_lp_" + to_string(layer_pause) + "_qi_" + to_string(query_interval) + "_infer.txt");
-        break;
-    
-    case 3:  // Config Control + Phase Pause
-    case 6:  // Phase Pause + Layer Pause
-    case 7:  // Config Control + Pase Pause + Layer Pause
-    case 9:  // Config Control + Token Pause
-    case 10: // Phase Pause + Token Pause
-    case 11: // Config Control + Phase Pause + Token Pause
-    case 12: // Layer Pause + Token Pause
-    case 13: // Config Control + Layer Pause + Token Pause
-    case 14: // Phase Pause + Layer Pause + Token Pause
-    case 15: // Config Control + Phase Pause + Layer Pause + Token Pause
-    default:
-        // Not controlled cases
-        cerr << "[ERROR] Not Controlled Configuration\n";
-        return 1;
-    }
+    output_hard = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_" + to_string(start_cpu_clk_idx) + "-" + to_string(start_ram_clk_idx) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_resource_agent_hard.txt");
+    output_infer = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_" + to_string(start_cpu_clk_idx) + "-" + to_string(start_ram_clk_idx) + "_to_" + to_string(cpu_clk_idx_d) + "-" + to_string(ram_clk_idx_d) + "_resource_agent_infer.txt");
     output_qa = joinPaths(output_dir, "HotpotQA_mllm_Qwen3_" + model_billion + "_result.json");
 
     // variable initialization: For Thermal Throttling Detection
@@ -338,6 +276,11 @@ int main(int argc, char **argv) {
     auto start_sys_time = chrono::system_clock::now();
     std::thread record_thread = std::thread(record_hard, std::ref(sigterm), dvfs);
 
+    // Start DVFS setting is only meaningful in this agent case
+    freq_config = dvfs.get_cpu_freqs_conf(cpu_clk_idx_p);
+    dvfs.set_cpu_freq(freq_config);
+    dvfs.set_ram_freq(ram_clk_idx_p);
+
     // start agent
     std::thread scheduler_agent = std::thread(agent, &model.params, std::ref(dvfs), std::ref(collector), std::ref(sigterm));
 
@@ -347,9 +290,7 @@ int main(int argc, char **argv) {
         int ft = 0; // first token
         auto now_sys_time = chrono::system_clock::now();
 
-        freq_config = dvfs.get_cpu_freqs_conf(cpu_clk_idx_p);
-        dvfs.set_cpu_freq(freq_config);
-        dvfs.set_ram_freq(ram_clk_idx_p);
+        // Prefill DVFS setting is meaningless in this agent case
 
         auto time1 = chrono::system_clock::now();
         auto input_str = tokenizer.apply_chat_template(question);
@@ -374,13 +315,8 @@ int main(int argc, char **argv) {
         model.generate(input_tensor, opt, [&](unsigned int out_token) -> bool {
             auto out_string = tokenizer.detokenize({out_token});
             // now prefill done (when ft==0)
-
-            // phase clock control
-            if (ft == 0 && !fixed_config) {
-                freq_config = dvfs.get_cpu_freqs_conf(cpu_clk_idx_d);
-                dvfs.set_cpu_freq(freq_config);
-                dvfs.set_ram_freq(ram_clk_idx_d);
-            }
+            // phase clock control is meaningless in this agent case
+            
             // phase pause
             if (ft == 0 && phase_pause > 0) {
                 // std::cout << std::flush << "sleep\n"; // test
@@ -416,15 +352,7 @@ int main(int argc, char **argv) {
         profile_res.insert(profile_res.begin(), (double)sys_time / (double)1000.0);
         write_file(profile_res, output_infer); // store in real time
 
-        // Throttling detection
-        // single query is done
-        // This throttling detection is valid for only Pixel9
-        int cur_cpu_freq = stoi(split_string(execute_cmd(command.c_str()))[0]);
-        if (cur_cpu_freq * 1000 != dvfs.get_cpu_freq().at(7).at(freq_config[2])) {
-            Module::thread_sleep = 0; // reset layer-pause
-            phase_pause = 0;          // reset phase-pause
-            token_pause = 0;          // reset token-pause
-        }
+        // throttling detection is meaningless in this agent case
 
         // Reset
         if (is_query_save) { ans.push_back(answer); } // accummulate answers

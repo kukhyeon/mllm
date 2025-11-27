@@ -18,11 +18,12 @@ struct ignite_params {
     int max_ram_clk_idx = 0; // fixed by device
     int cur_ram_clk_idx = 0; // dynamic
 
-    // model plane
+    // llm plane
     int phase_pause = 0; // ms
     int token_pause = 0; // ms
     int layer_pause = 0; // ms
     int query_interval = 0; // ms
+    bool prefill_phase = true; // prefill phase or not
 };
 
 #endif // COMMON_H

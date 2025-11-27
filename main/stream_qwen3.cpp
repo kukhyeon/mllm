@@ -217,7 +217,7 @@ int main(int argc, char **argv) {
     model.load(model_path);
     model.init_ignite_params(_params);  // for this, must turn on "IGNITE_USE_SYSTEM" option when building MLLM
                                         // see scripts/build.sh
-    Module::thread_sleep = layer_pause; // set layer-pause time
+    Module::thread_sleep = layer_pause; // set layer-pause time // deprecated
 
     // QA Dataset Load
     vector<vector<string>> qa_list = readCSV(input_path); // qa load
@@ -331,9 +331,13 @@ int main(int argc, char **argv) {
         // This throttling detection is valid for only Pixel9
         int cur_cpu_freq = stoi(split_string(execute_cmd(command.c_str()))[0]);
         if (cur_cpu_freq * 1000 != dvfs.get_cpu_freq().at(7).at(freq_config[2])) {
-            Module::thread_sleep = 0; // reset layer-pause
+            // deprecated
+            // Module::thread_sleep = 0; // reset layer-pause
             phase_pause = 0;          // reset phase-pause
             token_pause = 0;          // reset token-pause
+
+            // new ver.
+            model.params.layer_pause = 0;
         }
 
         // Reset
