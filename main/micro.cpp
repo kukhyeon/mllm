@@ -341,5 +341,7 @@ int main(int argc, char** argv) {
 #pragma endregion // DVFS_JITTER_TEST
     }
 
+    dvfs.unset_cpu_freq();
+
     return 0;
 }
