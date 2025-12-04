@@ -16,6 +16,9 @@
 #include <unistd.h>   // gettid()
 #endif
 
+#define DVFS_LATENCY_TEST
+#define DVFS_JITTER_TEST
+
 using Clock = std::chrono::steady_clock;
 
 struct Stats {
@@ -198,24 +201,14 @@ int main(int argc, char** argv) {
     cmdParser.add<int>("freq-b", 'b', "specify RAM clock index for RAM DVFS", true, 0);
     cmdParser.parse_check(argc, argv);
 
-    int mode = cmdParser.get<int>("mode");
+    const int mode = cmdParser.get<int>("mode");
     std::string device_name = cmdParser.get<std::string>("device");
     int freq_a = cmdParser.get<int>("freq-a");
     int freq_b = cmdParser.get<int>("freq-b");
 
     DVFS dvfs(device_name);
 
-    switch (mode){
-    case 0:
-        #define DVFS_LATENCY_TEST
-        break;
-    case 1:
-        #define DVFS_JITTER_TEST
-        break;
-    default:
-        #define DVFS_LATENCY_TEST
-        break;
-    }
+    if (mode == 0){
 
 #ifdef DVFS_LATENCY_TEST
     const int warmup_iters  = 10;   // 캐시/드라이버 워밍업
@@ -254,7 +247,8 @@ int main(int argc, char** argv) {
     std::string filename = "dvfs_latency_" + std::to_string(freq_a) + "_" + std::to_string(freq_b)  + ".txt";
     write_latencies_to_file(filename, latencies_us);
 #endif // DVFS_LATENCY_TEST
-
+    }
+    else if (mode == 1){
 #ifdef DVFS_JITTER_TEST
     // (예시) big 코어 CPU ID
     // - Snapdragon: big 코어가 4~7일 가능성이 큼 → 6 같은 값 사용
@@ -348,6 +342,7 @@ int main(int argc, char** argv) {
     std::cout << "Mean dt  = " << mean_dt << " us\n";
     std::cout << "Max dt   = " << max_dt  << " us\n";
 #endif // DVFS_JITTER_TEST
+    }
 
     return 0;
 }
