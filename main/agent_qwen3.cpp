@@ -98,7 +98,7 @@ void agent(struct ignite_params* params, /*to control*/ DVFS& dvfs, /*to monitor
         }
         
         i++;
-        std::this_thread::sleep_for(std::chrono::milliseconds((int)monitor_interval_ms));
+        std::this_thread::sleep_for(std::chrono::milliseconds((int)control_ms));
     }
     
 
