@@ -12,8 +12,8 @@
 #include <cmath>
 
 #ifdef __linux__
-#include <pthread.h>
 #include <sched.h>
+#include <unistd.h>   // gettid()
 #endif
 
 using Clock = std::chrono::steady_clock;
@@ -128,10 +128,12 @@ bool set_affinity_to_cpu(int cpu_id) {
     CPU_ZERO(&cpuset);
     CPU_SET(cpu_id, &cpuset);
 
-    int rc = pthread_setaffinity_np(pthread_self(),
-                                    sizeof(cpu_set_t), &cpuset);
+    // 현재 스레드의 TID 가져오기 (Android/bionic 에서 지원)
+    pid_t tid = gettid();  // calling thread
+
+    int rc = sched_setaffinity(tid, sizeof(cpu_set_t), &cpuset);
     if (rc != 0) {
-        std::cerr << "[WARN] pthread_setaffinity_np failed, rc=" << rc << "\n";
+        std::cerr << "[WARN] sched_setaffinity failed, rc=" << rc << "\n";
         return false;
     }
     return true;
@@ -140,6 +142,7 @@ bool set_affinity_to_cpu(int cpu_id) {
     return true;
 #endif
 }
+
 
 // ===============================
 // 샘플 저장용 struct
