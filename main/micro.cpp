@@ -142,11 +142,9 @@ int main(int argc, char** argv) {
         // 2) 실제 측정
         latencies_us.reserve(measure_iters);
 
-        for (int i = 0; i < measure_iters; ++i) {
-            us = measure_one_switch(dvfs, freqs_idx[i % freqs_idx.size()]);
-            if (!std::isnan(us)) {
-                latencies_us.push_back(us);
-            }
+        us = measure_one_switch(dvfs, freqs_idx[i % freqs_idx.size()]);
+        if (!std::isnan(us)) {
+            latencies_us.push_back(us);
         }
     }
 
