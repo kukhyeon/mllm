@@ -38,6 +38,9 @@ double measure_one_switch(
         return std::numeric_limits<double>::quiet_NaN();
     }
 
+    double t_now_ns = now_ns();
+    double delta_us = (t_now_ns - t0_ns) / 1e3;  // ns → us
+    return delta_us;
     // 2. polling으로 실제 freq 반영 시점 찾기
     // const double timeout_ns = timeout_us * 1e3;
     // while (true) {
