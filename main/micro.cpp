@@ -110,11 +110,12 @@ void write_latencies_to_file(const std::string &filename,
               << " samples to " << filename << "\n";
 }
 
-int main(){
+int main(int argc, char** argv) {
     cmdline::parser cmdParser;
     cmdParser.add<std::string>("device", 'D', "specify your android phone [Pixel9 | S24]", true, "");
     cmdParser.add<int>("freq-a", 'a', "specify CPU clock index for CPU DVFS", true, 0);
     cmdParser.add<int>("freq-b", 'b', "specify RAM clock index for RAM DVFS", true, 0);
+    cmdParser.parse_check(argc, argv);
 
     std::string device_name = cmdParser.get<std::string>("device");
     int freq_a = cmdParser.get<int>("freq-a");
