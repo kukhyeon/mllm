@@ -76,6 +76,25 @@ double measure_one_switch(
     // }
 }
 
+double measure_one_ram_switch(
+    DVFS& dvfs,
+    int target_idx,
+    int poll_interval_us = 50,
+    int timeout_us = 10000   // 10ms
+) {
+    // 1. 스위치 요청 시각
+    double t0_ns = now_ns();
+    int ok = dvfs.set_ram_freq(target_idx);
+    if (ok != 0) {
+        std::cerr << "[WARN] set_cpu_frequency(" << target_idx << ") failed\n";
+        return std::numeric_limits<double>::quiet_NaN();
+    }
+
+    double t_now_ns = now_ns();
+    double delta_us = (t_now_ns - t0_ns) / 1e3;  // ns → us
+    return delta_us;
+}
+
 Stats compute_stats(const std::vector<double>& vals) {
     Stats s{};
     if (vals.empty()) return s;
@@ -207,8 +226,7 @@ int main(int argc, char** argv) {
     DVFS dvfs(device_name);
 
     if (mode == 0){
-
-#pragma region DVFS_LATENCY_TEST
+#pragma region CPU_DVFS_LATENCY_TEST
     const int warmup_iters  = 10;   // 캐시/드라이버 워밍업
     const int measure_iters = 1000;  // 실제 통계 계산 반복 횟수
     std::vector<int> freqs_idx = { freq_a, freq_b };
@@ -244,10 +262,10 @@ int main(int argc, char** argv) {
 
     std::string filename = "dvfs_latency_" + std::to_string(freq_a) + "_" + std::to_string(freq_b)  + ".txt";
     write_latencies_to_file(filename, latencies_us);
-#pragma endregion // DVFS_LATENCY_TEST
+#pragma endregion // CPU_DVFS_LATENCY_TEST
     }
     else if (mode == 1){
-#pragma region DVFS_JITTER_TEST
+#pragma region CPU_DVFS_JITTER_TEST
     // (예시) big 코어 CPU ID
     // - Snapdragon: big 코어가 4~7일 가능성이 큼 → 6 같은 값 사용
     // - Tensor / Exynos도 big 코어 번호 확인해서 맞춰주면 됨.
@@ -289,7 +307,7 @@ int main(int argc, char** argv) {
 
         int ret = dvfs.set_cpu_freq(target_conf);
         if (ret != 0) {
-            std::cerr << "[WARN] set_cpu_freq switch " << i
+            std::cerr << "[WARN] set_ram_freq switch " << i
                       << " failed (ret=" << ret << ")\n";
         }
 
@@ -342,10 +360,144 @@ int main(int argc, char** argv) {
 
     std::cout << "Mean dt  = " << mean_dt << " us\n";
     std::cout << "Max dt   = " << max_dt  << " us\n";
-#pragma endregion // DVFS_JITTER_TEST
+#pragma endregion // CPU_DVFS_JITTER_TEST
+    } else if (mode == 2){
+#pragma region RAM_DVFS_LATENCY_TEST
+    const int warmup_iters  = 10;   // 캐시/드라이버 워밍업
+    const int measure_iters = 1000;  // 실제 통계 계산 반복 횟수
+    std::vector<int> freqs_idx = { freq_a, freq_b };
+    std::vector<double> latencies_us;
+
+    // 1) 워밍업
+    double us;
+    for (int i = 0; i < warmup_iters; ++i) {
+        us = measure_one_ram_switch(dvfs, freqs_idx[i % freqs_idx.size()]);
+        (void)us; // 워밍업 결과는 버림
+    }
+
+
+    us = 0.0;
+    for (int i = 0; i < measure_iters; ++i) {
+        // 2) 실제 측정
+        latencies_us.reserve(measure_iters);
+
+        us = measure_one_ram_switch(dvfs, freqs_idx[i % freqs_idx.size()]);
+        if (!std::isnan(us)) {
+            latencies_us.push_back(us);
+        }
+    }
+
+    Stats st = compute_stats(latencies_us);
+
+    std::cout << "  count = " << st.count << "\n";
+    std::cout << "  mean  = " << st.mean  << " us\n";
+    std::cout << "  std   = " << st.stddev << " us\n";
+    std::cout << "  min   = " << st.min   << " us\n";
+    std::cout << "  max   = " << st.max   << " us\n";
+    std::cout << std::endl;
+
+    std::string filename = "ram_dvfs_latency_" + std::to_string(freq_a) + "_" + std::to_string(freq_b)  + ".txt";
+    write_latencies_to_file(filename, latencies_us);
+#pragma endregion // RAM_DVFS_LATENCY_TEST
+    } else if (mode == 3){
+#pragma region RAM_DVFS_JITTER_TEST
+    // (예시) big 코어 CPU ID
+    // - Snapdragon: big 코어가 4~7일 가능성이 큼 → 6 같은 값 사용
+    // - Tensor / Exynos도 big 코어 번호 확인해서 맞춰주면 됨.
+    const int worker_cpu_id = 7;  // 기기에 맞게 수정
+    const size_t max_samples = 2000000; // 필요에 따라 조정
+    const int switch_iter = 1;          // A<->B 스위칭 횟수
+
+    // 워커 스레드에서 쌓을 샘플 버퍼
+    std::vector<Sample> samples;
+
+    // 워커 스레드 시작
+    std::thread worker(worker_thread_func,
+                       worker_cpu_id,
+                       std::ref(samples),
+                       max_samples);
+
+    // 워커가 준비될 때까지 대기
+    while (!g_started.load(std::memory_order_acquire)) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+
+    // 1) 먼저 freq_A로 고정 (선택 사항)
+    dvfs.set_ram_freq(freq_a);
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    // 2) DVFS 스위칭: A <-> B 를 switch_iter번 반복
+    std::vector<double> dvfs_req_times_ns;
+    dvfs_req_times_ns.reserve(switch_iter);
+
+    for (int i = 0; i < switch_iter; ++i) {
+        // 짝수: A -> B, 홀수: B -> A (원하면 반대로도 가능)
+        int target_idx = (i % 2 == 0) ? freq_b : freq_a;
+
+        double t_req_ns = now_ns();
+        g_dvfs_req_time_ns.store(t_req_ns, std::memory_order_release);
+        dvfs_req_times_ns.push_back(t_req_ns);
+
+        int ret = dvfs.set_ram_freq(target_idx);
+        if (ret != 0) {
+            std::cerr << "[WARN] set_ram_freq switch " << i
+                      << " failed (ret=" << ret << ")\n";
+        }
+
+        // 스위칭 사이 간격 (예: 200ms)
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    }
+
+    // 3) 실험 종료
+   // 3) 실험 종료
+    g_stop.store(true, std::memory_order_release);
+    worker.join();
+
+    std::cout << "Total samples collected: " << samples.size() << "\n";
+
+    // ===============================
+    // 결과를 파일로 저장
+    // ===============================
+    const char* output_filename = "worker_deltas_ram.txt";
+    std::ofstream ofs(output_filename);
+    if (!ofs.is_open()) {
+        std::cerr << "[ERROR] Failed to open " << output_filename << "\n";
+        return 1;
+    }
+
+    ofs << "# t_ns\t dt_us\n";
+    // 여러 번 DVFS 요청 시각도 주석으로 기록
+    for (size_t i = 0; i < dvfs_req_times_ns.size(); ++i) {
+        ofs << "# dvfs_req_time_ns[" << i << "] = "
+            << std::setprecision(17) << std::fixed  // double 거의 full precision
+            << dvfs_req_times_ns[i] << "\n";
+    }
+
+    // t_ns는 ns 단위고 값이 크니까, 정밀도 많이 주고 출력
+    for (const auto& s : samples) {
+        ofs << std::setprecision(17) << std::fixed << s.t_ns << "\t"
+            << std::setprecision(9)  << std::fixed << s.dt_us << "\n";
+    }
+
+    ofs.close();
+    std::cout << "[INFO] Saved samples to " << output_filename << "\n";
+
+    // 간단한 통계: 전체 dt 평균 / 최대 보기
+    double sum = 0.0;
+    double max_dt = 0.0;
+    for (const auto& s : samples) {
+        sum += s.dt_us;
+        if (s.dt_us > max_dt) max_dt = s.dt_us;
+    }
+    double mean_dt = (samples.empty() ? 0.0 : sum / samples.size());
+
+    std::cout << "Mean dt  = " << mean_dt << " us\n";
+    std::cout << "Max dt   = " << max_dt  << " us\n";
+#pragma endregion // RAM_DVFS_JITTER_TEST
     }
 
     dvfs.unset_cpu_freq();
+    dvfs.unset_ram_freq();
 
     return 0;
 }
