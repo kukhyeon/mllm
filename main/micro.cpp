@@ -10,6 +10,7 @@
 #include <fstream>
 #include <limits>
 #include <cmath>
+#include <iomanip>
 
 #ifdef __linux__
 #include <sched.h>
@@ -317,11 +318,14 @@ int main(int argc, char** argv) {
     // 여러 번 DVFS 요청 시각도 주석으로 기록
     for (size_t i = 0; i < dvfs_req_times_ns.size(); ++i) {
         ofs << "# dvfs_req_time_ns[" << i << "] = "
+            << std::setprecision(17) << std::fixed  // double 거의 full precision
             << dvfs_req_times_ns[i] << "\n";
     }
 
+    // t_ns는 ns 단위고 값이 크니까, 정밀도 많이 주고 출력
     for (const auto& s : samples) {
-        ofs << s.t_ns << "\t" << s.dt_us << "\n";
+        ofs << std::setprecision(17) << std::fixed << s.t_ns << "\t"
+            << std::setprecision(9)  << std::fixed << s.dt_us << "\n";
     }
 
     ofs.close();
