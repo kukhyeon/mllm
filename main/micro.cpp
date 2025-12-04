@@ -16,9 +16,6 @@
 #include <unistd.h>   // gettid()
 #endif
 
-#define DVFS_LATENCY_TEST
-#define DVFS_JITTER_TEST
-
 using Clock = std::chrono::steady_clock;
 
 struct Stats {
@@ -210,7 +207,7 @@ int main(int argc, char** argv) {
 
     if (mode == 0){
 
-#ifdef DVFS_LATENCY_TEST
+#pragma region DVFS_LATENCY_TEST
     const int warmup_iters  = 10;   // 캐시/드라이버 워밍업
     const int measure_iters = 1000;  // 실제 통계 계산 반복 횟수
     std::vector<int> freqs_idx = { freq_a, freq_b };
@@ -246,10 +243,10 @@ int main(int argc, char** argv) {
 
     std::string filename = "dvfs_latency_" + std::to_string(freq_a) + "_" + std::to_string(freq_b)  + ".txt";
     write_latencies_to_file(filename, latencies_us);
-#endif // DVFS_LATENCY_TEST
+#pragma endregion // DVFS_LATENCY_TEST
     }
     else if (mode == 1){
-#ifdef DVFS_JITTER_TEST
+#pragma region DVFS_JITTER_TEST
     // (예시) big 코어 CPU ID
     // - Snapdragon: big 코어가 4~7일 가능성이 큼 → 6 같은 값 사용
     // - Tensor / Exynos도 big 코어 번호 확인해서 맞춰주면 됨.
@@ -341,7 +338,7 @@ int main(int argc, char** argv) {
 
     std::cout << "Mean dt  = " << mean_dt << " us\n";
     std::cout << "Max dt   = " << max_dt  << " us\n";
-#endif // DVFS_JITTER_TEST
+#pragma endregion // DVFS_JITTER_TEST
     }
 
     return 0;
