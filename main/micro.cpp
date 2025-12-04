@@ -17,73 +17,6 @@ struct Stats {
     size_t count = 0;
 };
 
-inline double now_ns();
-
-double measure_one_switch(
-    DVFS& dvfs,
-    int target_khz,
-    int poll_interval_us = 50,
-    int timeout_us = 10000
-);
-
-void write_latencies_to_file(const std::string &filename,
-                             const std::vector<double> &latencies_us);
-
-int main(){
-    cmdline::parser cmdParser;
-    cmdParser.add<std::string>("device", 'D', "specify your android phone [Pixel9 | S24]", true, "");
-    cmdParser.add<int>("freq-a", 'a', "specify CPU clock index for CPU DVFS", true, 0);
-    cmdParser.add<int>("freq-b", 'b', "specify RAM clock index for RAM DVFS", true, 0);
-
-    std::string device_name = cmdParser.get<std::string>("device");
-    int freq_a = cmdParser.get<int>("freq-a");
-    int freq_b = cmdParser.get<int>("freq-b");
-
-    DVFS dvfs(device_name);
-
-
-    const int warmup_iters  = 10;   // 캐시/드라이버 워밍업
-    const int measure_iters = 1000;  // 실제 통계 계산 반복 횟수
-    std::vector<int> freqs_idx = { freq_a, freq_b };
-    std::vector<double> latencies_us;
-
-    // 1) 워밍업
-    double us;
-    for (int i = 0; i < warmup_iters; ++i) {
-        us = measure_one_switch(dvfs, freqs_idx[i % freqs_idx.size()]);
-        (void)us; // 워밍업 결과는 버림
-    }
-
-
-    us = 0.0;
-    for (int i = 0; i < measure_iters; ++i) {
-        // 2) 실제 측정
-        latencies_us.reserve(measure_iters);
-
-        for (int i = 0; i < measure_iters; ++i) {
-            us = measure_one_switch(dvfs, freqs_idx[i % freqs_idx.size()]);
-            if (!std::isnan(us)) {
-                latencies_us.push_back(us);
-            }
-        }
-    }
-
-    Stats st = compute_stats(latencies_us);
-
-    std::cout << "  count = " << st.count << "\n";
-    std::cout << "  mean  = " << st.mean  << " us\n";
-    std::cout << "  std   = " << st.stddev << " us\n";
-    std::cout << "  min   = " << st.min   << " us\n";
-    std::cout << "  max   = " << st.max   << " us\n";
-    std::cout << std::endl;
-
-    std::string filename = "dvfs_latency_" + std::to_string(freq_a) + "_" + std::to_string(freq_b)  + ".txt";
-    write_latencies_to_file(filename, latencies_us);
-
-    return 0;
-}
-
-
 inline double now_ns() {
     return std::chrono::duration<double, std::nano>(Clock::now().time_since_epoch()).count();
 }
@@ -172,4 +105,58 @@ void write_latencies_to_file(const std::string &filename,
     ofs.close();
     std::cout << "  [INFO] Saved " << latencies_us.size()
               << " samples to " << filename << "\n";
+}
+
+int main(){
+    cmdline::parser cmdParser;
+    cmdParser.add<std::string>("device", 'D', "specify your android phone [Pixel9 | S24]", true, "");
+    cmdParser.add<int>("freq-a", 'a', "specify CPU clock index for CPU DVFS", true, 0);
+    cmdParser.add<int>("freq-b", 'b', "specify RAM clock index for RAM DVFS", true, 0);
+
+    std::string device_name = cmdParser.get<std::string>("device");
+    int freq_a = cmdParser.get<int>("freq-a");
+    int freq_b = cmdParser.get<int>("freq-b");
+
+    DVFS dvfs(device_name);
+
+
+    const int warmup_iters  = 10;   // 캐시/드라이버 워밍업
+    const int measure_iters = 1000;  // 실제 통계 계산 반복 횟수
+    std::vector<int> freqs_idx = { freq_a, freq_b };
+    std::vector<double> latencies_us;
+
+    // 1) 워밍업
+    double us;
+    for (int i = 0; i < warmup_iters; ++i) {
+        us = measure_one_switch(dvfs, freqs_idx[i % freqs_idx.size()]);
+        (void)us; // 워밍업 결과는 버림
+    }
+
+
+    us = 0.0;
+    for (int i = 0; i < measure_iters; ++i) {
+        // 2) 실제 측정
+        latencies_us.reserve(measure_iters);
+
+        for (int i = 0; i < measure_iters; ++i) {
+            us = measure_one_switch(dvfs, freqs_idx[i % freqs_idx.size()]);
+            if (!std::isnan(us)) {
+                latencies_us.push_back(us);
+            }
+        }
+    }
+
+    Stats st = compute_stats(latencies_us);
+
+    std::cout << "  count = " << st.count << "\n";
+    std::cout << "  mean  = " << st.mean  << " us\n";
+    std::cout << "  std   = " << st.stddev << " us\n";
+    std::cout << "  min   = " << st.min   << " us\n";
+    std::cout << "  max   = " << st.max   << " us\n";
+    std::cout << std::endl;
+
+    std::string filename = "dvfs_latency_" + std::to_string(freq_a) + "_" + std::to_string(freq_b)  + ".txt";
+    write_latencies_to_file(filename, latencies_us);
+
+    return 0;
 }
