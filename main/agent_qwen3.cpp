@@ -79,9 +79,9 @@ void agent(struct ignite_params* params, /*to control*/ DVFS& dvfs, /*to monitor
     }
 #endif
 
-    const std::size_t control_ms = 200; // ms
-    const int up_cpu_idx = 12; const int down_cpu_idx = 10;
-    const int up_ram_idx = 11; const int down_ram_idx = 9;
+    const std::size_t control_ms = 5000; // ms
+    const int up_cpu_idx = 11; const int down_cpu_idx = 8;
+    const int up_ram_idx = 12; const int down_ram_idx = 10;
     const std::vector<int> up_cpu_conf = dvfs.get_cpu_freqs_conf(up_cpu_idx);
     const std::vector<int> down_cpu_conf = dvfs.get_cpu_freqs_conf(down_cpu_idx);
     int i =  0;
