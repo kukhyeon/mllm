@@ -211,6 +211,7 @@ int main(int argc, char** argv) {
         break;
     case 1:
         #define DVFS_JITTER_TEST
+        break;
     default:
         #define DVFS_LATENCY_TEST
         break;
