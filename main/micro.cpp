@@ -48,18 +48,20 @@ int main(){
     std::vector<double> latencies_us;
 
     // 1) 워밍업
+    double us;
     for (int i = 0; i < warmup_iters; ++i) {
-        double us = measure_one_switch(dvfs, freqs_idx[i % freqs_idx.size()]);
+        us = measure_one_switch(dvfs, freqs_idx[i % freqs_idx.size()]);
         (void)us; // 워밍업 결과는 버림
     }
 
 
+    us = 0.0;
     for (int i = 0; i < measure_iters; ++i) {
         // 2) 실제 측정
         latencies_us.reserve(measure_iters);
 
         for (int i = 0; i < measure_iters; ++i) {
-            double us = measure_one_switch(dvfs, freqs_idx[i % freqs_idx.size()]);
+            us = measure_one_switch(dvfs, freqs_idx[i % freqs_idx.size()]);
             if (!std::isnan(us)) {
                 latencies_us.push_back(us);
             }
