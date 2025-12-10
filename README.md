@@ -18,7 +18,6 @@ Inference Governed by Nested lazy Ignition for Thermal Efficiency
 </h4>
 
 - Plain C/C++ implementation without dependencies
-- Optimized for multimodal LLMs like Qwen2-VL and LLaVA
 - Supported: ARM NEON, x86 AVX2, etc
 - Various quantization schemes
 - Advanced support for *IGNITE*
