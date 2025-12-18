@@ -250,6 +250,7 @@ int main(int argc, char **argv) {
     // measurement start
     auto start_sys_time = chrono::system_clock::now();
     std::thread record_thread = std::thread(record_hard, std::ref(sigterm), dvfs);
+    bool throttling = false;
 
     while ((qa_now - qa_start) < qa_limit) {
         string question = qa_list[qa_now][1];
@@ -257,9 +258,11 @@ int main(int argc, char **argv) {
         int ft = 0; // first token
         auto now_sys_time = chrono::system_clock::now();
 
-        freq_config = dvfs.get_cpu_freqs_conf(cpu_clk_idx_p);
-        dvfs.set_cpu_freq(freq_config);
-        dvfs.set_ram_freq(ram_clk_idx_p);
+        if (!fixed_config && !throttling) {
+            freq_config = dvfs.get_cpu_freqs_conf(cpu_clk_idx_p);
+            dvfs.set_cpu_freq(freq_config);
+            dvfs.set_ram_freq(ram_clk_idx_p);
+        }
 
         auto time1 = chrono::system_clock::now();
         auto input_str = tokenizer.apply_chat_template(question);
@@ -338,6 +341,7 @@ int main(int argc, char **argv) {
 
             // new ver.
             model.params.layer_pause = 0;
+            throttling = true;            
         }
 
         // Reset
