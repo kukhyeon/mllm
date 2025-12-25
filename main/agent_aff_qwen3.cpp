@@ -207,6 +207,8 @@ int main(int argc, char **argv) {
     // Affinity setting start
     pin_current({4,5,6,7}); // mid/big cores (main thread)
 
+    // Prepare collector
+    auto collector = dvfs.get_collector();
 
     // measurement start
     auto start_sys_time = chrono::system_clock::now();
