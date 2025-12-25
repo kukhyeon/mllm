@@ -1,6 +1,33 @@
 #include "record.h"
 #include <algorithm>
 
+/*
+ * Temp test function 
+ */
+
+std::string replaceFirst(std::string& str, const std::string& from, const std::string& to) {
+    size_t pos = 0;
+    if (str.substr(pos, from.length()) == from) {
+        str.replace(pos, from.length(), to);
+    }
+    return str;
+}
+
+static pid_t gettid_() { return (pid_t)syscall(SYS_gettid); }
+
+static void pin_tid(pid_t tid, std::initializer_list<int> cpus) {
+  cpu_set_t cs; CPU_ZERO(&cs);
+  for (int c : cpus) CPU_SET(c, &cs);
+  sched_setaffinity(tid, sizeof(cs), &cs);
+}
+static void pin_current(std::initializer_list<int> cpus) {
+  pin_tid(gettid_(), cpus);
+}
+/*
+* Temp test function
+*/
+
+
 // test function
 void get_cpu_info() {
     std::string command = "su -c \""; //prefix

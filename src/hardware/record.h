@@ -6,6 +6,9 @@
 #include "utils.h"
 
 #include <stdlib.h>
+#include <sched.h>
+#include <sys/syscall.h>
+#include <unistd.h>
 
 #include <iostream>
 #include <string>
