@@ -283,7 +283,7 @@ void write_file(const std::vector<double>& data, std::string output){
  * 
  * */
 void record_hard(std::atomic<bool>& sigterm, const DVFS& dvfs){
-
+    pin_current({2}); // silver core for agent
     sigterm = false;
     std::string filename = dvfs.output_filename;
 
