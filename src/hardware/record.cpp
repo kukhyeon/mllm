@@ -25,7 +25,7 @@ void get_cpu_info() {
     
     // command to get cpu freq
     command += "awk '{print \\$1/1000}' /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq; ";
-    command += "awk '{print \\$1/1000}' /sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq; ";
+    command += "awk '{print \\$1/1000}' /sys/devices/system/cpu/cpu6/cpufreq/scaling_cur_freq; ";
     command += "\""; // postfix
 
     // only execution
@@ -62,7 +62,7 @@ const std::string get_records_names(const DVFS& dvfs) {
 
     // power
     if (dvfs.get_device_name() == "Pixel9") names += "current_now,voltage_now,";
-    else names += "power_now,current_now,voltage_now,";
+    else names += "power_now,current_now,voltage_now,"; // S24, S25
 
     // RAM clock info
     names += "scaling_devfreq_max,scaling_devfreq_min,cur_freq,";
@@ -108,8 +108,10 @@ std::vector<std::string> get_hard_records(const DVFS& dvfs) {
 	// GPU clock info
     if (device_name == "Pixel9"){
         command += "awk '{print \\$1}' /sys/devices/platform/1f000000.mali/scaling_min_freq; awk '{print \\$1}' /sys/devices/platform/1f000000.mali/scaling_max_freq; "; //gpu clock
-    } else { // S24
+    } else if (device_name == "S24") { // S24
 	    command += "awk '{print \\$1}' /sys/kernel/gpu/gpu_min_clock; awk '{print \\$1}' /sys/kernel/gpu/gpu_max_clock; ";
+    } else if (device_name == "S25") { // S25
+        command += "awk '{print \\$1}' /sys/class/kgsl/kgsl-3d0/devfreq/min_freq; awk '{print \\$1}' /sys/class/kgsl/kgsl-3d0/devfreq/max_freq; ";
     }
 
     // CPU clock info
@@ -168,8 +170,10 @@ std::vector<std::string> get_hard_records_wo_systime(const DVFS& dvfs){
 	// GPU clock info
     if (device_name == "Pixel9"){
         command += "awk '{print \\$1}' /sys/devices/platform/1f000000.mali/scaling_min_freq; awk '{print \\$1}' /sys/devices/platform/1f000000.mali/scaling_max_freq; "; //gpu clock
-    } else { // S24
+    } else if (device_name == "S24") { // S24
 	    command += "awk '{print \\$1}' /sys/kernel/gpu/gpu_min_clock; awk '{print \\$1}' /sys/kernel/gpu/gpu_max_clock; ";
+    } else if (device_name == "S25") { // S25
+        command += "awk '{print \\$1}' /sys/class/kgsl/kgsl-3d0/devfreq/min_freq; awk '{print \\$1}' /sys/class/kgsl/kgsl-3d0/devfreq/max_freq; ";
     }
 
     // CPU clock info

@@ -7,8 +7,11 @@ echo "Device: $DEV"
 if [ "$DEV" = "Pixel9" ]; then
   # Pixel9
   su -c "echo 0 > /sys/class/backlight/panel0-backlight/brightness"
+elif [ "$DEV" = "S24" ] || [ "$DEV" = "S25" ]; then
+  # S24, S25
+  su -c "echo 0 > /sys/class/backlight/panel/brightness"
 else
-  # S24
+  # Default 
   su -c "echo 0 > /sys/class/backlight/panel/brightness"
   DEV="S24"
 fi
@@ -52,11 +55,10 @@ su -c "echo 1 > /sys/devices/system/cpu/cpu2/online"
 su -c "echo 1 > /sys/devices/system/cpu/cpu3/online"
 
 # turn-on screen
-# turn-off screen
 if [ "$DEV" = "Pixel9" ]; then
   # Pixel9
   su -c "echo 1023 > /sys/class/backlight/panel0-backlight/brightness"
 else
-  # S24
+  # S24, S25
   su -c "echo 1023 > /sys/class/backlight/panel/brightness"
 fi
