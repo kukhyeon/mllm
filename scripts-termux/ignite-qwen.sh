@@ -24,6 +24,30 @@ su -c "echo 0 > /sys/devices/system/cpu/cpu2/online"
 su -c "echo 0 > /sys/devices/system/cpu/cpu3/online"
 
 ./bin-arm/stream_qwen3 \
+  # -m: model path
+  # -v: vocabulary path
+  # -e: merges path
+  # -f: model family
+  # -b: model size
+  # -t: num of threads
+  # -l: max KV cache size
+  # -i: print inference interface
+  # -s: starting num of queries
+  # -L: num of queries
+
+  # -I: input dataset path of csv
+  # -O: output directory path
+  # -S: save query-answer pairs with json
+  # -D: device name
+  # --strict: apply tokwn limits to only output tokens
+  # --cpu-p: specify CPU frequency for CPU DVFS
+  # --ram-p: specify RAM frequency for RAM DVFS
+  # --cpu-d: specify CPU frequency for CPU DVFS
+  # --ram-d: specify RAM frequency for RAM DVFS
+  # --phase-pause: specify a pause time between phases (ms)
+  # --token-pause: specify a pause time between generation tokens (ms)
+  # --layer-pause: specify a pause time between self-attention layers during prefill (ms)
+  # --query-interval: specify an interval time between queries (s)
   -m models/qwen-3-1.7b-q4k.mllm \
   -v vocab/qwen3_vocab.mllm \
   -e vocab/qwen3_merges.txt \
@@ -34,6 +58,7 @@ su -c "echo 0 > /sys/devices/system/cpu/cpu3/online"
   -i 1 \
   -s 1 \
   -L 20 \
+
   -I dataset/hotpot_qa.csv \
   -O output/ \
   -S 0 \
