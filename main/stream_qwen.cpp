@@ -185,6 +185,8 @@ int main(int argc, char **argv) {
     Module::thread_sleep = layer_pause; // set layer-pause time
 
     // QA Dataset Load
+    // qa_list[0] -> {"id", "question", "answer"}
+    // qa_list[0][1] -> {"question"}
     vector<vector<string>> qa_list = readCSV(input_path); // qa load
     vector<string> ans;                                   // qa load
 
@@ -207,7 +209,7 @@ int main(int argc, char **argv) {
     }
 
     // measurement start
-    auto start_sys_time = chrono::system_clock::now();
+    auto start_sys_time = chrono::system_clock::now(); // chorno is the library, provided by std
     std::thread record_thread = std::thread(record_hard, std::ref(sigterm), dvfs);
 
     while ((qa_now - qa_start) < qa_limit) {
