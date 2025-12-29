@@ -1,6 +1,6 @@
 #include "device.h"
 
-Device::Device(const std::string& device_name) : device(device_name){
+Device::Device(const std::string& device_name) : device(device_name){ // set device which member function of Deivce class to value of device_num
     if (device_name == "S22_Ultra" || device_name == "Fold4" ||  device_name == "Pixel9"){
 	    cluster_indices = {0, 4, 7};
     } else if (device_name == "S24" || device_name == "SM-S921N"){

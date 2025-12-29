@@ -14,6 +14,7 @@ public:
     Device() = delete;
     explicit Device(const std::string& device_name);
 
+    // member function
     const std::vector<int> get_cluster_indices() const;
     const std::string get_device_name() const;
 };
