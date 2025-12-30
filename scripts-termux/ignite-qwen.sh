@@ -60,7 +60,7 @@ fi
   -l 1024 \
   -i 1 \
   -s 1 \
-  -L 20 \
+  -L 3 \
   -I dataset/hotpot_qa.csv \
   -O output/ \
   -S 0 \
