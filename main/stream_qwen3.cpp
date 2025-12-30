@@ -328,7 +328,7 @@ int main(int argc, char **argv) {
         auto profile_res = model.profiling("Inference");
         profile_res.insert(profile_res.begin(), (double)sys_time / (double)1000.0);
         write_file(profile_res, output_infer); // store in real time
-
+        /*
         // Throttling detection
         // single query is done
         // This throttling detection is valid for only Pixel9
@@ -342,7 +342,7 @@ int main(int argc, char **argv) {
             // new ver.
             model.params.layer_pause = 0;
             throttling = true;            
-        }
+        } */
 
         // Reset
         if (is_query_save) { ans.push_back(answer); } // accummulate answers
