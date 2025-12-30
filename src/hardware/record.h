@@ -21,7 +21,8 @@
 #include <atomic>
 #include <thread>
 
-#define HARD_RECORD_FILE "./data/hard_info_termux.txt"
+//#define HARD_RECORD_FILE "./data/hard_info_termux.txt"
+#define HARD_RECORD_FILE "/data/data/com.termux/files/home/mllm/data/hard_info_termux.txt"
 #define INFER_RECORD_FILE "./data/infer_info.csv"
 #define TIME_T std::chrono::system_clock::time_point
 
