@@ -34,7 +34,6 @@ su -c "echo 0 > /sys/devices/system/cpu/cpu3/online"
   # -i: print inference interface
   # -s: starting num of queries
   # -L: num of queries
-
   # -I: input dataset path of csv
   # -O: output directory path
   # -S: save query-answer pairs with json
@@ -58,7 +57,6 @@ su -c "echo 0 > /sys/devices/system/cpu/cpu3/online"
   -i 1 \
   -s 1 \
   -L 20 \
-
   -I dataset/hotpot_qa.csv \
   -O output/ \
   -S 0 \
