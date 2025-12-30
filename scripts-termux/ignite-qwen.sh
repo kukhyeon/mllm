@@ -23,7 +23,6 @@ su -c "echo 0 > /sys/devices/system/cpu/cpu1/online"
 su -c "echo 0 > /sys/devices/system/cpu/cpu2/online"
 su -c "echo 0 > /sys/devices/system/cpu/cpu3/online"
 
-./bin-arm/stream_qwen3 \
   # -m: model path
   # -v: vocabulary path
   # -e: merges path
@@ -47,6 +46,8 @@ su -c "echo 0 > /sys/devices/system/cpu/cpu3/online"
   # --token-pause: specify a pause time between generation tokens (ms)
   # --layer-pause: specify a pause time between self-attention layers during prefill (ms)
   # --query-interval: specify an interval time between queries (s)
+
+./bin-arm/stream_qwen3 \
   -m models/qwen-3-1.7b-q4k.mllm \
   -v vocab/qwen3_vocab.mllm \
   -e vocab/qwen3_merges.txt \
