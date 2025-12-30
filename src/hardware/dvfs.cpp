@@ -97,6 +97,10 @@ int DVFS::unset_cpu_freq(){
 }
 
 int DVFS::set_ram_freq(const int freq_idx){
+    // S25 is held
+    if (this->get_device_name() == "S25") {
+        return 0;
+    }
 	// vector size should be same
 	if (this->get_ddr_freq().size() <= freq_idx) return 1;
 
@@ -111,15 +115,18 @@ int DVFS::set_ram_freq(const int freq_idx){
         // for S24
         command += std::string("echo ") + std::to_string(clk)+ std::string(" > /sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/scaling_devfreq_min; ");
 		command += std::string("echo ") + std::to_string(clk)+ std::string(" > /sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/scaling_devfreq_max; ");
-    }   // S25 is held
+    }
 	command += "\""; // closing quote
 	
 	return system(command.c_str());
 }
 
 int DVFS::unset_ram_freq(){
+    // S25 is held
+    if (this->get_device_name() == "S25") {
+        return 0;
+    }
     // unset ram frequency
-
     const int min_clk = this->ddrfreq.at(this->device)[0];
     const int max_clk = this->ddrfreq.at(this->device)[this->ddrfreq.at(this->device).size()-1];
 
