@@ -14,9 +14,13 @@ namespace mllm {
         base_alignment_(base_alignment)
     {
 #if defined(_MSC_VER) || defined(__MINGW32__)
-        data_ = _aligned_malloc(pool_size,base_alignment);
+       data_ = _aligned_malloc(pool_size,base_alignment);
 #else
-        data_ = std::aligned_alloc(base_alignment,pool_size);
+       // data_ = std::aligned_alloc(base_alignment,pool_size);
+	int res = posix_memalign(&data_, base_alignment, pool_size);
+	if (res != 0){
+		data_ = nullptr;
+	}
 #endif
 
         n_free_blocks_ += 1;
