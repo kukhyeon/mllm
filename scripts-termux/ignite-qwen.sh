@@ -1,6 +1,7 @@
 # product name
-DEV="$(getprop ro.product.product.model)"
-DEV="$(printf '%s' "$DEV" | tr -d '[:space:]')"
+# DEV="$(getprop ro.product.product.model)"
+# DEV="$(printf '%s' "$DEV" | tr -d '[:space:]')"
+DEV = "S25"
 echo "Device: $DEV"
 
 # turn-off screen
