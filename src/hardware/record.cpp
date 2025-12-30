@@ -231,7 +231,7 @@ void write_file(const std::vector<std::string>& data, std::string output){
 
 	// check file open
 	if (!file){
-		std::cerr << "failed to open file: " << HARD_RECORD_FILE << std::endl;
+		std::cerr << "failed to open file: " << output << std::endl;
 		return;
 	}
 
@@ -251,7 +251,7 @@ void write_file(const std::string& data, std::string output){
 
 	// check file open
 	if (!file){
-		std::cerr << "failed to open file: " << HARD_RECORD_FILE << std::endl;
+		std::cerr << "failed to open file: " << output << std::endl;
 		return;
 	}
 
@@ -269,7 +269,7 @@ void write_file(const std::vector<double>& data, std::string output){
 
 	// check file open
 	if (!file){
-		std::cerr << "failed to open file: " << HARD_RECORD_FILE << std::endl;
+		std::cerr << "failed to open file: " << output << std::endl;
 		return;
 	}
 
