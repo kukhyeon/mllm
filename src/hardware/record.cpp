@@ -144,9 +144,9 @@ std::vector<std::string> get_hard_records(const DVFS& dvfs) {
         command += "awk '{print \\$1/1000}' /sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/scaling_devfreq_min; ";
         command += "awk '{print \\$1/1000}' /sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/cur_freq; ";
     } else if (device_name == "S25") { // S25 is held
-        command += "awk '{print \\$1/1000}'  /sys/devices/system/cpu/bus_dcvs/DDR/soc:qcom,memlat:ddr:prime-latfloor/max_freq";
-        command += "awk '{print \\$1/1000}'  /sys/devices/system/cpu/bus_dcvs/DDR/soc:qcom,memlat:ddr:prime-latfloor/min_freq";
-        command += "awk '{print \\$1/1000}'  /sys/devices/system/cpu/bus_dcvs/DDR/cur)freq";
+        command += "awk '{print \\$1/1000}' /sys/devices/system/cpu/bus_dcvs/DDR/soc:qcom,memlat:ddr:prime-latfloor/max_freq; ";
+        command += "awk '{print \\$1/1000}' /sys/devices/system/cpu/bus_dcvs/DDR/soc:qcom,memlat:ddr:prime-latfloor/min_freq; ";
+        command += "awk '{print \\$1/1000}' /sys/devices/system/cpu/bus_dcvs/DDR/cur_freq; ";
     }
 
 
