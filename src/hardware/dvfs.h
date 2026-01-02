@@ -35,7 +35,7 @@ private:
 
 public:
     std::string output_filename;
-
+    int cur_ram_clk = 0; // Save current RAM Clock
 public:
     explicit DVFS(const std::string& device_name);
 
@@ -47,7 +47,7 @@ public:
     int unset_cpu_freq();
     int set_ram_freq(const int freq_idx);
     int unset_ram_freq();
-
+    void enforce_ram_freq() const; // Encofre reset RAM freq for prime-latfloor, this code only run on S25 or Snapdragon
     std::vector<int> get_cpu_freqs_conf(int prime_cpu_index);
 
     Collector get_collector() { return Collector(this->get_device_name()); }

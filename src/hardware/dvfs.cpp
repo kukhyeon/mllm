@@ -145,7 +145,19 @@ int DVFS::set_ram_freq(const int freq_idx){
         command += std::string("echo ") + std::to_string(clk)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/LLCC/240b7400.qcom,bwmon-llcc-prime/second_vote_limit");
         //==========================================================================================
     }
+    command += "\"";
 	return system(command.c_str());
+}
+
+void DVFS::enforce_ram_freq() const {
+    if (this->device == "S25" && cur_ram_clk > 0){
+        std::string command = "su -c \"";
+        command += std::string("echo ") + std::to_string(clk)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/DDR/soc:qcom,memlat:ddr:prime-latfloor/min_freq");
+        command += std::string("echo ") + std::to_string(clk)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/DDR/soc:qcom,memlat:ddr:prime-latfloor/max_freq");
+
+        command += std::string("echo ") + std::to_string(0)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/DDRQOS/soc:qcom,memlat:ddrqos:prime-latfloor/min_freq");
+        command += std::string("echo ") + std::to_string(0)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/DDRQOS/soc:qcom,memlat:ddrqos:prime-latfloor/max_freq");
+    }
 }
 
 int DVFS::unset_ram_freq(){
@@ -197,7 +209,7 @@ int DVFS::unset_ram_freq(){
         command += std::string("echo ") + std::to_string(clk)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/LLCC/240b7400.qcom,bwmon-llcc-prime/second_vote_limit");
         //==========================================================================================
     }
-	
+    command += "\"";
 	return system(command.c_str());
 }
 
