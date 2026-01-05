@@ -249,8 +249,15 @@ int main(int argc, char **argv) {
 
     // measurement start
     auto start_sys_time = chrono::system_clock::now();
-    std::thread record_thread = std::thread(record_hard, std::ref(sigterm), dvfs);
+    std::thread record_thread = std::thread(record_hard, std::ref(sigterm), std::ref(dvfs));
     bool throttling = false;
+
+    // Initial frequency setting for fixed configuration
+    if (fixed_config) {
+        freq_config = dvfs.get_cpu_freqs_conf(cpu_clk_idx_p);
+        dvfs.set_cpu_freq(freq_config);
+        dvfs.set_ram_freq(ram_clk_idx_p);
+    }
 
     while ((qa_now - qa_start) < qa_limit) {
         string question = qa_list[qa_now][1];

@@ -160,10 +160,6 @@ void DVFS::enforce_ram_freq() const {
 }
 
 int DVFS::unset_ram_freq(){
-    // S25 is held
-    if (this->get_device_name() == "S25") {
-        return 0;
-    }
     // unset ram frequency
     const int min_clk = this->ddrfreq.at(this->device)[0];
     const int max_clk = this->ddrfreq.at(this->device)[this->ddrfreq.at(this->device).size()-1];
