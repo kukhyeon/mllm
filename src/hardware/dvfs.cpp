@@ -187,8 +187,8 @@ int DVFS::unset_ram_freq(){
 		command += std::string("echo ") + std::to_string(max_clk)+ std::string(" > /sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/scaling_devfreq_max; ");
     } else {
         // for S25
-        command += std::string("echo ") + std::to_string(max_clk)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/DDR/boost_freq; ");
-        command += "echo 1 > /sys/devices/system/cpu/bus_dcvs/DDRQOS/boost_freq; ";
+        command += std::string("echo ") + std::to_string(min_clk)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/DDR/boost_freq; ");
+        command += "echo 0 > /sys/devices/system/cpu/bus_dcvs/DDRQOS/boost_freq; ";
         // ===================================== DDR monitor =====================================
         command += std::string("echo ") + std::to_string(min_clk)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/DDR/soc:qcom,memlat:ddr:gold/min_freq; ");
         command += std::string("echo ") + std::to_string(max_clk)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/DDR/soc:qcom,memlat:ddr:gold/max_freq; ");
