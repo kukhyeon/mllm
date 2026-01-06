@@ -23,6 +23,7 @@ _deps
 Makefile
 *.model
 output/
+scripts-termux/
 models/*
 /.devcontainer/
 /.vscode/
