@@ -1,6 +1,7 @@
 # product name
-DEV="$(getprop ro.product.product.model)"
-DEV="$(printf '%s' "$DEV" | tr -d '[:space:]')"
+# DEV="$(getprop ro.product.product.model)"
+# DEV="$(printf '%s' "$DEV" | tr -d '[:space:]')"
+DEV="S25"
 echo "Device: $DEV"
 
 # turn-off screen
@@ -18,15 +19,17 @@ fi
 
 sleep 3 # stabilize
 
-# silver core control
-su -c "echo 0 > /sys/devices/system/cpu/cpu1/online"
-su -c "echo 0 > /sys/devices/system/cpu/cpu2/online"
-su -c "echo 0 > /sys/devices/system/cpu/cpu3/online"
+# silver core control (Except S25)
+if [ "$DEV" != "S25" ]; then
+  su -c "echo 0 > /sys/devices/system/cpu/cpu1/online"
+  su -c "echo 0 > /sys/devices/system/cpu/cpu2/online"
+  su -c "echo 0 > /sys/devices/system/cpu/cpu3/online"
+fi
 
 ./bin-arm/stream_llama3 \
-  -m models/llama-3.2-1b-q4k.mllm \
+  -m models/llama-3.2-3b-q4k.mllm \
   -v vocab/llama3_tokenizer.model \
-  -b 1b \
+  -b 3b \
   -t 4 \
   -l 1024 \
   -i 1 \
@@ -49,10 +52,12 @@ su -c "echo 0 > /sys/devices/system/cpu/cpu3/online"
 # [pause-unit] = ms
 # [interval-unit] = s
 
-# silver core reset
-su -c "echo 1 > /sys/devices/system/cpu/cpu1/online"
-su -c "echo 1 > /sys/devices/system/cpu/cpu2/online"
-su -c "echo 1 > /sys/devices/system/cpu/cpu3/online"
+# silver core reset (except S25)
+if [ "$DEV" != "S25" ]; then
+  su -c "echo 1 > /sys/devices/system/cpu/cpu1/online"
+  su -c "echo 1 > /sys/devices/system/cpu/cpu2/online"
+  su -c "echo 1 > /sys/devices/system/cpu/cpu3/online"
+fi
 
 # turn-on screen
 if [ "$DEV" = "Pixel9" ]; then
