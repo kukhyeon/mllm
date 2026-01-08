@@ -27,14 +27,14 @@ if [ "$DEV" != "S25" ]; then
 fi
 
 ./bin-arm/stream_llama3 \
-  -m models/llama-3.2-3b-q4k.mllm \
+  -m models/llama3.2-3b-q4k.mllm \
   -v vocab/llama3_tokenizer.model \
   -b 3b \
   -t 4 \
   -l 1024 \
   -i 1 \
   -s 1 \
-  -L 20 \
+  -L 4 \
   -I dataset/hotpot_qa.csv \
   -O output/ \
   -S 0 \
