@@ -309,7 +309,7 @@ void record_hard(std::atomic<bool>& sigterm, const DVFS& dvfs){
     auto start_sys_time = std::chrono::system_clock::now();
     do{
         // Fix RAM clock 
-        dvfs.enforce_ram_freq();
+        //dvfs.enforce_ram_freq();
         // get records
 		records = get_hard_records(dvfs);
         auto now = std::chrono::system_clock::now();
