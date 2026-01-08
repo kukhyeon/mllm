@@ -51,7 +51,7 @@ fi
   # --query-interval: specify an interval time between queries (s)
 
 ./bin-arm/stream_qwen3 \
-  -m models/qwen-3-1.7b-q4k.mllm \
+  -m models/qwen3-1.7b-fp16.mllm \
   -v vocab/qwen3_vocab.mllm \
   -e vocab/qwen3_merges.txt \
   -f Qwen1.5 \
@@ -60,7 +60,7 @@ fi
   -l 1024 \
   -i 1 \
   -s 1 \
-  -L 7 \
+  -L 6 \
   -I dataset/hotpot_qa.csv \
   -O output/ \
   -S 0 \
