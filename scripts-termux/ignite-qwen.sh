@@ -10,11 +10,11 @@ if [ "$DEV" = "Pixel9" ]; then
   su -c "echo 0 > /sys/class/backlight/panel0-backlight/brightness"
 elif [ "$DEV" = "S24" ] || [ "$DEV" = "S25" ]; then
   # S24, S25
-  su -c "echo 0 > /sys/class/backlight/panel/brightness"
+  su -c "echo 0 > /sys/class/backlight/panel0-backlight/brightness"
 else
   # Default 
   su -c "echo 0 > /sys/class/backlight/panel/brightness"
-  DEV="S24"
+  DEV="S25"
 fi
 
 sleep 3 # stabilize
@@ -25,6 +25,8 @@ if [ "$DEV" != "S25" ]; then
   su -c "echo 0 > /sys/devices/system/cpu/cpu2/online"
   su -c "echo 0 > /sys/devices/system/cpu/cpu3/online"
 fi
+
+su -c "echo 3 > /proc/sys/vm/drop_caches"
 
   # -m: model path
   # -v: vocabulary path
@@ -51,12 +53,12 @@ fi
   # --query-interval: specify an interval time between queries (s)
 
 ./bin-arm/stream_qwen3 \
-  -m models/qwen-3-1.7b-q4k.mllm \
+  -m models/qwen-3-0.6b-q4_k.mllm \
   -v vocab/qwen3_vocab.mllm \
   -e vocab/qwen3_merges.txt \
   -f Qwen1.5 \
-  -b 1.7B \
-  -t 4 \
+  -b 0.6B \
+  -t 8 \
   -l 1024 \
   -i 1 \
   -s 1 \
@@ -86,10 +88,10 @@ if [ "$DEV" != "S25" ]; then
 fi
 
 # turn-on screen
-if [ "$DEV" = "Pixel9" ]; then
-  # Pixel9
+if [ "$DEV" = "S25" ]; then
+  # S25
   su -c "echo 1023 > /sys/class/backlight/panel0-backlight/brightness"
 else
-  # S24, S25
+  # S24
   su -c "echo 1023 > /sys/class/backlight/panel/brightness"
 fi

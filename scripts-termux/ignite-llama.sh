@@ -5,11 +5,11 @@ DEV="S25"
 echo "Device: $DEV"
 
 # turn-off screen
-if [ "$DEV" = "Pixel9" ]; then
-  # Pixel9
+if [ "$DEV" = "S25" ]; then
+  # Pixel9, S25
   su -c "echo 0 > /sys/class/backlight/panel0-backlight/brightness"
 elif [ "$DEV" = "S24" ] || [ "$DEV" = "S25" ]; then
-  # S24, S25
+  # S24
   su -c "echo 0 > /sys/class/backlight/panel/brightness"
 else
   # Default 
@@ -26,11 +26,13 @@ if [ "$DEV" != "S25" ]; then
   su -c "echo 0 > /sys/devices/system/cpu/cpu3/online"
 fi
 
+su -c "echo 3 > /proc/sys/vm/drop_caches"
+
 ./bin-arm/stream_llama3 \
   -m models/llama3.2-3b-q4k.mllm \
   -v vocab/llama3_tokenizer.model \
   -b 3b \
-  -t 4 \
+  -t 8 \
   -l 1024 \
   -i 1 \
   -s 1 \
@@ -60,8 +62,8 @@ if [ "$DEV" != "S25" ]; then
 fi
 
 # turn-on screen
-if [ "$DEV" = "Pixel9" ]; then
-  # Pixel9
+if [ "$DEV" = "S25" ]; then
+  # S25
   su -c "echo 1023 > /sys/class/backlight/panel0-backlight/brightness"
 else
   # S24, S25
