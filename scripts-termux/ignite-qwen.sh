@@ -19,6 +19,13 @@ fi
 
 sleep 3 # stabilize
 
+# CPU Governor: performance
+su -c "echo performance > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor"
+su -c "echo performance > /sys/devices/system/cpu/cpufreq/policy6/scaling_governor"
+echo "CPU Governor (policy0): $(cat /sys/devices/system/cpu/cpufreq/policy0/scaling_governor)"
+echo "CPU Governor (policy6): $(cat /sys/devices/system/cpu/cpufreq/policy6/scaling_governor)"
+sleep 1
+
 # silver core control (Except S25)
 if [ "$DEV" != "S25" ]; then
   su -c "echo 0 > /sys/devices/system/cpu/cpu1/online"
@@ -26,7 +33,10 @@ if [ "$DEV" != "S25" ]; then
   su -c "echo 0 > /sys/devices/system/cpu/cpu3/online"
 fi
 
-su -c "echo 3 > /proc/sys/vm/drop_caches"
+# drop caches
+su -c "sync"
+echo 3 | su -c "tee /proc/sys/vm/drop_caches"
+sleep 3
 
   # -m: model path
   # -v: vocabulary path
@@ -86,6 +96,12 @@ if [ "$DEV" != "S25" ]; then
   su -c "echo 1 > /sys/devices/system/cpu/cpu2/online"
   su -c "echo 1 > /sys/devices/system/cpu/cpu3/online"
 fi
+
+# CPU Governor reset: walt
+su -c "echo walt > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor"
+su -c "echo walt > /sys/devices/system/cpu/cpufreq/policy6/scaling_governor"
+echo "CPU Governor reset (policy0): $(cat /sys/devices/system/cpu/cpufreq/policy0/scaling_governor)"
+echo "CPU Governor reset (policy6): $(cat /sys/devices/system/cpu/cpufreq/policy6/scaling_governor)"
 
 # turn-on screen
 if [ "$DEV" = "S25" ]; then
