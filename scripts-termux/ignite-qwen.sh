@@ -23,7 +23,7 @@ su -c "echo performance > /sys/devices/system/cpu/cpufreq/policy0/scaling_govern
 su -c "echo performance > /sys/devices/system/cpu/cpufreq/policy6/scaling_governor"
 echo "CPU Governor (policy0): $(cat /sys/devices/system/cpu/cpufreq/policy0/scaling_governor)"
 echo "CPU Governor (policy6): $(cat /sys/devices/system/cpu/cpufreq/policy6/scaling_governor)"
-sleep 5
+sleep 3
 
 # silver core control (Except S25)
 if [ "$DEV" != "S25" ]; then
@@ -62,7 +62,7 @@ fi
   -e vocab/qwen3_merges.txt \
   -f Qwen1.5 \
   -b 0.6B \
-  -t 8 \
+  -t 2 \
   -l 1024 \
   -i 1 \
   -s 1 \
