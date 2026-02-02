@@ -103,7 +103,7 @@ int main(int argc, char **argv) {
     int query_interval = cmdParser.get<int>("query-interval") * 1000;
 
     // variable initialization: For File Naming
-    bool fixed_config = (cpu_clk_idx_p == cpu_clk_idx_d) && (ram_clk_idx_p == ram_clk_idx_d);
+    bool fixed_config = (cpu_clk_idx_p == cpu_clk_idx_d); //&& (ram_clk_idx_p == ram_clk_idx_d);
     bool tp = (token_pause > 0);
     bool pp = (phase_pause > 0);
     bool lp = (layer_pause > 0);
@@ -220,7 +220,7 @@ int main(int argc, char **argv) {
 
         freq_config = dvfs.get_cpu_freqs_conf(cpu_clk_idx_p);
         dvfs.set_cpu_freq(freq_config);
-        dvfs.set_ram_freq(ram_clk_idx_p);
+        //dvfs.set_ram_freq(ram_clk_idx_p);
 
         //auto time1 = chrono::system_clock::now();
         auto input_str = tokenizer.apply_chat_template(question);
@@ -247,7 +247,7 @@ int main(int argc, char **argv) {
             if (ft == 0 && !fixed_config) {
                 freq_config = dvfs.get_cpu_freqs_conf(cpu_clk_idx_d);
                 dvfs.set_cpu_freq(freq_config);
-                dvfs.set_ram_freq(ram_clk_idx_d);
+                //dvfs.set_ram_freq(ram_clk_idx_d);
             }
             // phase pause
             if (ft == 0 && phase_pause > 0) {
@@ -305,7 +305,7 @@ int main(int argc, char **argv) {
     // measurement done
     sigterm = true;
     dvfs.unset_cpu_freq();
-    dvfs.unset_ram_freq();
+    //dvfs.unset_ram_freq();
     record_thread.join();
 
     cout << "DONE\r\n";
