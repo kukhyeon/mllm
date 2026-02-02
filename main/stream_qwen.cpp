@@ -284,13 +284,14 @@ int main(int argc, char **argv) {
         // Throttling detection
         // single query is done
         // This throttling detection is valid for only Pixel9
+        /*
         int cur_cpu_freq = stoi(split_string(execute_cmd(command.c_str()))[0]);
         if (cur_cpu_freq * 1000 != dvfs.get_cpu_freq().at(7).at(freq_config[2])) {
             Module::thread_sleep = 0; // reset layer-pause
             phase_pause = 0;          // reset phase-pause
             token_pause = 0;          // reset token-pause
         }
-
+        */
         // Reset
         if (is_query_save) { ans.push_back(answer); } // accummulate answers
         model.clear_kvcache();
