@@ -145,11 +145,11 @@ int DVFS::set_ram_freq(const int freq_idx){
         command += std::string("echo ") + std::to_string(clk)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/DDR/soc:qcom,memlat:ddr:prime-latfloor/max_freq; ");
         command += std::string("chmod 444 /sys/devices/system/cpu/bus_dcvs/DDR/soc:qcom,memlat:ddr:prime-latfloor/max_freq; ");
         //=================================== DDRQOS monitor ===================================
-        command += std::string("echo ") + std::to_string(0)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/DDRQOS/soc:qcom,memlat:ddrqos:gold/min_freq; ");
-        command += std::string("echo ") + std::to_string(0)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/DDRQOS/soc:qcom,memlat:ddrqos:gold/max_freq; ");
+        command += std::string("echo ") + std::to_string(1)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/DDRQOS/soc:qcom,memlat:ddrqos:gold/min_freq; ");
+        command += std::string("echo ") + std::to_string(1)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/DDRQOS/soc:qcom,memlat:ddrqos:gold/max_freq; ");
 
-        command += std::string("echo ") + std::to_string(0)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/DDRQOS/soc:qcom,memlat:ddrqos:prime/min_freq; ");
-        command += std::string("echo ") + std::to_string(0)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/DDRQOS/soc:qcom,memlat:ddrqos:prime/max_freq; ");
+        command += std::string("echo ") + std::to_string(1)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/DDRQOS/soc:qcom,memlat:ddrqos:prime/min_freq; ");
+        command += std::string("echo ") + std::to_string(1)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/DDRQOS/soc:qcom,memlat:ddrqos:prime/max_freq; ");
 
         command += std::string("chmod 644 /sys/devices/system/cpu/bus_dcvs/DDRQOS/soc:qcom,memlat:ddrqos:prime-latfloor/min_freq; ");
         command += std::string("echo ") + std::to_string(0)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/DDRQOS/soc:qcom,memlat:ddrqos:prime-latfloor/min_freq; ");
