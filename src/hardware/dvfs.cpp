@@ -46,7 +46,6 @@ const std::map<std::string, std::vector<std::string>> DVFS::empty_thermal = {
     { "Pixel9", {}}
 };
 
-
 // consturctor
 DVFS::DVFS(const std::string& device_name) : Device(device_name) { output_filename = ""; }
 
@@ -152,16 +151,17 @@ int DVFS::set_ram_freq(const int freq_idx){
         command += std::string("echo ") + std::to_string(1)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/DDRQOS/soc:qcom,memlat:ddrqos:prime/max_freq; ");
 
         command += std::string("chmod 644 /sys/devices/system/cpu/bus_dcvs/DDRQOS/soc:qcom,memlat:ddrqos:prime-latfloor/min_freq; ");
-        command += std::string("echo ") + std::to_string(0)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/DDRQOS/soc:qcom,memlat:ddrqos:prime-latfloor/min_freq; ");
+        command += std::string("echo ") + std::to_string(1)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/DDRQOS/soc:qcom,memlat:ddrqos:prime-latfloor/min_freq; ");
         command += std::string("chmod 444 /sys/devices/system/cpu/bus_dcvs/DDRQOS/soc:qcom,memlat:ddrqos:prime-latfloor/min_freq; ");
 
         command += std::string("chmod 644 /sys/devices/system/cpu/bus_dcvs/DDRQOS/soc:qcom,memlat:ddrqos:prime-latfloor/max_freq; ");
-        command += std::string("echo ") + std::to_string(0)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/DDRQOS/soc:qcom,memlat:ddrqos:prime-latfloor/max_freq; ");
+        command += std::string("echo ") + std::to_string(1)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/DDRQOS/soc:qcom,memlat:ddrqos:prime-latfloor/max_freq; ");
         command += std::string("chmod 444 /sys/devices/system/cpu/bus_dcvs/DDRQOS/soc:qcom,memlat:ddrqos:prime-latfloor/max_freq; ");
         //=================================== LLCC/bwmon monitor ===================================
         command += std::string("echo ") + std::to_string(clk)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/LLCC/240b3400.qcom,bwmon-llcc-gold/second_vote_limit; ");
         command += std::string("echo ") + std::to_string(clk)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/LLCC/240b7400.qcom,bwmon-llcc-prime/second_vote_limit; ");
-        //==========================================================================================
+        //=================================== LLCC Clock monitor=====================================
+        command += std::string("echo ") + std::to_string(1211000)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/LLCC/boost_freq; ");
     }
     command += "\"";
 	return system(command.c_str());
@@ -229,7 +229,8 @@ int DVFS::unset_ram_freq(){
         //=================================== LLCC/bwmon monitor ===================================
         command += std::string("echo ") + std::to_string(max_clk)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/LLCC/240b3400.qcom,bwmon-llcc-gold/second_vote_limit; ");
         command += std::string("echo ") + std::to_string(max_clk)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/LLCC/240b7400.qcom,bwmon-llcc-prime/second_vote_limit; ");
-        //==========================================================================================
+        //=================================== LLCC Clock monitor=====================================
+        command += std::string("echo ") + std::to_string(350000)+ std::string(" > /sys/devices/system/cpu/bus_dcvs/LLCC/boost_freq; ");
     }
     command += "\"";
 	return system(command.c_str());
