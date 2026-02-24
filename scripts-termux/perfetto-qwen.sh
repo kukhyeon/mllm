@@ -110,8 +110,8 @@ FTRACE_EVENTS=(
   # Per-core scheduling / thread placement (코어 점유율/활동률 기반)
   "sched/sched_switch"
   "sched/sched_wakeup"
-  "sched/sched_wakeup_new"
-  "sched/sched_waking"          # some kernels
+  #"sched/sched_wakeup_new"
+  #"sched/sched_waking"          # some kernels
   "sched/sched_migrate_task"
   "sched/sched_process_fork"
   "sched/sched_process_exit"
@@ -133,7 +133,7 @@ FTRACE_EVENTS=(
   "interconnect/icc_set_bw"
   "interconnect/icc_set_bw_end"
   "interconnect_qcom/bcm_voter_commit"
-  "samsung/tracing_mark_write"
+  #"samsung/tracing_mark_write"
 
   # dcvs
   "dcvs/bw_hwmon_update"
@@ -148,14 +148,14 @@ FTRACE_EVENTS=(
   "devfreq/devfreq_frequency"
 
   # thermal tracepoints (있으면)
-  "thermal/thermal_temperature"
-  "thermal/cdev_update"
+  #"thermal/thermal_temperature"
+  #"thermal/cdev_update"
   "thermal/thermal_power_cpu_get_power_simple"
   "thermal/thermal_zone_trip"
   "thermal/thermal_power_devfreq_get_power"
 
   # optional memory event
-  "kmem/rss_stat"
+  #"kmem/rss_stat"
 )
 
 # Snapshot: devfreq/cpufreq 노드 매핑용 (S25에서 RAM/버스가 어떤 devfreq인지 찾을 때 도움)
@@ -187,7 +187,7 @@ FTRACE_EVENTS=(
 #   (cpufreq_period_ms/devfreq_period_ms는 sys_stats_config의 필드로 정의됨) :contentReference[oaicite:5]{index=5}
 # - process_stats: 프로세스 RSS/virt/smaps_rollup 등 폴링 :contentReference[oaicite:6]{index=6}
 cat > "$CFG_LOCAL" <<CONFIG_HEAD
-buffers { size_kb: 65536 fill_policy: RING_BUFFER }
+buffers { size_kb: 512000 fill_policy: RING_BUFFER }
 
 data_sources {
   config {
@@ -222,7 +222,7 @@ data_sources {
       devfreq_period_ms: 100
 
       # Thermal zones + PSI (CPU/memory/IO pressure)
-      thermal_period_ms: 1000
+      # thermal_period_ms: 1000
       psi_period_ms: 1000
     }
   }
