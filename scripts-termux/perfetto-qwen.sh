@@ -59,6 +59,39 @@ if [[ ! -d "$TRACEFS" ]]; then
   TRACEFS="/sys/kernel/tracing"
 fi
 
+# Enable additional trace events at script start
+ADDITIONAL_TRACE_EVENTS=(
+  "clk/clk_set_duty_cycle"
+  "clk_qcom/clk_measure"
+  "clk_qcom/clk_state"
+  "interconnect/icc_set_bw"
+  "interconnect/icc_set_bw_end"
+  "interconnect_qcom/bcm_voter_commit"
+  "devfreq/devfreq_monitor"
+  "devfreq/devfreq_frequency"
+  "thermal/thermal_power_cpu_get_power_simple"
+  "thermal/thermal_zone_trip"
+  "thermal/thermal_power_devfreq_get_power"
+)
+
+enable_additional_traces() {
+  for ev in "${ADDITIONAL_TRACE_EVENTS[@]}"; do
+    local enable_path="$TRACEFS/events/$ev/enable"
+    if [[ -e "$enable_path" ]]; then
+      su -c "echo 1 > '$enable_path'" >/dev/null 2>&1 || true
+    fi
+  done
+  
+  # Enable dcvs events (wildcard pattern)
+  for dcvs_dir in "$TRACEFS"/events/dcvs/*/; do
+    if [[ -d "$dcvs_dir" && -e "${dcvs_dir}enable" ]]; then
+      su -c "echo 1 > '${dcvs_dir}enable'" >/dev/null 2>&1 || true
+    fi
+  done
+}
+
+enable_additional_traces
+
 # Turn-off screen (backlight path differs by device).
 if [[ "$DEV" == "Pixel9" || "$DEV" == "S24" || "$DEV" == "S25" ]]; then
   su -c "echo 0 > /sys/class/backlight/panel0-backlight/brightness" || true
@@ -123,7 +156,7 @@ FTRACE_EVENTS=(
   "power/cpu_idle"
   "power/suspend_resume"
 
-  # Clock + interconnect (DDR/버스/“voter” 후보)
+  # Clock + interconnect 
   "clk/clk_set_rate"
   "clk/clk_enable"
   "clk/clk_disable"
@@ -261,7 +294,26 @@ stop_perfetto() {
   fi
 }
 
+disable_additional_traces() {
+  for ev in "${ADDITIONAL_TRACE_EVENTS[@]}"; do
+    local enable_path="$TRACEFS/events/$ev/enable"
+    if [[ -e "$enable_path" ]]; then
+      su -c "echo 0 > '$enable_path'" >/dev/null 2>&1 || true
+    fi
+  done
+  
+  # Disable dcvs events (wildcard pattern)
+  for dcvs_dir in "$TRACEFS"/events/dcvs/*/; do
+    if [[ -d "$dcvs_dir" && -e "${dcvs_dir}enable" ]]; then
+      su -c "echo 0 > '${dcvs_dir}enable'" >/dev/null 2>&1 || true
+    fi
+  done
+}
+
 restore_settings() {
+  # Disable additional trace events
+  disable_additional_traces
+
   # Bring back silver cores if we turned them off.
   if [[ "$SILVER_OFFLINED" -eq 1 ]]; then
     for c in 1 2 3; do
