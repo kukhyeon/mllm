@@ -61,12 +61,12 @@ fi
   -v vocab/qwen_vocab.mllm \
   -e vocab/qwen_merges.txt \
   -f Qwen1.5 \
-  -b 0.5B \
+  -b 1.8B \
   -t 4 \
   -l 1024 \
   -i 1 \
   -s 1 \
-  -L 30 \
+  -L 20 \
   -I dataset/hotpot_qa.csv \
   -O output/ \
   -S 0 \
